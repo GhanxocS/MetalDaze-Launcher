@@ -1,0 +1,224 @@
+@import 'font.css';
+@import 'theme.css';
+@import 'panels/login.css';
+@import 'panels/home.css';
+@import 'panels/settings.css';
+@import './panels/game-settings.css';
+
+body {
+    margin: 0;
+    padding: 0;
+    user-select: none;
+    color: var(--color);
+    font-family: 'Poppins';
+    font-weight: bolder;
+}
+
+img {
+    -webkit-user-drag: none;
+    user-select: none;
+}
+
+* {
+    outline: none;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.content-scroll {
+    overflow: auto;
+}
+
+.content-scroll::-webkit-scrollbar {
+    width: 0;
+}
+
+.dragbar {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 26px;
+    -webkit-app-region: drag;
+    z-index: 11;
+}
+
+.darwin .frame {
+    background: transparent;
+    position: fixed;
+    top: 0px;
+    z-index: 11;
+    -webkit-app-region: no-drag;
+    display: none;
+}
+
+.other .frame {
+    background: transparent;
+    position: fixed;
+    top: 0px;
+    right: 0px;
+    z-index: 11;
+    -webkit-app-region: no-drag;
+    display: none;
+}
+
+.frame.hide {
+    display: block;
+}
+
+.darwin .button-frame {
+    position: relative;
+    display: table-cell;
+    width: 20px;
+    height: 26px;
+    transition: color .2s, background-color .2s;
+}
+
+.other .button-frame {
+    position: relative;
+    display: table-cell;
+    width: 30px;
+    height: 26px;
+    transition: color .2s, background-color .2s;
+    color: black;
+    cursor: pointer;
+}
+
+.button-frame:before {
+    position: absolute;
+    top: 6px;
+    left: 8px;
+    width: 14px;
+    height: 14px;
+    font-size: 14px;
+    color: #f8f9f9;
+}
+
+.darwin-icon-minimize,
+.darwin-icon-maximize,
+.darwin-icon-close {
+    position: relative;
+}
+
+.darwin-icon-minimize:before,
+.darwin-icon-maximize:before,
+.darwin-icon-close:before {
+    content: '';
+    position: absolute;
+    border-radius: 50%;
+    width: 12px;
+    height: 12px;
+    cursor: pointer;
+}
+
+.darwin-icon-maximize:before {
+    background: #07d014;
+}
+
+.darwin-icon-minimize:before {
+    background: #ffbd2e;
+}
+
+.darwin-icon-close:before {
+    background: #ff6047;
+}
+
+.icon-close:hover {
+    background: #e21212;
+}
+
+.icon-minimize:hover,
+.icon-restore-down:hover,
+.icon-maximize:hover {
+    background-color: #0000009d;
+}
+
+.popup {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.popup-tab {
+    width: 320px;
+    padding: 2rem 2.5rem;
+    background: #111111;
+    border: 1px solid #2a2a2a;
+    border-radius: 10px;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.popup-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 1.1rem;
+    letter-spacing: 0.15em;
+    color: #f0f0f0;
+    text-align: center;
+    border-bottom: 1px solid #2a2a2a;
+    padding-bottom: 0.75rem;
+    margin: 0;
+}
+
+.popup-content {
+    font-family: 'Barlow', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 300;
+    color: rgba(240,240,240,0.6) !important;
+    text-align: center;
+    line-height: 1.6;
+}
+
+.popup-options {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    margin-top: 0.5rem;
+}
+
+.popup-button {
+    background: rgba(255,255,255,0.06);
+    color: #f0f0f0;
+    border: 1px solid #3a3a3a;
+    border-radius: 6px;
+    padding: 0.5rem 2.5rem;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 0.85rem;
+    letter-spacing: 0.12em;
+    cursor: pointer;
+    transition: border-color 0.18s, background 0.18s;
+}
+
+.popup-button:hover {
+    border-color: #f0f0f0;
+    background: rgba(255,255,255,0.1);
+}
+
+.panel {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    z-index: 0;
+    pointer-events: none;
+}
+
+.active {
+    opacity: 1;
+    z-index: 1;
+    pointer-events: all;
+}

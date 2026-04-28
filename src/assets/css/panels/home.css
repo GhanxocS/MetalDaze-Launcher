@@ -1,0 +1,517 @@
+/* ============================================================
+   MetalDaze Launcher — Home Panel
+   Estilo: Industrial Minimal Dark
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;900&family=Barlow:wght@300;400;500&display=swap');
+
+/* ── Variables ── */
+:root {
+    --md-black:       #0a0a0a;
+    --md-dark:        #111111;
+    --md-surface:     #1a1a1a;
+    --md-border:      #2a2a2a;
+    --md-border-lit:  #3a3a3a;
+    --md-white:       #f0f0f0;
+    --md-muted:       #666666;
+    --md-accent:      #ffffff;
+    --md-accent-dim:  rgba(255,255,255,0.08);
+    --md-glow:        rgba(255,255,255,0.04);
+    --sidebar-w:      72px;
+    --transition:     0.18s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ── Base ── */
+.home .container {
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+    align-items: center;
+    font-family: 'Barlow', sans-serif;
+    background: var(--md-black);
+    color: var(--md-white);
+}
+
+/* ============================================================
+   SIDEBAR
+   ============================================================ */
+
+.sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: var(--sidebar-w);
+    height: 100%;
+    background: var(--md-dark);
+    border-right: 1px solid var(--md-border);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 100;
+    padding: 0;
+}
+
+.sidebar-top {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    padding-top: 1.2rem;
+}
+
+.sidebar-mid {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.sidebar-bottom {
+    padding-bottom: 1.2rem;
+}
+
+/* Brand mark */
+.brand-mark {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: 1rem;
+    letter-spacing: 0.1em;
+    color: var(--md-white);
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--md-border-lit);
+    border-radius: 6px;
+}
+
+/* Player head */
+.player-options {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.player-head {
+    background: url('../../images/default/setve.png'), no-repeat;
+    background-size: cover;
+    image-rendering: pixelated;
+    height: 40px;
+    width: 40px;
+    border-radius: 6px;
+    border: 1px solid var(--md-border-lit);
+    transition: border-color var(--transition);
+}
+
+.player-head:hover {
+    border-color: var(--md-white);
+}
+
+/* Social icons in sidebar */
+.social-tab-sidebar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.social-block-sidebar {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background var(--transition);
+}
+
+.social-block-sidebar:hover {
+    background: var(--md-accent-dim);
+}
+
+.social-block-sidebar .icon-social {
+    pointer-events: none;
+    background-repeat: no-repeat;
+    background-size: contain;
+    height: 55%;
+    width: 55%;
+    filter: var(--svg-color);
+    opacity: 0.5;
+    transition: opacity var(--transition);
+}
+
+.social-block-sidebar:hover .icon-social {
+    opacity: 1;
+}
+
+/* Settings button */
+.settings-btn {
+    width: 40px;
+    height: 40px;
+    font-size: 1.4rem;
+    color: var(--md-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: color var(--transition), background var(--transition);
+}
+
+.settings-btn:hover {
+    color: var(--md-white);
+    background: var(--md-accent-dim);
+}
+
+/* ============================================================
+   HOME BOTTOM (news + old social tab hidden)
+   ============================================================ */
+
+.home-bottom {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    padding-left: var(--sidebar-w);
+}
+
+/* Hide old floating social tab */
+.social-tab {
+    display: none;
+}
+
+/* ============================================================
+   NEWS
+   ============================================================ */
+
+.new-tab {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 420px;
+    height: 100%;
+    padding: 2rem 2rem 6rem 2.5rem;
+}
+
+.titre-tab-new {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 0.7rem;
+    letter-spacing: 0.25em;
+    color: var(--md-muted);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+    /* override old fixed positioning */
+    position: static;
+    background: none;
+    padding: 0;
+    border-radius: 0;
+    top: auto;
+    left: auto;
+}
+
+.news-label-line {
+    flex: 1;
+    height: 1px;
+    background: var(--md-border);
+    max-width: 32px;
+}
+
+.news-list {
+    width: 100%;
+    height: calc(100% - 2rem);
+    overflow-y: auto;
+    scrollbar-width: none;
+    /* override old fixed positioning */
+    position: static;
+    left: auto;
+    top: auto;
+    margin: 0;
+    border-radius: 0;
+}
+
+.news-list::-webkit-scrollbar {
+    display: none;
+}
+
+.news-block {
+    width: 100%;
+    margin: 0 0 0.75rem 0;
+    border-radius: 8px;
+    background: var(--md-surface);
+    border: 1px solid var(--md-border);
+    transition: border-color var(--transition);
+}
+
+.news-block:hover {
+    border-color: var(--md-border-lit);
+}
+
+.news-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.9rem 1.1rem 0.5rem;
+    gap: 0.75rem;
+}
+
+.server-status-icon {
+    height: 28px;
+    width: 28px;
+    border-radius: 4px;
+    opacity: 0.8;
+}
+
+.header-text {
+    flex: 1;
+}
+
+.header-text .title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 1rem;
+    letter-spacing: 0.04em;
+    text-decoration: none;
+    color: var(--md-white);
+}
+
+.news-header .date {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.75rem;
+    color: var(--md-muted);
+    letter-spacing: 0.05em;
+    min-width: 2.5rem;
+    text-align: center;
+}
+
+.news-content .bbWrapper {
+    padding: 0 1.1rem 0.9rem;
+    font-size: 0.85rem;
+    font-weight: 300;
+    color: rgba(240,240,240,0.65);
+    line-height: 1.6;
+}
+
+.news-content .bbWrapper p {
+    margin: 0;
+}
+
+.news-content .bbWrapper .news-author {
+    margin-top: 0.75rem;
+    text-align: end;
+    font-size: 0.72rem;
+    color: var(--md-muted);
+}
+
+.news-content .bbWrapper .news-author span {
+    font-weight: 600;
+    color: rgba(240,240,240,0.5);
+}
+
+/* ============================================================
+   PLAY BUTTON
+   ============================================================ */
+
+.play-elements {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.5rem;
+    z-index: 50;
+}
+
+.play-instance {
+    display: flex;
+    align-items: stretch;
+    border: 1px solid var(--md-border-lit);
+    border-radius: 8px;
+    overflow: hidden;
+    background: var(--md-surface);
+    transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+.play-instance:hover {
+    border-color: var(--md-white);
+    box-shadow: 0 0 24px rgba(255,255,255,0.06);
+}
+
+.play-btn {
+    border: none;
+    background: none;
+    color: var(--md-white);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 1.35rem;
+    letter-spacing: 0.18em;
+    padding: 1rem 2.75rem;
+    cursor: pointer;
+    pointer-events: all;
+    transition: background var(--transition);
+}
+
+.play-btn:hover {
+    background: var(--md-glow);
+}
+
+.instance-select {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--md-muted);
+    font-size: 0.8rem;
+    width: 40px;
+    border-left: 1px solid var(--md-border);
+    cursor: pointer;
+    transition: color var(--transition), background var(--transition);
+}
+
+.instance-select:hover {
+    color: var(--md-white);
+    background: var(--md-accent-dim);
+}
+
+.instance-select:before {
+    transform: rotate(270deg);
+    pointer-events: none;
+}
+
+/* Progress / starting */
+.info-starting-game {
+    display: none;
+    text-align: right;
+}
+
+.info-starting-game-text {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    color: var(--md-muted);
+    margin-bottom: 0.3rem;
+}
+
+.progress-bar {
+    appearance: none;
+    width: 220px;
+    height: 2px;
+}
+
+.progress-bar::-webkit-progress-bar {
+    background: var(--md-border);
+    border-radius: 2px;
+}
+
+.progress-bar::-webkit-progress-value {
+    background: var(--md-white);
+    border-radius: 2px;
+}
+
+/* ============================================================
+   INSTANCE POPUP
+   ============================================================ */
+
+.instance-popup {
+    position: fixed;
+    inset: 0;
+    display: none;
+    background: rgba(0,0,0,0.75);
+    backdrop-filter: blur(4px);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+}
+
+.instances-tab {
+    position: relative;
+    background: var(--md-dark);
+    border: 1px solid var(--md-border-lit);
+    border-radius: 10px;
+    padding: 2rem 2.5rem;
+    min-width: 280px;
+}
+
+.close-popup {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 5px;
+    cursor: pointer;
+    color: var(--md-muted);
+    transition: color var(--transition), background var(--transition);
+}
+
+.close-popup:hover {
+    color: var(--md-white);
+    background: var(--md-accent-dim);
+}
+
+.instances-tab p {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 0.7rem;
+    letter-spacing: 0.25em;
+    color: var(--md-muted);
+    margin: 0 0 1rem 0;
+    text-align: center;
+}
+
+.instance-elements {
+    background: var(--md-surface);
+    border: 1px solid var(--md-border);
+    text-align: center;
+    border-radius: 6px;
+    margin: 0.4rem 0;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 1rem;
+    letter-spacing: 0.08em;
+    padding: 0.6rem 1rem;
+    cursor: pointer;
+    transition: background var(--transition), border-color var(--transition), color var(--transition);
+    color: rgba(240,240,240,0.7);
+}
+
+.instance-elements:hover {
+    background: var(--md-accent-dim);
+    border-color: var(--md-border-lit);
+    color: var(--md-white);
+}
+
+.active-instance {
+    background: var(--md-accent-dim);
+    border-color: var(--md-white);
+    color: var(--md-white);
+}
+body, html {
+    overflow: hidden;
+}
+
+.panels, .panel {
+    overflow: hidden;
+}
+
+.dev-badge {
+    position: fixed;
+    bottom: 0.6rem;
+    left: calc(var(--sidebar-w) + 0.75rem);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    color: rgba(240,240,240,0.18);
+    pointer-events: none;
+    user-select: none;
+}

@@ -1,0 +1,183 @@
+/* ============================================================
+   GAME SETTINGS TAB — options.txt editor
+   ============================================================ */
+
+/* Cada fila de opción */
+.game-option-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--md-border);
+}
+
+.game-option-row:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.game-option-row:first-child {
+    padding-top: 0;
+}
+
+.game-option-label {
+    font-family: 'Barlow', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 400;
+    color: rgba(240,240,240,0.75);
+    flex: 1;
+}
+
+/* ── Toggle ── */
+.game-toggle {
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.game-toggle-track {
+    width: 42px;
+    height: 22px;
+    background: var(--md-border-lit);
+    border-radius: 99px;
+    position: relative;
+    transition: background var(--transition);
+    border: 1px solid var(--md-border-lit);
+}
+
+.game-toggle-thumb {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 14px;
+    height: 14px;
+    background: var(--md-muted);
+    border-radius: 50%;
+    transition: transform var(--transition), background var(--transition);
+}
+
+.game-toggle.active .game-toggle-track {
+    background: var(--md-white);
+    border-color: var(--md-white);
+}
+
+.game-toggle.active .game-toggle-thumb {
+    background: var(--md-black);
+    transform: translateX(20px);
+}
+
+/* ── Slider wrap: columna para poner valor arriba y barra abajo ── */
+.game-slider-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.3rem;
+    flex-shrink: 0;
+    width: 55%;
+}
+
+/* Valor numérico — bien visible encima de la barra */
+.game-slider-val {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 0.82rem;
+    letter-spacing: 0.08em;
+    color: var(--md-white);
+    background: var(--md-surface);
+    border: 1px solid var(--md-border-lit);
+    border-radius: 4px;
+    padding: 0.1rem 0.5rem;
+    min-width: 2.5rem;
+    text-align: center;
+    flex-shrink: 0;
+    line-height: 1.6;
+}
+
+/* La barra ocupa todo el ancho */
+.game-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--md-border-lit);
+    outline: none;
+    cursor: pointer;
+}
+
+.game-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--md-white);
+    cursor: pointer;
+    transition: transform 0.1s ease;
+    border: 2px solid var(--md-black);
+    box-shadow: 0 0 0 1px var(--md-white);
+}
+
+.game-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+}
+
+.game-slider::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--md-white);
+    cursor: pointer;
+    border: 2px solid var(--md-black);
+    box-shadow: 0 0 0 1px var(--md-white);
+}
+
+/* ── Botón guardar ── */
+.game-save-row {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 1rem;
+    width: 100%;
+    max-width: 700px;
+    margin: 1rem 0 2rem;
+}
+
+.game-save-status {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    color: var(--md-muted);
+    transition: color var(--transition);
+}
+
+.game-save-status.saved {
+    color: #66bb6a;
+}
+
+.game-save-status.error {
+    color: #ff4444;
+}
+
+.game-save-btn {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 0.85rem;
+    letter-spacing: 0.12em;
+    padding: 0.7rem 1.5rem;
+    background: var(--md-white);
+    color: var(--md-black);
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background var(--transition), transform 0.1s ease;
+    flex-shrink: 0;
+}
+
+.game-save-btn:hover {
+    background: #e0e0e0;
+    transform: translateY(-1px);
+}
+
+.game-save-btn:active {
+    transform: translateY(0);
+}

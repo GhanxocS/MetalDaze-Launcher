@@ -1,0 +1,351 @@
+/* ============================================================
+   MetalDaze Launcher — Login Panel
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;900&family=Barlow:wght@300;400;500&display=swap');
+
+:root {
+    --md-black:       #0a0a0a;
+    --md-dark:        #111111;
+    --md-surface:     #161616;
+    --md-surface-2:   #1e1e1e;
+    --md-border:      #2a2a2a;
+    --md-border-lit:  #3a3a3a;
+    --md-white:       #f0f0f0;
+    --md-muted:       #555555;
+    --md-muted-light: #888888;
+    --md-accent-dim:  rgba(255,255,255,0.06);
+    --transition:     0.18s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ── Contenedor fullscreen ── */
+.login .container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    background: var(--md-black);
+    /* Textura de ruido sutil */
+    background-image:
+        radial-gradient(ellipse 60% 50% at 50% 100%, rgba(255,255,255,0.02) 0%, transparent 100%),
+        url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+}
+
+/* ── Panel flotante ── */
+.login-panel {
+    width: 380px;
+    background: var(--md-surface);
+    border: 1px solid var(--md-border);
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow:
+        0 0 0 1px rgba(255,255,255,0.03),
+        0 32px 80px rgba(0,0,0,0.7),
+        0 8px 24px rgba(0,0,0,0.5);
+    animation: panelIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes panelIn {
+    from {
+        opacity: 0;
+        transform: translateY(18px) scale(0.97);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* ── Branding ── */
+.login-brand {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2.5rem 2rem 2rem;
+    border-bottom: 1px solid var(--md-border);
+    background: linear-gradient(180deg, rgba(255,255,255,0.03) 0%, transparent 100%);
+    gap: 0.2rem;
+}
+
+.login-logo {
+    position: relative;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0.75rem;
+}
+
+.login-logo::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 14px;
+    border: 1px solid var(--md-border-lit);
+    background: var(--md-surface-2);
+}
+
+.login-logo-text {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: 1.4rem;
+    letter-spacing: 0.1em;
+    color: var(--md-white);
+    position: relative;
+    z-index: 1;
+}
+
+.login-logo-glow {
+    position: absolute;
+    inset: -1px;
+    border-radius: 14px;
+    background: transparent;
+    box-shadow: 0 0 20px rgba(255,255,255,0.04);
+    pointer-events: none;
+}
+
+.login-brand-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 1.3rem;
+    letter-spacing: 0.2em;
+    color: var(--md-white);
+    line-height: 1;
+}
+
+.login-brand-sub {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 400;
+    font-size: 0.6rem;
+    letter-spacing: 0.45em;
+    color: var(--md-muted);
+    text-transform: uppercase;
+    margin-top: 0.15rem;
+}
+
+/* ── Tabs ocultas por defecto ── */
+.login-tabs {
+    display: none;
+    padding: 1.75rem 1.75rem 2rem;
+    animation: tabIn 0.25s ease both;
+}
+
+@keyframes tabIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.login-section-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    letter-spacing: 0.12em;
+    color: var(--md-white);
+    margin-bottom: 1.25rem;
+    text-align: center;
+}
+
+/* ── Métodos de login (home tab) ── */
+.login-methods {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.method-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    width: 100%;
+    padding: 0.9rem 1.1rem;
+    background: var(--md-accent-dim);
+    border: 1px solid var(--md-border);
+    border-radius: 9px;
+    cursor: pointer;
+    transition:
+        border-color var(--transition),
+        background var(--transition),
+        transform 0.12s ease;
+    color: var(--md-white);
+    font-family: 'Barlow Condensed', sans-serif;
+    text-align: left;
+}
+
+.method-btn:hover {
+    border-color: var(--md-border-lit);
+    background: rgba(255,255,255,0.08);
+    transform: translateY(-1px);
+}
+
+.method-btn:active {
+    transform: translateY(0);
+}
+
+.method-icon {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--md-surface-2);
+    border: 1px solid var(--md-border-lit);
+    border-radius: 7px;
+    flex-shrink: 0;
+    color: var(--md-muted-light);
+}
+
+.method-label {
+    flex: 1;
+    font-size: 0.95rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    color: var(--md-white);
+}
+
+.method-arrow {
+    font-size: 0.9rem;
+    color: var(--md-muted);
+    transition: color var(--transition), transform var(--transition);
+}
+
+.method-btn:hover .method-arrow {
+    color: var(--md-white);
+    transform: translateX(3px);
+}
+
+/* ── Formularios ── */
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+    margin-bottom: 1.25rem;
+}
+
+.login-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.login-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    color: var(--md-muted-light);
+    text-transform: uppercase;
+}
+
+.login-input {
+    background: var(--md-black);
+    border: 1px solid var(--md-border);
+    color: var(--md-white);
+    padding: 0.7rem 1rem;
+    border-radius: 8px;
+    font-family: 'Barlow', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 400;
+    width: 100%;
+    box-sizing: border-box;
+    transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+.login-input::placeholder {
+    color: var(--md-muted);
+}
+
+.login-input:focus {
+    outline: none;
+    border-color: var(--md-border-lit);
+    box-shadow: 0 0 0 3px rgba(255,255,255,0.04);
+}
+
+/* ── Acciones ── */
+.login-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.login-btn-primary {
+    width: 100%;
+    padding: 0.85rem;
+    background: var(--md-white);
+    color: var(--md-black);
+    border: none;
+    border-radius: 8px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 0.9rem;
+    letter-spacing: 0.15em;
+    cursor: pointer;
+    transition: background var(--transition), transform 0.1s ease;
+}
+
+.login-btn-primary:hover {
+    background: #e0e0e0;
+    transform: translateY(-1px);
+}
+
+.login-btn-primary:active {
+    transform: translateY(0);
+}
+
+.login-btn-ghost {
+    width: 100%;
+    padding: 0.6rem;
+    background: none;
+    color: var(--md-muted-light);
+    border: none;
+    border-radius: 8px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 400;
+    font-size: 0.82rem;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    transition: color var(--transition);
+}
+
+.login-btn-ghost:hover {
+    color: var(--md-white);
+}
+
+/* Botón cancelar heredado (usado por JS) */
+.login-cancel {
+    margin-top: 0.5rem;
+    width: 100%;
+    padding: 0.6rem;
+    background: none;
+    color: var(--md-muted-light);
+    border: none;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.82rem;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    transition: color var(--transition);
+}
+
+.login-cancel:hover {
+    color: var(--md-white);
+}
+
+/* ── Compatibilidad con clases del JS original ── */
+.connect,
+.cancel {
+    background: none;
+    color: var(--md-white);
+    border: none;
+    cursor: pointer;
+}
+
+.input-login .email,
+.input-login .password,
+.A2F {
+    color: var(--md-white);
+    background: var(--md-black);
+    border: 1px solid var(--md-border);
+    border-radius: 8px;
+    padding: 0.7rem 1rem;
+    font-family: 'Barlow', sans-serif;
+}

@@ -1,0 +1,198 @@
+<div class="container">
+    <div class="nav-settings">
+        <div class="nav-brand">CONFIGURACIÓN</div>
+        <div class="nav-box">
+            <div id="account" class="nav-settings-btn active-settings-BTN">CUENTAS</div>
+            <div id="java" class="nav-settings-btn">JAVA</div>
+            <div id="resolution" class="nav-settings-btn">RESOLUCIÓN</div>
+            <div id="launcher" class="nav-settings-btn">LAUNCHER</div>
+            <div id="game" class="nav-settings-btn">JUEGO</div>
+            <div id="about" class="nav-settings-btn">ACERCA DE</div>
+        </div>
+        <div id="save" class="nav-settings-btn nav-back">
+            <span class="nav-back-arrow">←</span> INICIO
+        </div>
+    </div>
+
+    <div id="account-tab" class="container-settings active-container-settings">
+        <div class="titre-tab">
+            <span class="tab-line"></span>
+            CUENTAS DE JUGADORES
+            <span class="tab-line"></span>
+        </div>
+        <div class="accounts-list content-scroll">
+            <div class="account" id="add">
+                <div class="add-profile">
+                    <div class="icon-account-add"></div>
+                </div>
+                <div class="add-text-profile">Añadir una cuenta</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="java-tab" class="container-settings content-scroll">
+        <div class="titre-tab">
+            <span class="tab-line"></span>
+            MEMORIA RAM
+            <span class="tab-line"></span>
+        </div>
+        <div class="settings-elements-box">
+            <div class="setting-text">
+                Configura la RAM asignada al juego. No superes el 50% de tu RAM total para el máximo, ni más de 4 GB para el mínimo.
+            </div>
+            <div class="settings-elements content-evenly">
+                <div class="memory-slider" min="0.5" max="8" step="0.5">
+                    <div class="slider-touch-left"><span value="0 GB"></span></div>
+                    <div class="slider-touch-right"><span value="0 GB"></span></div>
+                    <div class="slider-line"><span></span></div>
+                </div>
+                <div class="ram-info-block">
+                    RAM total: <span id="total-ram">0 GB</span><br>
+                    RAM disponible: <span id="free-ram">0 GB</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="titre-tab">
+            <span class="tab-line"></span>
+            RUTA DE JAVA
+            <span class="tab-line"></span>
+        </div>
+        <div class="settings-elements-box">
+            <div class="setting-text">
+                El launcher usa Java integrado ubicado en:<br>
+                <span class="java-path-txt"></span>
+            </div>
+            <div class="settings-elements content-evenly">
+                <input type="text" class="java-path-input-text" disabled>
+                <input type="file" class="java-path-input-file" accept="application/octet-stream" />
+                <div class="java-path-box">
+                    <div class="java-path-set java-path-btn">Cambiar</div>
+                    <div class="java-path-reset java-path-btn">Por defecto</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="resolution-tab" class="container-settings">
+        <div class="titre-tab">
+            <span class="tab-line"></span>
+            RESOLUCIÓN
+            <span class="tab-line"></span>
+        </div>
+        <div class="settings-elements-box">
+            <div class="setting-text">
+                Resolución de la ventana de Minecraft. Por defecto: 854 × 480.
+            </div>
+            <div class="settings-elements content-center">
+                <div class="input-size-element">
+                    <input type="number" class="width-size input-resolution">
+                    <div class="size-cross"></div>
+                    <input type="number" class="height-size input-resolution">
+                </div>
+                <div class="size-reset size-btn">Por defecto</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="launcher-tab" class="container-settings content-scroll">
+        <div class="titre-tab">
+            <span class="tab-line"></span>
+            DESCARGAS
+            <span class="tab-line"></span>
+        </div>
+        <div class="settings-elements-box">
+            <div class="setting-text">
+                Número máximo de archivos descargados simultáneamente.
+            </div>
+            <div class="settings-elements content-center">
+                <input type="number" class="max-files input-max-files">
+                <span class="setting-label">archivos</span>
+                <div class="max-files-reset max-files-btn">Por defecto</div>
+            </div>
+        </div>
+
+        <div class="titre-tab">
+            <span class="tab-line"></span>
+            TEMA
+            <span class="tab-line"></span>
+        </div>
+        <div class="settings-elements-box">
+            <div class="settings-elements content-center theme-box">
+                <div class="theme-btn theme-btn-clair">Gato</div>
+                <div class="theme-btn theme-btn-sombre">Oscuro</div>
+                <div class="theme-btn theme-btn-auto">Automático</div>
+            </div>
+        </div>
+
+        <div class="titre-tab">
+            <span class="tab-line"></span>
+            AL INICIAR EL JUEGO
+            <span class="tab-line"></span>
+        </div>
+        <div class="settings-elements-box">
+            <div class="settings-elements content-evenly close-box">
+                <div class="close-launcher close-btn">Cerrar launcher al iniciar</div>
+                <div class="close-none close-btn">Mantener abierto</div>
+                <div class="close-all close-btn">Cerrar juego con launcher</div>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="game-tab" class="container-settings">
+        <div class="titre-tab">
+            <span class="tab-line"></span>
+            CONFIGURACIÓN DEL JUEGO
+            <span class="tab-line"></span>
+        </div>
+        <div class="settings-elements-box">
+            <div class="setting-text">
+                Próximamente podrás configurar opciones del juego desde aquí.
+            </div>
+        </div>
+    </div>
+
+    <div id="about-tab" class="container-settings">
+        <div class="titre-tab">
+            <span class="tab-line"></span>
+            ACERCA DEL LAUNCHER
+            <span class="tab-line"></span>
+        </div>
+        <div class="about-card">
+            <div class="about-logo-wrapper">
+                <div class="about-logo-ring"></div>
+                <div class="about-logo-text">MD</div>
+            </div>
+            <div class="about-info">
+                <div class="about-title">MetalDaze Launcher</div>
+                <div class="about-subtitle">Launcher oficial de MetalDaze Estudio</div>
+                <div class="about-divider"></div>
+                <div class="about-credit-label">BASADO EN</div>
+                <div class="about-credit-name">Selvana Launcher</div>
+                <div class="about-credit-by">por <span>Luuxis</span></div>
+                <div class="about-divider"></div>
+                <div class="about-links">
+                    <a class="about-link" href="https://github.com/luuxis/Selvania-Launcher" target="_blank">
+                        <span class="about-link-icon">&#x27B6;</span> Repositorio original (Selvana Launcher)
+                    </a>
+                    <a class="about-link" href="https://github.com/luuxis" target="_blank">
+                        <span class="about-link-icon">&#x27B6;</span> Luuxis en GitHub
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="titre-tab">
+            <span class="tab-line"></span>
+            LICENCIA
+            <span class="tab-line"></span>
+        </div>
+        <div class="settings-elements-box">
+            <div class="setting-text">
+                Este launcher es un fork de <strong style="color:rgba(240,240,240,0.75)">Selvana Launcher</strong> desarrollado por <strong style="color:rgba(240,240,240,0.75)">Luuxis</strong>,
+                distribuido bajo la licencia Luuxis License v1.0.<br><br>
+                Modificaciones y personalización realizadas por <strong style="color:rgba(240,240,240,0.75)">MetalDaze Estudio</strong> para uso interno en sus servidores y proyectos.
+            </div>
+        </div>
+    </div>
+</div>
