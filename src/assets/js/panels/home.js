@@ -16,6 +16,7 @@ class Home {
         this.socialLick()
         this.instancesSelect()
         document.querySelector('.settings-btn').addEventListener('click', e => changePanel('settings'))
+        this.checkUpdate()
     }
 
     async news() {
@@ -92,14 +93,14 @@ class Home {
         }
     }
 
-socialLick() {
-    let socials = document.querySelectorAll('.social-block, .social-block-sidebar')
-    socials.forEach(social => {
-        social.addEventListener('click', e => {
-            shell.openExternal(e.currentTarget.dataset.url)
-        })
-    });
-}
+    socialLick() {
+        let socials = document.querySelectorAll('.social-block, .social-block-sidebar')
+        socials.forEach(social => {
+            social.addEventListener('click', e => {
+                shell.openExternal(e.currentTarget.dataset.url)
+            })
+        });
+    }
 
     async instancesSelect() {
         let configClient = await this.db.readData('configClient')
@@ -262,14 +263,14 @@ socialLick() {
         });
 
         launch.on('progress', (progress, size) => {
-            infoStarting.innerHTML = `Téléchargement ${((progress / size) * 100).toFixed(0)}%`
+            infoStarting.innerHTML = `Descargando ${((progress / size) * 100).toFixed(0)}%`
             ipcRenderer.send('main-window-progress', { progress, size })
             progressBar.value = progress;
             progressBar.max = size;
         });
 
         launch.on('check', (progress, size) => {
-            infoStarting.innerHTML = `Vérification ${((progress / size) * 100).toFixed(0)}%`
+            infoStarting.innerHTML = `Verificando ${((progress / size) * 100).toFixed(0)}%`
             ipcRenderer.send('main-window-progress', { progress, size })
             progressBar.value = progress;
             progressBar.max = size;
@@ -289,7 +290,7 @@ socialLick() {
         launch.on('patch', patch => {
             console.log(patch);
             ipcRenderer.send('main-window-progress-load')
-            infoStarting.innerHTML = `Estancia en curso...`
+            infoStarting.innerHTML = `Aplicando parches...`
         });
 
         launch.on('data', (e) => {
@@ -299,7 +300,7 @@ socialLick() {
             };
             new logger('Minecraft', '#36b030');
             ipcRenderer.send('main-window-progress-load')
-            infoStarting.innerHTML = `Estancia en curso...`
+            infoStarting.innerHTML = `Juego en curso...`
             console.log(e);
         })
 
@@ -310,7 +311,7 @@ socialLick() {
             ipcRenderer.send('main-window-progress-reset')
             infoStartingBOX.style.display = "none"
             playInstanceBTN.style.display = "flex"
-            infoStarting.innerHTML = `Vérification`
+            infoStarting.innerHTML = `Verificando`
             new logger(pkg.name, '#7289da');
             console.log('Close');
         });
@@ -319,7 +320,7 @@ socialLick() {
             let popupError = new popup()
 
             popupError.openPopup({
-                title: 'Erreur',
+                title: 'Error',
                 content: err.error,
                 color: 'red',
                 options: true
@@ -331,7 +332,7 @@ socialLick() {
             ipcRenderer.send('main-window-progress-reset')
             infoStartingBOX.style.display = "none"
             playInstanceBTN.style.display = "flex"
-            infoStarting.innerHTML = `Vérification`
+            infoStarting.innerHTML = `Verificando`
             new logger(pkg.name, '#7289da');
             console.log(err);
         });
@@ -344,6 +345,38 @@ socialLick() {
         let day = date.getDate()
         let allMonth = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre']
         return { year: year, month: allMonth[month - 1], day: day }
+    }
+
+    async checkUpdate() {
+        try {
+            const { version } = require('../../../package.json');
+            const res = await fetch('https://api.github.com/repos/GhanxocS/MetalDaze-Launcher/releases/latest');
+            if (!res.ok) return;
+            const data = await res.json();
+            const latest = data.tag_name?.replace('v', '');
+            if (!latest) return;
+
+            const current = version.split('.').map(Number);
+            const remote = latest.split('.').map(Number);
+
+            let hasUpdate = false;
+            for (let i = 0; i < 3; i++) {
+                if ((remote[i] || 0) > (current[i] || 0)) { hasUpdate = true; break; }
+                if ((remote[i] || 0) < (current[i] || 0)) break;
+            }
+
+            if (hasUpdate) {
+                const btn = document.querySelector('.update-btn');
+                if (btn) {
+                    btn.style.display = 'flex';
+                    btn.addEventListener('click', () => {
+                        shell.openExternal(data.html_url);
+                    });
+                }
+            }
+        } catch(e) {
+            console.log('Update check failed:', e);
+        }
     }
 }
 export default Home;

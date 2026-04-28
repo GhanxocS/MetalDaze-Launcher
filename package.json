@@ -1,7 +1,7 @@
 {
     "name": "MetalDaze-Launcher",
     "productname": "MetalDaze Launcher",
-    "version": "2.2.2",
+    "version": "0.1.0",
     "description": "",
     "main": "src/app.js",
     "author": {
@@ -39,6 +39,6 @@
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/luuxis/Selvania-Launcher.git"
+        "url": "git+https://github.com/GhanxocS/MetalDaze-Launcher.git"
     }
 }
