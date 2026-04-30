@@ -131,3 +131,43 @@ autoUpdater.on('error', (err) => {
     const updateWindow = UpdateWindow.getWindow();
     if (updateWindow) updateWindow.webContents.send('error', err);
 });
+
+// ── Almacenamiento (v1.1) ────────────────────────────────
+const os = require('os');
+const { shell } = require('electron'); // agregar shell al require de arriba si quieres
+
+const INSTANCES_PATH = path.join(os.homedir(), 'AppData', 'Roaming', '.MetalDaze')
+
+ipcMain.handle('storage-get-instances-path', () => INSTANCES_PATH)
+
+ipcMain.on('storage-open-folder', (event, folderPath) => {
+    shell.openPath(folderPath)
+})
+
+ipcMain.handle('storage-get-info', async (event, folderPath) => {
+    function getFolderSize(dirPath) {
+        let total = 0
+        try {
+            const entries = fs.readdirSync(dirPath, { withFileTypes: true })
+            for (const entry of entries) {
+                const full = path.join(dirPath, entry.name)
+                if (entry.isDirectory()) total += getFolderSize(full)
+                else try { total += fs.statSync(full).size } catch {}
+            }
+        } catch {}
+        return total
+    }
+
+    let diskFree = 0, diskTotal = 0
+    try {
+        const stat = await fs.promises.statfs(folderPath)
+        diskFree  = stat.bfree  * stat.bsize
+        diskTotal = stat.blocks * stat.bsize
+    } catch {}
+
+    return {
+        instancesSize: fs.existsSync(folderPath) ? getFolderSize(folderPath) : 0,
+        diskFree,
+        diskTotal
+    }
+})

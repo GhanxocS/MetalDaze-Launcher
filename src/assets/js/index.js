@@ -42,10 +42,14 @@ class Splash {
         this.splashAuthor.children[0].textContent = "@" + splash.author;
         await sleep(100);
         document.querySelector("#splash").style.display = "block";
+        document.body.classList.add("ready");
+        await sleep(50);
+        // Activa animación de entrada del frame (scale + opacity definida en CSS)
+        document.querySelector(".splash-frame").classList.add("visible");
+        await sleep(400);
+        // Anima el logo (translateY + opacity definida en CSS)
+        document.querySelector(".splash-logo-wrap").classList.add("show");
         await sleep(500);
-        this.splash.classList.add("opacity");
-        await sleep(500);
-        this.splash.classList.add("translate");
         this.splashMessage.classList.add("opacity");
         this.splashAuthor.classList.add("opacity");
         this.message.classList.add("opacity");
