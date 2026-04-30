@@ -731,3 +731,134 @@
 .about-link-icon {
     opacity: 0.5;
 }
+
+/* ============================================================
+   ALMACENAMIENTO — bloque en launcher-tab (v1.1)
+   Pegar al final de settings.css
+   ============================================================ */
+
+/* ── Fila ruta + botón ── */
+.storage-path-row {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 1rem;
+}
+
+.storage-path-input {
+    flex: 1;
+    background: var(--md-black);
+    border: 1px solid var(--md-border);
+    color: rgba(240,240,240,0.45);
+    padding: 0.5rem 0.85rem;
+    border-radius: 6px;
+    font-family: 'Barlow', sans-serif;
+    font-size: 0.8rem;
+    /* cursor de texto aunque esté disabled, para poder seleccionar y copiar */
+    cursor: default;
+    /* quita el estilo grayed-out que ponen algunos SO al usar disabled */
+    -webkit-text-fill-color: rgba(240,240,240,0.45);
+    opacity: 1;
+}
+
+.storage-open-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 0.8rem;
+    letter-spacing: 0.1em;
+    padding: 0.5rem 1rem;
+    background: var(--md-accent-dim);
+    border: 1px solid var(--md-border-lit);
+    border-radius: 6px;
+    color: var(--md-white);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: border-color var(--transition), background var(--transition);
+    flex-shrink: 0;
+}
+
+.storage-open-btn:hover {
+    border-color: var(--md-white);
+    background: rgba(255,255,255,0.1);
+}
+
+.storage-open-btn svg {
+    flex-shrink: 0;
+    opacity: 0.75;
+}
+
+/* ── Fila de estadísticas ── */
+.storage-stats-row {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    background: var(--md-black);
+    border: 1px solid var(--md-border);
+    border-radius: 6px;
+    padding: 0.75rem 0;
+    margin-bottom: 0.85rem;
+}
+
+.storage-stat-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0 1rem;
+}
+
+.storage-stat-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    color: var(--md-muted);
+}
+
+.storage-stat-value {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 1.05rem;
+    letter-spacing: 0.06em;
+    color: var(--md-white);
+}
+
+.storage-stat-divider {
+    width: 1px;
+    height: 2rem;
+    background: var(--md-border);
+    flex-shrink: 0;
+}
+
+/* ── Barra de uso visual ── */
+.storage-bar-wrap {
+    width: 100%;
+    height: 4px;
+    background: var(--md-border);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 0.4rem;
+}
+
+.storage-bar-fill {
+    height: 100%;
+    width: 0%;
+    background: var(--md-white);
+    border-radius: 4px;
+    transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Color de la barra según porcentaje de uso
+   Se aplica desde JS añadiendo clases .storage-bar-warn / .storage-bar-critical */
+.storage-bar-fill.storage-bar-warn  { background: #eab308; }
+.storage-bar-fill.storage-bar-crit  { background: #ef4444; }
+
+.storage-bar-legend {
+    font-size: 0.72rem;
+    color: var(--md-muted);
+    text-align: right;
+    font-family: 'Barlow', sans-serif;
+}

@@ -30,9 +30,12 @@ class Splash {
 
     async startAnimation() {
         let splashes = [
-            { "message": "Je... vie...", "author": "Luuxis" },
-            { "message": "Salut je suis du code.", "author": "Luuxis" },
-            { "message": "Linux n'est pas un os, mais un kernel.", "author": "Luuxis" }
+            { "message": "Bienvenido a MetalDaze.", "author": "ITakerMetal" },
+            { "message": "El forge está caliente.", "author": "ITakerMetal" },
+            { "message": "Cargando mundos...", "author": "MetalDaze Estudio" },
+            { "message": "Construido con dedicación.", "author": "MetalDaze Estudio" },
+            { "message": "El metal nunca muere.", "author": "ITakerMetal" },
+            { "message": "Preparando la aventura...", "author": "MetalDaze Estudio" }
         ];
         let splash = splashes[Math.floor(Math.random() * splashes.length)];
         this.splashMessage.textContent = splash.message;
@@ -54,20 +57,23 @@ class Splash {
         this.setStatus(`Buscando actualizaciones...`);
 
         ipcRenderer.invoke('update-app').then().catch(err => {
-            return this.shutdown(`Error al buscar actualizaciones :<br>${err.message}`);
+            console.error('Error al buscar actualizaciones:', err);
+            return this.maintenanceCheck();
         });
 
         ipcRenderer.on('updateAvailable', () => {
-            this.setStatus(`¡Hay una actualización disponible!`);
+            this.setStatus(`¡Hay una actualización disponible! Descargando...`);
             if (os.platform() == 'win32') {
                 this.toggleProgress();
                 ipcRenderer.send('start-update');
+            } else {
+                return this.dowloadUpdate();
             }
-            else return this.dowloadUpdate();
         })
 
         ipcRenderer.on('error', (event, err) => {
-            if (err) return this.shutdown(`${err.message}`);
+            console.error('Error de actualizacion:', err);
+            return this.maintenanceCheck();
         })
 
         ipcRenderer.on('download-progress', (event, progress) => {
@@ -76,7 +82,7 @@ class Splash {
         })
 
         ipcRenderer.on('update-not-available', () => {
-            console.error("Actualización no disponible");
+            console.log("El launcher está actualizado.");
             this.maintenanceCheck();
         })
     }
@@ -102,16 +108,14 @@ class Splash {
         let latest;
 
         if (os.platform() == 'darwin') latest = this.getLatestReleaseForOS('mac', '.dmg', latestRelease);
-        else if (os == 'linux') latest = this.getLatestReleaseForOS('linux', '.appimage', latestRelease);
+        else if (os.platform() == 'linux') latest = this.getLatestReleaseForOS('linux', '.appimage', latestRelease);
 
-
-        this.setStatus(`Mise à jour disponible !<br><div class="download-update">Télécharger</div>`);
+        this.setStatus(`¡Actualización disponible!<br><div class="download-update">Descargar</div>`);
         document.querySelector(".download-update").addEventListener("click", () => {
             shell.openExternal(latest.browser_download_url);
-            return this.shutdown("Descargando...");
+            return this.shutdown("Descargando actualización...");
         });
     }
-
 
     async maintenanceCheck() {
         config.GetConfig().then(res => {
@@ -124,16 +128,16 @@ class Splash {
     }
 
     startLauncher() {
-        this.setStatus(`Démarrage du launcher`);
+        this.setStatus(`Iniciando MetalDaze Launcher...`);
         ipcRenderer.send('main-window-open');
         ipcRenderer.send('update-window-close');
     }
 
     shutdown(text) {
-        this.setStatus(`${text}<br>Se detendrá en 5 segundos`);
+        this.setStatus(`${text}<br>Se cerrará en 5 segundos`);
         let i = 4;
         setInterval(() => {
-            this.setStatus(`${text}<br>Parada en ${i--}s`);
+            this.setStatus(`${text}<br>Cerrando en ${i--}s`);
             if (i < 0) ipcRenderer.send('update-window-close');
         }, 1000);
     }

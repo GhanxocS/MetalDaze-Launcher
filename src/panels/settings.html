@@ -137,8 +137,64 @@
                 <div class="close-all close-btn">Cerrar juego con launcher</div>
             </div>
         </div>
-    </div>
 
+        <!-- ── ALMACENAMIENTO (nuevo bloque v1.1) ── -->
+        <div class="titre-tab">
+            <span class="tab-line"></span>
+            ALMACENAMIENTO
+            <span class="tab-line"></span>
+        </div>
+        <div class="settings-elements-box">
+            <div class="setting-text">
+                Carpeta de instancias del launcher. Solo lectura.
+            </div>
+
+            <!-- Fila: ruta + botón abrir carpeta -->
+            <div class="storage-path-row">
+                <input
+                    type="text"
+                    class="storage-path-input"
+                    id="storage-path"
+                    disabled
+                    value="Cargando..."
+                />
+                <button class="storage-open-btn" id="storage-open-btn" title="Abrir carpeta">
+                    <!-- Icono carpeta SVG inline, sin dependencias externas -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+                    </svg>
+                    Abrir
+                </button>
+            </div>
+
+            <!-- Fila: stats de uso -->
+            <div class="storage-stats-row">
+                <div class="storage-stat-item">
+                    <span class="storage-stat-label">USADO POR INSTANCIAS</span>
+                    <span class="storage-stat-value" id="storage-instances-size">—</span>
+                </div>
+                <div class="storage-stat-divider"></div>
+                <div class="storage-stat-item">
+                    <span class="storage-stat-label">ESPACIO LIBRE EN DISCO</span>
+                    <span class="storage-stat-value" id="storage-disk-free">—</span>
+                </div>
+                <div class="storage-stat-divider"></div>
+                <div class="storage-stat-item">
+                    <span class="storage-stat-label">DISCO TOTAL</span>
+                    <span class="storage-stat-value" id="storage-disk-total">—</span>
+                </div>
+            </div>
+
+            <!-- Barra de uso visual -->
+            <div class="storage-bar-wrap">
+                <div class="storage-bar-fill" id="storage-bar-fill"></div>
+            </div>
+            <div class="storage-bar-legend">
+                <span id="storage-bar-pct">—</span> del disco en uso por otras aplicaciones
+            </div>
+
+        </div>
+    </div>
 
     <div id="game-tab" class="container-settings">
         <div class="titre-tab">
