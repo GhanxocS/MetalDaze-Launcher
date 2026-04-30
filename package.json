@@ -1,7 +1,7 @@
 {
     "name": "MetalDaze-Launcher",
     "productname": "MetalDaze Launcher",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "description": "",
     "main": "src/app.js",
     "author": {
