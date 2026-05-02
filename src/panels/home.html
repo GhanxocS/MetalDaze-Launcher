@@ -27,7 +27,8 @@
         <div class="sidebar-top">
             <div class="brand-mark">MD</div>
             <div class="player-options">
-                <div class="player-head"></div>
+                <!-- Click abre el modal de skins -->
+                <div class="player-head" id="open-skin-modal" title="Cambiar skin"></div>
             </div>
         </div>
 
@@ -45,12 +46,13 @@
             </div>
         </div>
 
-    <div class="sidebar-bottom">
-    <div class="update-btn" style="display:none;">
-        <span class="update-icon">⬆</span>
+        <div class="sidebar-bottom">
+            <div class="update-btn" style="display:none;">
+                <span class="update-icon">⬆</span>
+            </div>
+            <div class="settings-btn icon-settings"></div>
+        </div>
     </div>
-    <div class="settings-btn icon-settings"></div>
-</div>
 
     <div class="play-elements">
         <div class="play-instance">
@@ -70,4 +72,67 @@
             <div class="instances-List"></div>
         </div>
     </div>
+
+    <!-- ── SKIN MODAL ── -->
+    <div class="skin-modal-overlay" id="skin-modal-overlay">
+        <div class="skin-modal">
+
+            <!-- Header -->
+            <div class="skin-modal-header">
+                <div class="skin-modal-title">CAMBIAR SKIN</div>
+                <div class="skin-modal-close" id="skin-modal-close">✕</div>
+            </div>
+
+            <!-- Body -->
+            <div class="skin-modal-body">
+
+                <!-- Columna izquierda: preview -->
+                <div class="skin-preview-col">
+                    <div class="skin-preview-canvas-wrap">
+                        <canvas id="skin-preview-canvas" width="8" height="8"></canvas>
+                    </div>
+                    <div class="skin-preview-label">PREVISUALIZACIÓN</div>
+
+                    <!-- Selector de variante -->
+                    <div class="skin-variant-toggle">
+                        <button class="skin-variant-btn active" data-variant="CLASSIC">CLÁSICO</button>
+                        <button class="skin-variant-btn" data-variant="SLIM">SLIM</button>
+                    </div>
+                </div>
+
+                <!-- Columna derecha: controles + historial -->
+                <div class="skin-controls-col">
+
+                    <!-- Zona de carga -->
+                    <div class="skin-upload-zone" id="skin-upload-zone">
+                        <div class="skin-upload-icon">🎨</div>
+                        <div class="skin-upload-text">Click para seleccionar skin</div>
+                        <div class="skin-upload-sub">Archivo PNG · 64×64 o 64×32</div>
+                    </div>
+                    <input type="file" id="skin-file-input" accept=".png" style="display:none">
+
+                    <!-- Nombre del archivo seleccionado -->
+                    <div class="skin-selected-file" id="skin-selected-file">
+                        Ningún archivo seleccionado
+                    </div>
+
+                    <!-- Botón aplicar -->
+                    <button class="skin-apply-btn" id="skin-apply-btn">
+                        APLICAR SKIN
+                    </button>
+
+                    <!-- Mensaje de estado -->
+                    <div class="skin-status" id="skin-status"></div>
+
+                    <!-- Historial -->
+                    <div class="skin-history-label">HISTORIAL</div>
+                    <div class="skin-history-grid" id="skin-history-grid">
+                        <div class="skin-history-empty">Sin historial</div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="dev-badge">LAUNCHER EN DESARROLLO</div>

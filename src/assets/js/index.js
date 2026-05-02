@@ -30,12 +30,12 @@ class Splash {
 
     async startAnimation() {
         let splashes = [
-            { "message": "Bienvenido a MetalDaze.", "author": "ITakerMetal" },
-            { "message": "El forge está caliente.", "author": "ITakerMetal" },
-            { "message": "Cargando mundos...", "author": "MetalDaze Estudio" },
-            { "message": "Construido con dedicación.", "author": "MetalDaze Estudio" },
-            { "message": "El metal nunca muere.", "author": "ITakerMetal" },
-            { "message": "Preparando la aventura...", "author": "MetalDaze Estudio" }
+            { "message": "Por que la gallina cruzo la calle...", "author": "ITakerMetal" },
+            { "message": "Glorp Glorp Glorp Glorp", "author": "ITakerMetal" },
+            { "message": "Iban 2 watonas en una moto", "author": "MetalDaze Estudio" },
+            { "message": "Wololo", "author": "MetalDaze Estudio" },
+            { "message": "Launcher qliao feo", "author": "ITakerMetal" },
+            { "message": "No si ese se murio", "author": "MetalDaze Estudio" }
         ];
         let splash = splashes[Math.floor(Math.random() * splashes.length)];
         this.splashMessage.textContent = splash.message;

@@ -559,3 +559,378 @@ body, html {
 .update-btn:hover::after {
     opacity: 1;
 }
+
+/* ============================================================
+   SKIN MODAL — MetalDaze Launcher v1.2
+   Pegar al final de home.css
+   ============================================================ */
+
+/* ── Overlay ── */
+.skin-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.82);
+    backdrop-filter: blur(6px);
+    z-index: 300;
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+
+.skin-modal-overlay.open {
+    display: flex;
+}
+
+/* ── Modal container ── */
+.skin-modal {
+    background: var(--md-dark);
+    border: 1px solid var(--md-border-lit);
+    border-radius: 12px;
+    width: 680px;
+    max-width: 95vw;
+    max-height: 88vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* ── Header ── */
+.skin-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--md-border);
+    flex-shrink: 0;
+}
+
+.skin-modal-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 0.7rem;
+    letter-spacing: 0.25em;
+    color: var(--md-muted);
+}
+
+.skin-modal-close {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 5px;
+    cursor: pointer;
+    color: var(--md-muted);
+    font-size: 1rem;
+    transition: color var(--transition), background var(--transition);
+}
+
+.skin-modal-close:hover {
+    color: var(--md-white);
+    background: var(--md-accent-dim);
+}
+
+/* ── Body: two columns ── */
+.skin-modal-body {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    flex: 1;
+    overflow: hidden;
+}
+
+/* ── Left: preview 3D ── */
+.skin-preview-col {
+    border-right: 1px solid var(--md-border);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1.25rem 1rem;
+    gap: 1rem;
+    background: var(--md-black);
+}
+
+/* Contenedor del visor Three.js */
+.skin-3d-wrap {
+    position: relative;
+    width: 160px;
+    height: 220px;
+    background: var(--md-surface);
+    border: 1px solid var(--md-border);
+    border-radius: 8px;
+    overflow: hidden;
+    cursor: grab;
+}
+
+.skin-3d-wrap:active {
+    cursor: grabbing;
+}
+
+.skin-3d-wrap canvas {
+    display: block;
+    width: 100% !important;
+    height: 100% !important;
+}
+
+.skin-3d-hint {
+    position: absolute;
+    bottom: 0.4rem;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.58rem;
+    letter-spacing: 0.15em;
+    color: var(--md-muted);
+    pointer-events: none;
+    z-index: 2;
+    transition: opacity 0.3s;
+}
+
+.skin-3d-wrap:active .skin-3d-hint,
+.skin-3d-wrap.dragging .skin-3d-hint {
+    opacity: 0;
+}
+
+/* Variant toggle */
+.skin-variant-toggle {
+    display: flex;
+    border: 1px solid var(--md-border);
+    border-radius: 6px;
+    overflow: hidden;
+    width: 100%;
+}
+
+.skin-variant-btn {
+    flex: 1;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    padding: 0.45rem 0;
+    text-align: center;
+    cursor: pointer;
+    color: var(--md-muted);
+    background: none;
+    border: none;
+    transition: color var(--transition), background var(--transition);
+}
+
+.skin-variant-btn:first-child {
+    border-right: 1px solid var(--md-border);
+}
+
+.skin-variant-btn.active {
+    color: var(--md-white);
+    background: var(--md-accent-dim);
+}
+
+/* ── Right: controls + history ── */
+.skin-controls-col {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* Upload zone */
+.skin-upload-zone {
+    margin: 1.25rem 1.25rem 0;
+    border: 2px dashed var(--md-border-lit);
+    border-radius: 8px;
+    padding: 1.5rem 1rem;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color var(--transition), background var(--transition);
+    flex-shrink: 0;
+}
+
+.skin-upload-zone:hover {
+    border-color: var(--md-white);
+    background: var(--md-accent-dim);
+}
+
+.skin-upload-icon {
+    font-size: 1.75rem;
+    margin-bottom: 0.4rem;
+}
+
+.skin-upload-text {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.82rem;
+    letter-spacing: 0.08em;
+    color: var(--md-muted);
+}
+
+.skin-upload-sub {
+    font-size: 0.7rem;
+    color: rgba(102,102,102,0.7);
+    margin-top: 0.2rem;
+}
+
+/* Selected file name */
+.skin-selected-file {
+    margin: 0.6rem 1.25rem 0;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.78rem;
+    letter-spacing: 0.06em;
+    color: var(--md-muted);
+    min-height: 1.1rem;
+    flex-shrink: 0;
+}
+
+.skin-selected-file span {
+    color: var(--md-white);
+}
+
+/* Apply button */
+.skin-apply-btn {
+    margin: 0.75rem 1.25rem 0;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 0.82rem;
+    letter-spacing: 0.15em;
+    padding: 0.65rem;
+    background: var(--md-accent-dim);
+    border: 1px solid var(--md-border-lit);
+    border-radius: 6px;
+    color: var(--md-white);
+    cursor: pointer;
+    transition: border-color var(--transition), background var(--transition);
+    flex-shrink: 0;
+    opacity: 0.4;
+    pointer-events: none;
+}
+
+.skin-apply-btn.ready {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.skin-apply-btn.ready:hover {
+    border-color: var(--md-white);
+    background: rgba(255,255,255,0.12);
+}
+
+.skin-apply-btn.loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+/* Status message */
+.skin-status {
+    margin: 0.5rem 1.25rem 0;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    min-height: 1rem;
+    flex-shrink: 0;
+}
+
+.skin-status.success { color: #22c55e; }
+.skin-status.error   { color: #ef4444; }
+
+/* History divider */
+.skin-history-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.6rem;
+    letter-spacing: 0.25em;
+    color: var(--md-muted);
+    margin: 1rem 1.25rem 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-shrink: 0;
+}
+
+.skin-history-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--md-border);
+}
+
+/* History grid */
+.skin-history-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.5rem;
+    padding: 0 1.25rem 1.25rem;
+    overflow-y: auto;
+    scrollbar-width: none;
+    flex: 1;
+}
+
+.skin-history-grid::-webkit-scrollbar { display: none; }
+
+.skin-history-item {
+    aspect-ratio: 1;
+    background: var(--md-black);
+    border: 1px solid var(--md-border);
+    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.3rem;
+    cursor: pointer;
+    transition: border-color var(--transition), background var(--transition);
+    padding: 0.5rem;
+    position: relative;
+}
+
+.skin-history-item:hover {
+    border-color: var(--md-border-lit);
+    background: var(--md-accent-dim);
+}
+
+.skin-history-item.active-skin {
+    border-color: var(--md-white);
+}
+
+.skin-history-canvas {
+    image-rendering: pixelated;
+    width: 36px;
+    height: 36px;
+}
+
+.skin-history-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.6rem;
+    letter-spacing: 0.05em;
+    color: var(--md-muted);
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    width: 100%;
+    text-align: center;
+}
+
+.skin-history-delete {
+    position: absolute;
+    top: 3px;
+    right: 3px;
+    width: 16px;
+    height: 16px;
+    border-radius: 3px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.6rem;
+    color: #ef4444;
+    background: var(--md-dark);
+    border: 1px solid rgba(239,68,68,0.3);
+}
+
+.skin-history-item:hover .skin-history-delete {
+    display: flex;
+}
+
+.skin-history-empty {
+    grid-column: 1 / -1;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
+    color: var(--md-muted);
+    text-align: center;
+    padding: 1rem 0;
+}

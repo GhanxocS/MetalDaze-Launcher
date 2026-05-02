@@ -1,20 +1,37 @@
 /**
  * @author Luuxis
  * Luuxis License v1.0 (voir fichier LICENSE pour les détails en FR/EN)
+ *
+ * Modificado para MetalDaze Launcher — v1.2
+ * Añadido: modal de cambio de skins con historial local
  */
-import { config, database, logger, changePanel, appdata, setStatus, pkg, popup } from '../utils.js'
+import { config, database, logger, changePanel, appdata, setStatus, pkg, popup, skin2D } from '../utils.js'
 
 const { Launch } = require('minecraft-java-core')
 const { shell, ipcRenderer } = require('electron')
+const fs = require('fs')
+const path = require('path')
+const nodeFetch = require('node-fetch')
+const FormData = require('form-data')
 
 class Home {
     static id = "home";
     async init(config) {
         this.config = config;
         this.db = new database();
+        let configClient = await this.db.readData('configClient')
+let auth = await this.db.readData('accounts', configClient.account_selected)
+if (auth?.uuid && auth?.name) {
+    nodeFetch(`${this.config.url || 'https://metaldaze-backend-production.up.railway.app'}/players/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ uuid: auth.uuid, name: auth.name })
+    }).catch(err => console.error('[players] Error registrando jugador:', err))
+}
         this.news()
         this.socialLick()
         this.instancesSelect()
+        this.skinModal()
         document.querySelector('.settings-btn').addEventListener('click', e => changePanel('settings'))
         this.checkUpdate()
     }
@@ -113,22 +130,35 @@ class Home {
         let instancesListPopup = document.querySelector('.instances-List')
         let instanceCloseBTN = document.querySelector('.close-popup')
 
-        if (instancesList.length === 1) {
-            document.querySelector('.instance-select').style.display = 'none'
-            instanceBTN.style.paddingRight = '0'
-        }
+        instancesList = instancesList.filter(i => {
+    if (!i.whitelistActive) return true
+    return i.whitelist && i.whitelist.find(w => w === auth?.uuid)
+})
+
+if (instancesList.length === 0) {
+    let playInstance = document.querySelector('.play-instance')
+    let instanceSelect = document.querySelector('.instance-select')
+    if (playInstance) playInstance.style.display = 'none'
+    if (instanceSelect) instanceSelect.style.display = 'none'
+    return
+}
 
         if (!instanceSelect) {
-            let newInstanceSelect = instancesList.find(i => i.whitelistActive == false)
-            let configClient = await this.db.readData('configClient')
-            configClient.instance_select = newInstanceSelect.name
-            instanceSelect = newInstanceSelect.name
-            await this.db.updateData('configClient', configClient)
-        }
+    let newInstanceSelect = instancesList.find(i => i.whitelistActive == false)
+    if (!newInstanceSelect) {
+        // No hay instancias públicas disponibles
+        document.querySelector('.play-instance').style.display = 'none'
+        return
+    }
+    let configClient = await this.db.readData('configClient')
+    configClient.instance_select = newInstanceSelect.name
+    instanceSelect = newInstanceSelect.name
+    await this.db.updateData('configClient', configClient)
+}
 
-        for (let instance of instancesList) {
-            if (instance.whitelistActive) {
-                let whitelist = instance.whitelist.find(whitelist => whitelist == auth?.name)
+for (let instance of instancesList) {
+    if (instance.whitelistActive) {
+        let whitelist = instance.whitelist.find(w => w === auth?.uuid)
                 if (whitelist !== auth?.name) {
                     if (instance.name == instanceSelect) {
                         let newInstanceSelect = instancesList.find(i => i.whitelistActive == false)
@@ -173,7 +203,7 @@ class Home {
                 for (let instance of instancesList) {
                     if (instance.whitelistActive) {
                         instance.whitelist.map(whitelist => {
-                            if (whitelist == auth?.name) {
+                                if (whitelist === auth?.uuid) {
                                 if (instance.name == instanceSelect) {
                                     instancesListPopup.innerHTML += `<div id="${instance.name}" class="instance-elements active-instance">${instance.name}</div>`
                                 } else {
@@ -198,6 +228,325 @@ class Home {
 
         instanceCloseBTN.addEventListener('click', () => instancePopup.style.display = 'none')
     }
+
+    // ══════════════════════════════════════════════════════
+    // SKIN MODAL
+    // ══════════════════════════════════════════════════════
+
+    async skinModal() {
+        // ── Elementos del DOM ──
+        const overlay     = document.getElementById('skin-modal-overlay')
+        const closeBtn    = document.getElementById('skin-modal-close')
+        const uploadZone  = document.getElementById('skin-upload-zone')
+        const fileInput   = document.getElementById('skin-file-input')
+        const selectedLbl = document.getElementById('skin-selected-file')
+        const applyBtn    = document.getElementById('skin-apply-btn')
+        const statusEl    = document.getElementById('skin-status')
+        const previewCvs  = document.getElementById('skin-preview-canvas')
+        const historyGrid = document.getElementById('skin-history-grid')
+
+        // Estado interno
+        let selectedFile    = null   // File object del archivo PNG elegido
+        let selectedVariant = 'CLASSIC'
+        let pendingBase64   = null   // base64 del archivo para previsualizar
+
+        // ── Ruta del historial local ──
+        // Se guarda en %appdata%/.MetalDaze/skin-history.json
+        const appdataPath    = await ipcRenderer.invoke('appData')
+        const historyDir     = path.join(appdataPath, '.MetalDaze')
+        const historyFile    = path.join(historyDir, 'skin-history.json')
+
+        // ── Abrir modal al click en player-head ──
+        document.getElementById('open-skin-modal').addEventListener('click', async () => {
+            selectedFile  = null
+            pendingBase64 = null
+            selectedLbl.textContent = 'Ningún archivo seleccionado'
+            applyBtn.classList.remove('ready', 'loading')
+            statusEl.textContent = ''
+            statusEl.className = 'skin-status'
+
+            // Mostrar skin actual en el preview
+            const configClient = await this.db.readData('configClient')
+            const auth = await this.db.readData('accounts', configClient.account_selected)
+            if (auth?.profile?.skins?.[0]?.base64) {
+                await this.renderSkinPreview(previewCvs, auth.profile.skins[0].base64)
+                selectedVariant = auth.profile.skins[0].variant || 'CLASSIC'
+                this.updateVariantBtns(selectedVariant)
+            }
+
+            await this.renderHistory(historyGrid, historyFile, previewCvs, async (entry) => {
+                // Callback: usuario clickeó una skin del historial → previsualizar
+                pendingBase64   = entry.base64
+                selectedFile    = null
+                selectedVariant = entry.variant || 'CLASSIC'
+                selectedLbl.innerHTML = `Seleccionado del historial: <span>${entry.name}</span>`
+                applyBtn.classList.add('ready')
+                this.updateVariantBtns(selectedVariant)
+                await this.renderSkinPreview(previewCvs, entry.base64)
+            })
+
+            overlay.classList.add('open')
+            document.body.style.overflow = 'hidden'
+        })
+
+        // ── Cerrar modal ──
+        const closeSkinModal = () => {
+            overlay.classList.remove('open')
+            document.body.style.overflow = ''
+        }
+
+        closeBtn.addEventListener('click', closeSkinModal)
+        overlay.addEventListener('click', e => { if (e.target === overlay) closeSkinModal() })
+
+        // ── Selector de variante ──
+        document.querySelectorAll('.skin-variant-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                selectedVariant = btn.dataset.variant
+                this.updateVariantBtns(selectedVariant)
+            })
+        })
+
+        // ── Upload zone → abrir file picker ──
+        uploadZone.addEventListener('click', () => fileInput.click())
+
+        // Drag & drop
+        uploadZone.addEventListener('dragover', e => {
+            e.preventDefault()
+            uploadZone.style.borderColor = 'var(--md-white)'
+        })
+        uploadZone.addEventListener('dragleave', () => {
+            uploadZone.style.borderColor = 'var(--md-border-lit)'
+        })
+        uploadZone.addEventListener('drop', async e => {
+            e.preventDefault()
+            uploadZone.style.borderColor = 'var(--md-border-lit)'
+            const file = e.dataTransfer.files[0]
+            if (file) await this.handleSkinFile(file, selectedLbl, applyBtn, previewCvs, (b64) => { pendingBase64 = b64; selectedFile = file })
+        })
+
+        // ── File input change ──
+        fileInput.addEventListener('change', async () => {
+            const file = fileInput.files[0]
+            if (file) await this.handleSkinFile(file, selectedLbl, applyBtn, previewCvs, (b64) => { pendingBase64 = b64; selectedFile = file })
+        })
+
+        // ── Aplicar skin ──
+        applyBtn.addEventListener('click', async () => {
+            if (!pendingBase64) return
+
+            applyBtn.classList.add('loading')
+            applyBtn.textContent = 'APLICANDO...'
+            statusEl.textContent = ''
+            statusEl.className = 'skin-status'
+
+            try {
+                const configClient = await this.db.readData('configClient')
+                const auth = await this.db.readData('accounts', configClient.account_selected)
+
+                // Convertir base64 a Blob para la API de Mojang
+                const FormData = require('form-data')
+
+// Convertir base64 a Buffer
+const base64Data = pendingBase64.replace(/^data:image\/png;base64,/, '')
+const buffer = Buffer.from(base64Data, 'base64')
+
+const formData = new FormData()
+formData.append('variant', selectedVariant.toLowerCase())
+formData.append('file', buffer, {
+    filename: selectedFile ? selectedFile.name : 'skin.png',
+    contentType: 'image/png'
+})
+
+const mojangRes = await nodeFetch('https://api.minecraftservices.com/minecraft/profile/skins', {
+    method: 'POST',
+    headers: {
+        'Authorization': `Bearer ${auth.access_token}`,
+        ...formData.getHeaders()
+    },
+    body: formData
+})
+
+                if (!mojangRes.ok) {
+                    const err = await mojangRes.json().catch(() => ({}))
+                    throw new Error(err.errorMessage || `Error ${mojangRes.status}`)
+                }
+
+                // Guardar en historial local
+                const skinName = selectedFile ? selectedFile.name.replace('.png', '') : `skin_${Date.now()}`
+                await this.saveToHistory(historyFile, historyDir, {
+                    name: skinName,
+                    base64: pendingBase64,
+                    variant: selectedVariant,
+                    date: Date.now()
+                })
+
+                // Actualizar el player-head en la sidebar
+                const headTexture = await new skin2D().creatHeadTexture(pendingBase64)
+                document.querySelector('.player-head').style.backgroundImage = `url(${headTexture})`
+
+                // Refrescar historial
+                await this.renderHistory(historyGrid, historyFile, previewCvs, async (entry) => {
+                    pendingBase64   = entry.base64
+                    selectedFile    = null
+                    selectedVariant = entry.variant || 'CLASSIC'
+                    selectedLbl.innerHTML = `Seleccionado del historial: <span>${entry.name}</span>`
+                    applyBtn.classList.add('ready')
+                    this.updateVariantBtns(selectedVariant)
+                    await this.renderSkinPreview(previewCvs, entry.base64)
+                })
+
+                statusEl.textContent = '¡Skin aplicada correctamente!'
+                statusEl.className = 'skin-status success'
+                applyBtn.textContent = 'APLICAR SKIN'
+                applyBtn.classList.remove('loading')
+
+            } catch (err) {
+                console.error('[skin] Error al aplicar skin:', err)
+                statusEl.textContent = `Error: ${err.message}`
+                statusEl.className = 'skin-status error'
+                applyBtn.textContent = 'APLICAR SKIN'
+                applyBtn.classList.remove('loading')
+            }
+        })
+    }
+
+    // ── Procesa el archivo PNG seleccionado ──
+    async handleSkinFile(file, selectedLbl, applyBtn, previewCvs, onReady) {
+        if (!file.name.endsWith('.png')) {
+            selectedLbl.textContent = 'El archivo debe ser PNG'
+            return
+        }
+
+        const reader = new FileReader()
+        reader.onload = async (e) => {
+            const base64 = e.target.result
+            selectedLbl.innerHTML = `Archivo: <span>${file.name}</span>`
+            applyBtn.classList.add('ready')
+            onReady(base64)
+            await this.renderSkinPreview(previewCvs, base64)
+        }
+        reader.readAsDataURL(file)
+    }
+
+    // ── Renderiza la cabeza en el canvas de preview ──
+    async renderSkinPreview(canvas, base64) {
+        return new Promise((resolve) => {
+            const img = new Image()
+            img.onload = () => {
+                const ctx = canvas.getContext('2d')
+                ctx.clearRect(0, 0, 8, 8)
+                // Capa base de la cabeza
+                ctx.drawImage(img, 8, 8, 8, 8, 0, 0, 8, 8)
+                // Capa exterior (sombrero/overlay)
+                ctx.drawImage(img, 40, 8, 8, 8, 0, 0, 8, 8)
+                resolve()
+            }
+            img.src = base64
+        })
+    }
+
+    // ── Actualiza los botones de variante activos ──
+    updateVariantBtns(variant) {
+        document.querySelectorAll('.skin-variant-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.variant === variant)
+        })
+    }
+
+    // ── Lee el historial local ──
+    loadHistory(historyFile) {
+        try {
+            if (fs.existsSync(historyFile)) {
+                return JSON.parse(fs.readFileSync(historyFile, 'utf-8'))
+            }
+        } catch {}
+        return []
+    }
+
+    // ── Guarda una skin en el historial (máx 12) ──
+    async saveToHistory(historyFile, historyDir, entry) {
+        try {
+            if (!fs.existsSync(historyDir)) fs.mkdirSync(historyDir, { recursive: true })
+            let history = this.loadHistory(historyFile)
+            // Evitar duplicados por base64
+            history = history.filter(h => h.base64 !== entry.base64)
+            history.unshift(entry)
+            if (history.length > 12) history = history.slice(0, 12)
+            fs.writeFileSync(historyFile, JSON.stringify(history, null, 2))
+        } catch (err) {
+            console.error('[skin] Error guardando historial:', err)
+        }
+    }
+
+    // ── Renderiza el grid del historial ──
+    async renderHistory(grid, historyFile, previewCvs, onSelect) {
+        const history = this.loadHistory(historyFile)
+        grid.innerHTML = ''
+
+        if (!history.length) {
+            grid.innerHTML = '<div class="skin-history-empty">Sin historial</div>'
+            return
+        }
+
+        for (const entry of history) {
+            const item = document.createElement('div')
+            item.className = 'skin-history-item'
+
+            const cvs = document.createElement('canvas')
+            cvs.className = 'skin-history-canvas'
+            cvs.width = 8
+            cvs.height = 8
+
+            // Renderizar la cabeza en el canvas del historial
+            await new Promise((resolve) => {
+                const img = new Image()
+                img.onload = () => {
+                    const ctx = cvs.getContext('2d')
+                    ctx.drawImage(img, 8, 8, 8, 8, 0, 0, 8, 8)
+                    ctx.drawImage(img, 40, 8, 8, 8, 0, 0, 8, 8)
+                    resolve()
+                }
+                img.src = entry.base64
+            })
+
+            const nameLbl = document.createElement('div')
+            nameLbl.className = 'skin-history-name'
+            nameLbl.textContent = entry.name
+
+            const delBtn = document.createElement('div')
+            delBtn.className = 'skin-history-delete'
+            delBtn.textContent = '✕'
+            delBtn.title = 'Eliminar del historial'
+
+            item.appendChild(cvs)
+            item.appendChild(nameLbl)
+            item.appendChild(delBtn)
+
+            // Click en el item → seleccionar para aplicar
+            item.addEventListener('click', async (e) => {
+                if (e.target === delBtn) return
+                document.querySelectorAll('.skin-history-item').forEach(i => i.classList.remove('active-skin'))
+                item.classList.add('active-skin')
+                await onSelect(entry)
+            })
+
+            // Click en borrar → eliminar del historial
+            delBtn.addEventListener('click', async (e) => {
+                e.stopPropagation()
+                let history = this.loadHistory(historyFile)
+                history = history.filter(h => h.date !== entry.date)
+                try {
+                    fs.writeFileSync(historyFile, JSON.stringify(history, null, 2))
+                } catch {}
+                await this.renderHistory(grid, historyFile, previewCvs, onSelect)
+            })
+
+            grid.appendChild(item)
+        }
+    }
+
+    // ══════════════════════════════════════════════════════
+    // START GAME
+    // ══════════════════════════════════════════════════════
 
     async startGame() {
         let launch = new Launch()
@@ -226,10 +575,10 @@ class Home {
                 type: options.loader.loader_type,
                 build: options.loader.loader_version,
                 enable: options.loader.loader_type == 'none' ? false : true
+                
             },
 
             verify: options.verify,
-
             ignored: [...options.ignored],
 
             java: {
@@ -250,12 +599,22 @@ class Home {
             }
         }
 
+        console.log('[Launch Options]', JSON.stringify(opt, null, 2))
+        launch.Launch(opt);
+
+
         launch.Launch(opt);
 
         playInstanceBTN.style.display = "none"
         infoStartingBOX.style.display = "block"
         progressBar.style.display = "";
         ipcRenderer.send('main-window-progress-load')
+
+        launch.on('extract', e => console.log('[extract]', e))
+        launch.on('progress', (p, s) => console.log('[progress]', p, s))
+        launch.on('check', (p, s) => console.log('[check]', p, s))
+        launch.on('patch', e => console.log('[patch]', e))
+        launch.on('data', e => console.log('[data]', e))
 
         launch.on('extract', extract => {
             ipcRenderer.send('main-window-progress-load')
@@ -317,14 +676,18 @@ class Home {
         });
 
         launch.on('error', err => {
-            let popupError = new popup()
-
-            popupError.openPopup({
-                title: 'Error',
-                content: err.error,
-                color: 'red',
-                options: true
-            })
+    console.log('[Launch Error Raw]', err)
+    let errorMsg = 'Error desconocido al iniciar el juego'
+    if (err) {
+        errorMsg = err.error || err.message || JSON.stringify(err)
+    }
+    let popupError = new popup()
+    popupError.openPopup({
+        title: 'Error',
+        content: errorMsg,
+        color: 'red',
+        options: true
+    })
 
             if (configClient.launcher_config.closeLauncher == 'close-launcher') {
                 ipcRenderer.send("main-window-show")

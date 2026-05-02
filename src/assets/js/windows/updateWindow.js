@@ -29,6 +29,8 @@ function createWindow() {
         resizable: false,
         icon: `./src/assets/images/icon/icon.${os.platform() === "win32" ? "ico" : "png"}`,
         frame: false,
+        transparent: true,   
+        backgroundColor: '#00000000',
         show: false,
         webPreferences: {
             contextIsolation: false,
