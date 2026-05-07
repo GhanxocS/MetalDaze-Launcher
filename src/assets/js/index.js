@@ -35,7 +35,7 @@ class Splash {
             { "message": "Iban 2 watonas en una moto", "author": "MetalDaze Estudio" },
             { "message": "Wololo", "author": "MetalDaze Estudio" },
             { "message": "Launcher qliao feo", "author": "ITakerMetal" },
-            { "message": "No si ese se murio", "author": "MetalDaze Estudio" }
+            { "message": "No si ese se murio", "author": "MetalDaze Estudio" },
         ];
         let splash = splashes[Math.floor(Math.random() * splashes.length)];
         this.splashMessage.textContent = splash.message;
