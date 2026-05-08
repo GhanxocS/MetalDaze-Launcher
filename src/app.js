@@ -90,6 +90,10 @@ ipcMain.handle('Microsoft-window', async (_, client_id) => {
     return await new Microsoft(client_id).getAuth();
 })
 
+ipcMain.on('discord-rpc-destroy', () => {
+    discordRPC.destroyRPC();
+});
+
 ipcMain.handle('is-dark-theme', (_, theme) => {
     if (theme === 'dark') return true
     if (theme === 'light') return false
@@ -99,6 +103,14 @@ ipcMain.handle('is-dark-theme', (_, theme) => {
 app.on('window-all-closed', () => {
     discordRPC.destroyRPC();
     app.quit();
+});
+
+ipcMain.on('discord-rpc-init', () => {
+    discordRPC.initRPC();
+});
+
+app.on('before-quit', () => {
+    discordRPC.destroyRPC();
 });
 
 autoUpdater.autoDownload = false;

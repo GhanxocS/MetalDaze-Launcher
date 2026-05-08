@@ -669,6 +669,7 @@ class Home {
         launch.on('data', function(e) {
             progressBar.style.display = "none"
             if (configClient.launcher_config.closeLauncher == 'close-launcher') {
+                ipcRenderer.send('discord-rpc-destroy')
                 ipcRenderer.send("main-window-hide")
             }
             new logger('Minecraft', '#36b030');
@@ -680,6 +681,7 @@ class Home {
         launch.on('close', function(code) {
             if (configClient.launcher_config.closeLauncher == 'close-launcher') {
                 ipcRenderer.send("main-window-show")
+                ipcRenderer.send('discord-rpc-init') 
             }
             ipcRenderer.send('main-window-progress-reset')
             infoStartingBOX.style.display = "none"

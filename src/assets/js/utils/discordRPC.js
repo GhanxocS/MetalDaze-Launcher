@@ -52,9 +52,14 @@ function setInLauncher() {
 function destroyRPC() {
     if (!rpc) return;
     try {
-        rpc.destroy();
-        rpc = null;
-        ready = false;
+        rpc.clearActivity();
+        setTimeout(function() {
+            try {
+                rpc.destroy();
+            } catch(e) {}
+            rpc = null;
+            ready = false;
+        }, 500);
     } catch (err) {
         console.error('[RPC] Error al destruir RPC:', err);
     }
