@@ -1,7 +1,10 @@
 /**
  * @author Luuxis
  * Luuxis License v1.0 (voir fichier LICENSE pour les détails en FR/EN)
+ * 
+ * Modificado por ITakerMetal
  */
+
 const { AZauth, Mojang } = require('minecraft-java-core');
 const { ipcRenderer } = require('electron');
 

@@ -1,9 +1,7 @@
 /**
  * @author Luuxis
  * Luuxis License v1.0 (voir fichier LICENSE pour les détails en FR/EN)
- *
- * Modificado para MetalDaze Launcher — v1.1
- * Añadido: bloque de almacenamiento (storage()) en pestaña LAUNCHER
+ * Modificado por ITakerMetal
  */
 
 import { changePanel, accountSelect, database, Slider, config, setStatus, popup, appdata, setBackground } from '../utils.js'

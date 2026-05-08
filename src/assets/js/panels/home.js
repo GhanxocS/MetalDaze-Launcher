@@ -3,7 +3,6 @@
  * Luuxis License v1.0 (voir fichier LICENSE pour les détails en FR/EN)
  *
  * Modificado para MetalDaze Launcher — v1.2
- * Añadido: modal de cambio de skins con historial local
  */
 import { config, database, logger, changePanel, appdata, setStatus, pkg, popup, skin2D } from '../utils.js'
 
@@ -222,7 +221,6 @@ class Home {
                         }
                     }
                 }
-
                 instancePopup.style.display = 'flex'
             }
 
@@ -243,31 +241,86 @@ class Home {
         const statusEl    = document.getElementById('skin-status')
         const previewCvs  = document.getElementById('skin-preview-canvas')
         const historyGrid = document.getElementById('skin-history-grid')
+        const canvas3d    = document.getElementById('skin-3d-canvas')
 
         if (!overlay) return
 
         let selectedFile    = null
         let selectedVariant = 'CLASSIC'
         let pendingBase64   = null
+        let viewer          = null  // instancia de skinview3d
 
-        const appdataPath    = await ipcRenderer.invoke('appData')
-        const historyDir     = path.join(appdataPath, '.MetalDaze')
-        const historyFile    = path.join(historyDir, 'skin-history.json')
+        const appdataPath = await ipcRenderer.invoke('appData')
+        const historyDir  = path.join(appdataPath, '.MetalDaze')
+        const historyFile = path.join(historyDir, 'skin-history.json')
 
+
+        // ── Visor 2D — cuerpo completo de la skin en canvas ──
+        // Sin dependencias externas, solo Canvas API nativa
+        function initViewer(base64, variant) {
+            const img = new Image()
+            img.onload = function() {
+                const cvs = canvas3d
+                const ctx = cvs.getContext('2d')
+                const S   = 4  // cada px de skin = 2px en canvas
+
+                const armW = variant === 'SLIM' ? 3 : 4
+                cvs.width  = (8 + armW * 2) * S
+                cvs.height = 32 * S
+
+                ctx.clearRect(0, 0, cvs.width, cvs.height)
+                ctx.imageSmoothingEnabled = false
+
+                function draw(sx, sy, sw, sh, dx, dy, dw, dh) {
+                    ctx.drawImage(img, sx, sy, sw, sh, dx, dy, dw, dh)
+                }
+
+                const ox = armW * S  // offset: dejar espacio para brazo izquierdo
+
+                // Cabeza (capa base + overlay)
+                draw(8,  8,  8, 8,    ox,           0,     8*S,    8*S)
+                draw(40, 8,  8, 8,    ox,           0,     8*S,    8*S)
+                // Cuerpo
+                draw(20, 20, 8, 12,   ox,           8*S,   8*S,    12*S)
+                draw(20, 36, 8, 12,   ox,           8*S,   8*S,    12*S)
+                // Brazo derecho (a la izquierda del cuerpo)
+                draw(44, 20, armW, 12, ox - armW*S, 8*S,   armW*S, 12*S)
+                draw(44, 36, armW, 12, ox - armW*S, 8*S,   armW*S, 12*S)
+                // Brazo izquierdo (a la derecha del cuerpo)
+                draw(36, 52, armW, 12, ox + 8*S,    8*S,   armW*S, 12*S)
+                draw(52, 52, armW, 12, ox + 8*S,    8*S,   armW*S, 12*S)
+                // Pierna derecha
+                draw(4,  20, 4, 12,   ox,           20*S,  4*S,    12*S)
+                draw(4,  36, 4, 12,   ox,           20*S,  4*S,    12*S)
+                // Pierna izquierda
+                draw(20, 52, 4, 12,   ox + 4*S,     20*S,  4*S,    12*S)
+                draw(4,  52, 4, 12,   ox + 4*S,     20*S,  4*S,    12*S)
+            }
+            img.src = base64
+        }
+
+
+        // ── Abrir modal ──────────────────────────────────────
         document.getElementById('open-skin-modal').addEventListener('click', async function() {
             selectedFile  = null
             pendingBase64 = null
             selectedLbl.textContent = 'Ningún archivo seleccionado'
             applyBtn.classList.remove('ready', 'loading')
+            applyBtn.textContent = 'APLICAR SKIN'
             statusEl.textContent = ''
             statusEl.className = 'skin-status'
 
+            overlay.classList.add('open')
+            document.body.style.overflow = 'hidden'
+
+            // Cargar skin actual en el visor
             const configClient = await self.db.readData('configClient')
             const auth = await self.db.readData('accounts', configClient.account_selected)
             if (auth && auth.profile && auth.profile.skins && auth.profile.skins[0] && auth.profile.skins[0].base64) {
-                await self.renderSkinPreview(previewCvs, auth.profile.skins[0].base64)
+                pendingBase64   = auth.profile.skins[0].base64
                 selectedVariant = auth.profile.skins[0].variant || 'CLASSIC'
                 self.updateVariantBtns(selectedVariant)
+                initViewer(pendingBase64, selectedVariant)
             }
 
             await self.renderHistory(historyGrid, historyFile, previewCvs, async function(entry) {
@@ -277,30 +330,29 @@ class Home {
                 selectedLbl.innerHTML = 'Seleccionado del historial: <span>' + entry.name + '</span>'
                 applyBtn.classList.add('ready')
                 self.updateVariantBtns(selectedVariant)
-                await self.renderSkinPreview(previewCvs, entry.base64)
+                initViewer(entry.base64, entry.variant || 'CLASSIC')
             })
-
-            overlay.classList.add('open')
-            document.body.style.overflow = 'hidden'
         })
 
+        // ── Cerrar modal ──────────────────────────────────────
         function closeSkinModal() {
             overlay.classList.remove('open')
             document.body.style.overflow = ''
         }
-
         closeBtn.addEventListener('click', closeSkinModal)
         overlay.addEventListener('click', function(e) { if (e.target === overlay) closeSkinModal() })
 
+        // ── Variante CLASSIC / SLIM ───────────────────────────
         document.querySelectorAll('.skin-variant-btn').forEach(function(btn) {
             btn.addEventListener('click', function() {
                 selectedVariant = btn.dataset.variant
                 self.updateVariantBtns(selectedVariant)
+                if (pendingBase64) initViewer(pendingBase64, selectedVariant)
             })
         })
 
+        // ── Upload zone ───────────────────────────────────────
         uploadZone.addEventListener('click', function() { fileInput.click() })
-
         uploadZone.addEventListener('dragover', function(e) {
             e.preventDefault()
             uploadZone.style.borderColor = 'var(--md-white)'
@@ -312,14 +364,23 @@ class Home {
             e.preventDefault()
             uploadZone.style.borderColor = 'var(--md-border-lit)'
             const file = e.dataTransfer.files[0]
-            if (file) await self.handleSkinFile(file, selectedLbl, applyBtn, previewCvs, function(b64) { pendingBase64 = b64; selectedFile = file })
+            if (file) await self.handleSkinFile(file, selectedLbl, applyBtn, previewCvs, function(b64) {
+                pendingBase64 = b64
+                selectedFile  = file
+                initViewer(b64, selectedVariant)
+            })
         })
 
         fileInput.addEventListener('change', async function() {
             const file = fileInput.files[0]
-            if (file) await self.handleSkinFile(file, selectedLbl, applyBtn, previewCvs, function(b64) { pendingBase64 = b64; selectedFile = file })
+            if (file) await self.handleSkinFile(file, selectedLbl, applyBtn, previewCvs, function(b64) {
+                pendingBase64 = b64
+                selectedFile  = file
+                initViewer(b64, selectedVariant)
+            })
         })
 
+        // ── Aplicar skin ──────────────────────────────────────
         applyBtn.addEventListener('click', async function() {
             if (!pendingBase64) return
 
@@ -372,7 +433,7 @@ class Home {
                     selectedLbl.innerHTML = 'Seleccionado del historial: <span>' + entry.name + '</span>'
                     applyBtn.classList.add('ready')
                     self.updateVariantBtns(selectedVariant)
-                    await self.renderSkinPreview(previewCvs, entry.base64)
+                    initViewer(entry.base64, entry.variant || 'CLASSIC')
                 })
 
                 statusEl.textContent = '¡Skin aplicada correctamente!'
@@ -395,15 +456,13 @@ class Home {
             selectedLbl.textContent = 'El archivo debe ser PNG'
             return
         }
-
         const reader = new FileReader()
         reader.onload = async function(e) {
             const base64 = e.target.result
             selectedLbl.innerHTML = 'Archivo: <span>' + file.name + '</span>'
             applyBtn.classList.add('ready')
             onReady(base64)
-            await this.renderSkinPreview(previewCvs, base64)
-        }.bind(this)
+        }
         reader.readAsDataURL(file)
     }
 

@@ -1,11 +1,16 @@
 /**
  * @author Luuxis
  * Luuxis License v1.0 (voir fichier LICENSE pour les détails en FR/EN)
+ * Modificado por ITakerMetal
  */
 
 const { app, ipcMain, nativeTheme } = require('electron');
 const { Microsoft } = require('minecraft-java-core');
-const { autoUpdater } = require('electron-updater')
+const { autoUpdater } = require('electron-updater');
+console.log('[APP] Cargando discordRPC...');
+const discordRPC = require('./assets/js/utils/discordRPC.js');
+console.log('[APP] discordRPC cargado:', typeof discordRPC);
+
 
 const path = require('path');
 const fs = require('fs');
@@ -29,8 +34,12 @@ Store.initRenderer();
 
 if (!app.requestSingleInstanceLock()) app.quit();
 else app.whenReady().then(() => {
-    if (dev) return MainWindow.createWindow()
+    if (dev) {
+        discordRPC.initRPC();
+        return MainWindow.createWindow()
+    }
     UpdateWindow.createWindow()
+    discordRPC.initRPC();
 });
 
 ipcMain.on('main-window-open', () => MainWindow.createWindow())
@@ -87,7 +96,10 @@ ipcMain.handle('is-dark-theme', (_, theme) => {
     return nativeTheme.shouldUseDarkColors;
 })
 
-app.on('window-all-closed', () => app.quit());
+app.on('window-all-closed', () => {
+    discordRPC.destroyRPC();
+    app.quit();
+});
 
 autoUpdater.autoDownload = false;
 

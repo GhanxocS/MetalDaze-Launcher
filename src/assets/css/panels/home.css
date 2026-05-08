@@ -654,12 +654,14 @@ body, html {
 .skin-3d-wrap {
     position: relative;
     width: 160px;
-    height: 220px;
-    background: var(--md-surface);
-    border: 1px solid var(--md-border);
+    height: 260px;
+    background: transparent;
+    border: none;
     border-radius: 8px;
     overflow: hidden;
-    cursor: grab;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .skin-3d-wrap:active {
@@ -667,9 +669,9 @@ body, html {
 }
 
 .skin-3d-wrap canvas {
-    display: block;
-    width: 100% !important;
-    height: 100% !important;
+    image-rendering: pixelated;
+    width: auto;
+    height: 100%;
 }
 
 .skin-3d-hint {
@@ -933,4 +935,103 @@ body, html {
     color: var(--md-muted);
     text-align: center;
     padding: 1rem 0;
+}
+
+/* ── Overlay ── */
+.skin-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.82);
+    backdrop-filter: blur(6px);
+    z-index: 300;
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+
+.skin-modal-overlay.open {
+    display: flex;
+}
+
+/* ── Modal container ── */
+.skin-modal {
+    background: var(--md-dark);
+    border: 1px solid var(--md-border-lit);
+    border-radius: 12px;
+    width: 680px;
+    max-width: 95vw;
+    max-height: 88vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* ── Header ── */
+.skin-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--md-border);
+    flex-shrink: 0;
+}
+
+.skin-modal-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 0.7rem;
+    letter-spacing: 0.25em;
+    color: var(--md-muted);
+}
+
+.skin-modal-close {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 5px;
+    cursor: pointer;
+    color: var(--md-muted);
+    font-size: 1rem;
+    transition: color var(--transition), background var(--transition);
+}
+
+.skin-modal-close:hover {
+    color: var(--md-white);
+    background: var(--md-accent-dim);
+}
+
+/* ── Body: two columns ── */
+.skin-modal-body {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    flex: 1;
+    overflow: hidden;
+}
+
+/* ── Left: preview 3D ── */
+.skin-preview-col {
+    border-right: 1px solid var(--md-border);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1.25rem 1rem;
+    gap: 1rem;
+    background: var(--md-black);
+}
+
+/* Contenedor del visor Three.js */
+.skin-3d-wrap {
+    position: relative;
+    width: 160px;
+    height: 260px;
+    background: transparent;
+    border: none;
+    border-radius: 8px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
