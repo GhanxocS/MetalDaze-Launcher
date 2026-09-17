@@ -862,3 +862,172 @@
     text-align: right;
     font-family: 'Barlow', sans-serif;
 }
+
+/* ============================================================
+   GAME SETTINGS TAB — MetalDaze Launcher
+   Agregar al final de settings.css
+   ============================================================ */
+ 
+/* ── Fila de ajuste ── */
+.game-setting-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--md-border);
+    gap: 1rem;
+}
+ 
+.game-setting-row:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+ 
+.game-setting-row:first-child {
+    padding-top: 0;
+}
+ 
+.game-setting-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    color: var(--md-white);
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    flex-shrink: 0;
+    min-width: 180px;
+}
+ 
+.game-setting-hint {
+    font-family: 'Barlow', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 300;
+    color: var(--md-muted);
+    letter-spacing: 0.04em;
+}
+ 
+/* ── Toggle ── */
+.game-toggle {
+    position: relative;
+    width: 44px;
+    height: 24px;
+    background: var(--md-border-lit);
+    border-radius: 24px;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: background var(--transition);
+    border: 1px solid var(--md-border-lit);
+}
+ 
+.game-toggle.on {
+    background: var(--md-white);
+    border-color: var(--md-white);
+}
+ 
+.game-toggle-knob {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 18px;
+    height: 18px;
+    background: var(--md-muted);
+    border-radius: 50%;
+    transition: transform var(--transition), background var(--transition);
+}
+ 
+.game-toggle.on .game-toggle-knob {
+    transform: translateX(20px);
+    background: var(--md-black);
+}
+ 
+/* ── Slider ── */
+.game-slider-wrap {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex: 1;
+    max-width: 340px;
+    justify-content: flex-end;
+}
+ 
+.game-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    flex: 1;
+    height: 3px;
+    background: var(--md-border-lit);
+    border-radius: 3px;
+    outline: none;
+    cursor: pointer;
+}
+ 
+.game-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--md-white);
+    cursor: pointer;
+    border: none;
+    transition: transform 0.1s ease;
+}
+ 
+.game-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+}
+ 
+.game-slider-val {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    color: var(--md-white);
+    min-width: 48px;
+    text-align: right;
+    flex-shrink: 0;
+}
+ 
+/* ── Botón guardar ── */
+.game-save-row {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 1rem;
+    width: 100%;
+    max-width: 700px;
+    margin: 1.25rem 0 2rem;
+}
+ 
+.game-save-status {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
+    color: var(--md-muted);
+    flex: 1;
+}
+ 
+.game-save-status.success { color: #22c55e; }
+.game-save-status.error   { color: #ef4444; }
+ 
+.game-save-btn {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 0.82rem;
+    letter-spacing: 0.15em;
+    padding: 0.7rem 1.5rem;
+    background: var(--md-accent-dim);
+    border: 1px solid var(--md-border-lit);
+    border-radius: 6px;
+    color: var(--md-white);
+    cursor: pointer;
+    transition: border-color var(--transition), background var(--transition);
+    white-space: nowrap;
+}
+ 
+.game-save-btn:hover {
+    border-color: var(--md-white);
+    background: rgba(255,255,255,0.12);
+}

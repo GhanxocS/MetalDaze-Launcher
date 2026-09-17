@@ -9,7 +9,7 @@
         "email": "",
         "url": ""
     },
-    "url": "https://metaldaze-backend-production.up.railway.app",
+    "url": "https://metaldaze-backend.onrender.com",
     "scripts": {
         "start": "cross-env-shell NODE_ENV=dev electron .",
         "dev": "cross-env-shell DEV_TOOL=open nodemon --exec npm start",

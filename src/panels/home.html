@@ -1,139 +1,89 @@
 
-    <div class="home-bottom">
-        <div class="new-tab">
-            <div class="titre-tab-new">
-                <span class="news-label-line"></span>
-                NOTICIAS
-                <span class="news-label-line"></span>
-            </div>
-            <div class="news-list content-scroll"></div>
-        </div>
-        <div class="social-tab">
-            <div class="social-list content-scroll">
-                <div data-url="https://discord.gg/u7Uvb8XxMV" class="social-block">
-                    <div class="icon-discord icon-social"></div>
-                </div>
-                <div data-url="https://github.com/GhanxocS" class="social-block">
-                    <div class="icon-github icon-social"></div>
-                </div>
-                <div data-url="https://www.youtube.com/@MetalDazeEstudio" class="social-block">
-                    <div class="icon-youtube icon-social"></div>
-                </div>
-            </div>
-        </div>
-    </div>
+    <!-- ══ FONDO DINÁMICO POR INSTANCIA ══ -->
+    <div class="home-bg" id="home-bg"></div>
+    <div class="home-bg-grid" id="home-bg-grid"></div>
 
+    <!-- ══ SIDEBAR ══ -->
     <div class="sidebar">
         <div class="sidebar-top">
             <div class="brand-mark">MD</div>
-            <div class="player-options">
-                <!-- Click abre el modal de skins -->
-                <div class="player-head" id="open-skin-modal" title="Cambiar skin"></div>
-            </div>
+            <div class="player-head" id="open-skin-panel"></div>
         </div>
-
         <div class="sidebar-mid">
-            <div class="social-tab-sidebar">
-                <div data-url="https://discord.gg/u7Uvb8XxMV" class="social-block-sidebar">
-                    <div class="icon-discord icon-social"></div>
-                </div>
-                <div data-url="https://github.com/GhanxocS" class="social-block-sidebar">
-                    <div class="icon-github icon-social"></div>
-                </div>
-                <div data-url="https://www.youtube.com/@MetalDazeEstudio" class="social-block-sidebar">
-                    <div class="icon-youtube icon-social"></div>
-                </div>
+            <div data-url="https://discord.gg/u7Uvb8XxMV" class="social-block-sidebar">
+                <div class="icon-discord icon-social"></div>
+            </div>
+            <div data-url="https://github.com/GhanxocS" class="social-block-sidebar">
+                <div class="icon-github icon-social"></div>
+            </div>
+            <div data-url="https://www.youtube.com/@MetalDazeEstudio" class="social-block-sidebar">
+                <div class="icon-youtube icon-social"></div>
             </div>
         </div>
-
         <div class="sidebar-bottom">
-            <div class="update-btn" style="display:none;">
-                <span class="update-icon">⬆</span>
-            </div>
             <div class="settings-btn icon-settings"></div>
         </div>
     </div>
 
-    <div class="play-elements">
-        <div class="play-instance">
-            <button class="play-btn">JUGAR</button>
-            <div class="instance-select icon-arrow"></div>
+    <!-- ══ CONTENIDO PRINCIPAL ══ -->
+    <div class="home-main">
+
+        <!-- Noticia destacada -->
+        <div class="featured-news-wrap">
+            <div class="featured-news" id="featured-news">
+                <!-- Inyectado por JS -->
+            </div>
+            <div class="all-news-link" id="all-news-link">
+                <span class="all-news-arrow">›</span>
+                Ver todas las noticias
+            </div>
         </div>
-        <div class="info-starting-game">
-            <div class="info-starting-game-text">Iniciando...</div>
-            <progress value="0" max="0" class="progress-bar"></progress>
+
+        <!-- Panel de todas las noticias (oculto por defecto) -->
+        <div class="all-news-panel" id="all-news-panel" style="display:none">
+            <div class="all-news-header">
+                <div class="all-news-back" id="all-news-back">‹ Volver</div>
+                <div class="all-news-title">NOTICIAS</div>
+            </div>
+            <div class="news-list" id="news-list-full"></div>
         </div>
+
     </div>
 
-    <div class="instance-popup">
+    <!-- ══ ÁREA DE PLAY (esquina inferior derecha) ══ -->
+    <div class="play-area">
+
+        <!-- Selector de instancia (separado del play) -->
+        <div class="instance-selector-btn" id="instance-selector-btn">
+            <span class="instance-selector-icon">☰</span>
+            <span class="instance-selector-label" id="instance-selector-label">Seleccionar instancia</span>
+        </div>
+
+        <!-- Botón de play / actualizar / sin instancia -->
+        <div class="play-wrap">
+            <button class="play-btn" id="play-btn">
+                <span class="play-btn-label" id="play-btn-label">JUGAR</span>
+            </button>
+        </div>
+
+        <!-- Progreso al iniciar -->
+        <div class="info-starting-game" id="info-starting-game">
+            <div class="info-starting-game-text" id="info-starting-text">Iniciando...</div>
+            <progress value="0" max="0" class="progress-bar" id="progress-bar"></progress>
+        </div>
+
+    </div>
+
+    <!-- ══ POPUP SELECTOR DE INSTANCIAS ══ -->
+    <div class="instance-popup" id="instance-popup">
         <div class="instances-tab">
-            <div class="close-popup icon-close"></div>
-            <p>INSTANCIA</p>
-            <div class="instances-List"></div>
+            <div class="instance-popup-header">
+                <span class="instance-popup-title">INSTANCIA</span>
+                <div class="close-popup icon-close" id="close-instance-popup"></div>
+            </div>
+            <div class="instances-List" id="instances-list-popup"></div>
         </div>
     </div>
 
-    <!-- ── SKIN MODAL ── -->
-    <div class="skin-modal-overlay" id="skin-modal-overlay">
-        <div class="skin-modal">
-
-            <!-- Header -->
-            <div class="skin-modal-header">
-                <div class="skin-modal-title">CAMBIAR SKIN</div>
-                <div class="skin-modal-close" id="skin-modal-close">✕</div>
-            </div>
-
-            <!-- Body -->
-            <div class="skin-modal-body">
-
-                <!-- Columna izquierda: preview -->
-                <div class="skin-preview-col">
-                    <div class="skin-3d-wrap">
-    <canvas id="skin-3d-canvas" style="image-rendering:pixelated;width:100%;height:auto;"></canvas>
-</div>
-<canvas id="skin-preview-canvas" width="8" height="8" style="display:none"></canvas>
-<div class="skin-preview-label">PREVISUALIZACIÓN</div>
-
-                    <!-- Selector de variante -->
-                    <div class="skin-variant-toggle">
-                        <button class="skin-variant-btn active" data-variant="CLASSIC">CLÁSICO</button>
-                        <button class="skin-variant-btn" data-variant="SLIM">SLIM</button>
-                    </div>
-                </div>
-
-                <!-- Columna derecha: controles + historial -->
-                <div class="skin-controls-col">
-
-                    <!-- Zona de carga -->
-                    <div class="skin-upload-zone" id="skin-upload-zone">
-                        <div class="skin-upload-icon">🎨</div>
-                        <div class="skin-upload-text">Click para seleccionar skin</div>
-                        <div class="skin-upload-sub">Archivo PNG · 64×64 o 64×32</div>
-                    </div>
-                    <input type="file" id="skin-file-input" accept=".png" style="display:none">
-
-                    <!-- Nombre del archivo seleccionado -->
-                    <div class="skin-selected-file" id="skin-selected-file">
-                        Ningún archivo seleccionado
-                    </div>
-
-                    <!-- Botón aplicar -->
-                    <button class="skin-apply-btn" id="skin-apply-btn">
-                        APLICAR SKIN
-                    </button>
-
-                    <!-- Mensaje de estado -->
-                    <div class="skin-status" id="skin-status"></div>
-
-                    <!-- Historial -->
-                    <div class="skin-history-label">HISTORIAL</div>
-                    <div class="skin-history-grid" id="skin-history-grid">
-                        <div class="skin-history-empty">Sin historial</div>
-                    </div>
-
-                </div>
-            </div>
-        </div>
-    </div>
-
+    <!-- ══ BADGE DEV ══ -->
     <div class="dev-badge">LAUNCHER EN DESARROLLO</div>

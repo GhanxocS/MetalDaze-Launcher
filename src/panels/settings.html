@@ -196,17 +196,202 @@
         </div>
     </div>
 
-    <div id="game-tab" class="container-settings">
+    <div id="game-tab" class="container-settings content-scroll">
+
+        <!-- ── VIDEO ── -->
         <div class="titre-tab">
             <span class="tab-line"></span>
-            CONFIGURACIÓN DEL JUEGO
+            CONFIGURACIÓN DE VIDEO
             <span class="tab-line"></span>
         </div>
         <div class="settings-elements-box">
-            <div class="setting-text">
-                Próximamente podrás configurar opciones del juego desde aquí.
+
+            <div class="game-setting-row">
+                <div class="game-setting-label">Pantalla completa</div>
+                <div class="game-toggle" id="gs-fullscreen" data-key="fullscreen" data-type="bool">
+                    <div class="game-toggle-knob"></div>
+                </div>
             </div>
+
+            <div class="game-setting-row">
+                <div class="game-setting-label">Balanceo de vista</div>
+                <div class="game-toggle" id="gs-bobView" data-key="bobView" data-type="bool">
+                    <div class="game-toggle-knob"></div>
+                </div>
+            </div>
+
+            <div class="game-setting-row">
+                <div class="game-setting-label">Escala de GUI
+                    <span class="game-setting-hint">0 = Auto</span>
+                </div>
+                <div class="game-slider-wrap">
+                    <input type="range" class="game-slider" id="gs-guiScale" data-key="guiScale" data-type="int" min="0" max="4" step="1">
+                    <span class="game-slider-val" id="gs-guiScale-val">Auto</span>
+                </div>
+            </div>
+
+            <div class="game-setting-row">
+                <div class="game-setting-label">Brillo
+                    <span class="game-setting-hint">0% – 100%</span>
+                </div>
+                <div class="game-slider-wrap">
+                    <input type="range" class="game-slider" id="gs-gamma" data-key="gamma" data-type="float" min="0" max="1" step="0.01">
+                    <span class="game-slider-val" id="gs-gamma-val">50%</span>
+                </div>
+            </div>
+
+            <div class="game-setting-row">
+                <div class="game-setting-label">Distancia de render
+                    <span class="game-setting-hint">2 – 32 chunks</span>
+                </div>
+                <div class="game-slider-wrap">
+                    <input type="range" class="game-slider" id="gs-renderDistance" data-key="renderDistance" data-type="int" min="2" max="32" step="1">
+                    <span class="game-slider-val" id="gs-renderDistance-val">12</span>
+                </div>
+            </div>
+
+            <div class="game-setting-row">
+                <div class="game-setting-label">Campo de visión (FOV)
+                    <span class="game-setting-hint">30° – 110°</span>
+                </div>
+                <div class="game-slider-wrap">
+                    <input type="range" class="game-slider" id="gs-fov" data-key="fov" data-type="fov" min="30" max="110" step="1">
+                    <span class="game-slider-val" id="gs-fov-val">Normal</span>
+                </div>
+            </div>
+
         </div>
+
+        <!-- ── CONTROLES ── -->
+        <div class="titre-tab">
+            <span class="tab-line"></span>
+            CONTROLES
+            <span class="tab-line"></span>
+        </div>
+        <div class="settings-elements-box">
+
+            <div class="game-setting-row">
+                <div class="game-setting-label">Salto automático</div>
+                <div class="game-toggle" id="gs-autoJump" data-key="autoJump" data-type="bool">
+                    <div class="game-toggle-knob"></div>
+                </div>
+            </div>
+
+            <div class="game-setting-row">
+                <div class="game-setting-label">Invertir ratón</div>
+                <div class="game-toggle" id="gs-invertYMouse" data-key="invertYMouse" data-type="bool">
+                    <div class="game-toggle-knob"></div>
+                </div>
+            </div>
+
+            <div class="game-setting-row">
+                <div class="game-setting-label">Sensibilidad del ratón
+                    <span class="game-setting-hint">0% – 200%</span>
+                </div>
+                <div class="game-slider-wrap">
+                    <input type="range" class="game-slider" id="gs-mouseSensitivity" data-key="mouseSensitivity" data-type="float" min="0" max="1" step="0.01">
+                    <span class="game-slider-val" id="gs-mouseSensitivity-val">100%</span>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ── AUDIO ── -->
+        <div class="titre-tab">
+            <span class="tab-line"></span>
+            AUDIO
+            <span class="tab-line"></span>
+        </div>
+        <div class="settings-elements-box">
+
+            <div class="game-setting-row">
+                <div class="game-setting-label">Volumen maestro</div>
+                <div class="game-slider-wrap">
+                    <input type="range" class="game-slider" id="gs-master" data-key="soundCategory_master" data-type="float" min="0" max="1" step="0.01">
+                    <span class="game-slider-val" id="gs-master-val">100%</span>
+                </div>
+            </div>
+
+            <div class="game-setting-row">
+                <div class="game-setting-label">Música</div>
+                <div class="game-slider-wrap">
+                    <input type="range" class="game-slider" id="gs-music" data-key="soundCategory_music" data-type="float" min="0" max="1" step="0.01">
+                    <span class="game-slider-val" id="gs-music-val">100%</span>
+                </div>
+            </div>
+
+            <div class="game-setting-row">
+                <div class="game-setting-label">Jukebox / Bloques de nota</div>
+                <div class="game-slider-wrap">
+                    <input type="range" class="game-slider" id="gs-record" data-key="soundCategory_record" data-type="float" min="0" max="1" step="0.01">
+                    <span class="game-slider-val" id="gs-record-val">100%</span>
+                </div>
+            </div>
+
+            <div class="game-setting-row">
+                <div class="game-setting-label">Clima</div>
+                <div class="game-slider-wrap">
+                    <input type="range" class="game-slider" id="gs-weather" data-key="soundCategory_weather" data-type="float" min="0" max="1" step="0.01">
+                    <span class="game-slider-val" id="gs-weather-val">100%</span>
+                </div>
+            </div>
+
+            <div class="game-setting-row">
+                <div class="game-setting-label">Bloques</div>
+                <div class="game-slider-wrap">
+                    <input type="range" class="game-slider" id="gs-block" data-key="soundCategory_block" data-type="float" min="0" max="1" step="0.01">
+                    <span class="game-slider-val" id="gs-block-val">100%</span>
+                </div>
+            </div>
+
+            <div class="game-setting-row">
+                <div class="game-setting-label">Criaturas hostiles</div>
+                <div class="game-slider-wrap">
+                    <input type="range" class="game-slider" id="gs-hostile" data-key="soundCategory_hostile" data-type="float" min="0" max="1" step="0.01">
+                    <span class="game-slider-val" id="gs-hostile-val">100%</span>
+                </div>
+            </div>
+
+            <div class="game-setting-row">
+                <div class="game-setting-label">Criaturas amigables</div>
+                <div class="game-slider-wrap">
+                    <input type="range" class="game-slider" id="gs-neutral" data-key="soundCategory_neutral" data-type="float" min="0" max="1" step="0.01">
+                    <span class="game-slider-val" id="gs-neutral-val">100%</span>
+                </div>
+            </div>
+
+            <div class="game-setting-row">
+                <div class="game-setting-label">Jugadores</div>
+                <div class="game-slider-wrap">
+                    <input type="range" class="game-slider" id="gs-player" data-key="soundCategory_player" data-type="float" min="0" max="1" step="0.01">
+                    <span class="game-slider-val" id="gs-player-val">100%</span>
+                </div>
+            </div>
+
+            <div class="game-setting-row">
+                <div class="game-setting-label">Ambiente</div>
+                <div class="game-slider-wrap">
+                    <input type="range" class="game-slider" id="gs-ambient" data-key="soundCategory_ambient" data-type="float" min="0" max="1" step="0.01">
+                    <span class="game-slider-val" id="gs-ambient-val">100%</span>
+                </div>
+            </div>
+
+            <div class="game-setting-row">
+                <div class="game-setting-label">Voz / Locutor</div>
+                <div class="game-slider-wrap">
+                    <input type="range" class="game-slider" id="gs-voice" data-key="soundCategory_voice" data-type="float" min="0" max="1" step="0.01">
+                    <span class="game-slider-val" id="gs-voice-val">100%</span>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ── BOTÓN GUARDAR ── -->
+        <div class="game-save-row">
+            <div class="game-save-status" id="gs-status"></div>
+            <button class="game-save-btn" id="gs-save-btn">GUARDAR EN TODAS LAS INSTANCIAS</button>
+        </div>
+
     </div>
 
     <div id="about-tab" class="container-settings">

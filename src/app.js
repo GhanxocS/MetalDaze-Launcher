@@ -80,8 +80,8 @@ ipcMain.on('main-window-login-size', () => {
 })
 
 ipcMain.on('main-window-home-size', () => {
-    MainWindow.getWindow().setResizable(true)
-    MainWindow.getWindow().setMinimumSize(980, 552)
+    MainWindow.getWindow().setResizable(false)
+    MainWindow.getWindow().setMinimumSize(1280, 720)
     MainWindow.getWindow().setSize(1280, 720)
     MainWindow.getWindow().center()
 })
@@ -169,16 +169,27 @@ ipcMain.on('storage-open-folder', (event, folderPath) => {
 })
 
 ipcMain.handle('storage-get-info', async (event, folderPath) => {
-    function getFolderSize(dirPath) {
+    // Recorrido async: la versión anterior usaba readdirSync/statSync de forma
+    // recursiva y síncrona, lo que congelaba TODO el proceso principal de Electron
+    // (ventanas, IPC, autoUpdater, Discord RPC) mientras recorría carpetas de
+    // instancias grandes (mods, assets, runtime de Java, etc.) cada vez que se
+    // abría Configuración. Usar fs.promises cede el hilo entre cada entrada.
+    async function getFolderSize(dirPath) {
         let total = 0
+        let entries
         try {
-            const entries = fs.readdirSync(dirPath, { withFileTypes: true })
-            for (const entry of entries) {
-                const full = path.join(dirPath, entry.name)
-                if (entry.isDirectory()) total += getFolderSize(full)
-                else try { total += fs.statSync(full).size } catch {}
+            entries = await fs.promises.readdir(dirPath, { withFileTypes: true })
+        } catch {
+            return 0
+        }
+        for (const entry of entries) {
+            const full = path.join(dirPath, entry.name)
+            if (entry.isDirectory()) {
+                total += await getFolderSize(full)
+            } else {
+                try { total += (await fs.promises.stat(full)).size } catch {}
             }
-        } catch {}
+        }
         return total
     }
 
@@ -189,8 +200,11 @@ ipcMain.handle('storage-get-info', async (event, folderPath) => {
         diskTotal = stat.blocks * stat.bsize
     } catch {}
 
+    let exists = true
+    try { await fs.promises.access(folderPath) } catch { exists = false }
+
     return {
-        instancesSize: fs.existsSync(folderPath) ? getFolderSize(folderPath) : 0,
+        instancesSize: exists ? await getFolderSize(folderPath) : 0,
         diskFree,
         diskTotal
     }

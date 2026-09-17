@@ -121,6 +121,11 @@ export default class Slider {
         this.selectedTouch = null;
 
         this.calculateValue();
+        // Evento separado de 'change': 'change' se dispara en cada mousemove
+        // mientras se arrastra (útil para refrescar la UI en vivo); 'changeEnd'
+        // se dispara una sola vez al soltar, para que los listeners que persisten
+        // a disco (electron-store) no lo hagan decenas de veces por segundo.
+        this.emit('changeEnd', this.minValue, this.maxValue);
     }
 
     calculateValue() {

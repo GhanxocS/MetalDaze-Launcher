@@ -19,7 +19,8 @@ class Settings {
         this.javaPath()
         this.resolution()
         this.launcher()
-        this.storage()   // ← nuevo
+        this.storage()
+        this.gameSettings()
     }
 
     navBTN() {
@@ -188,10 +189,16 @@ class Settings {
 
         let slider = new Slider(".memory-slider", parseFloat(ram.ramMin), parseFloat(ram.ramMax));
 
-        slider.on("change", async (min, max) => {
-            let config = await this.db.readData('configClient');
+        // 'change' se dispara en cada mousemove del arrastre — solo actualiza
+        // los labels en pantalla, nada de disco, para que arrastrar sea fluido.
+        slider.on("change", (min, max) => {
             minSpan.setAttribute("value", `${min} GB`);
             maxSpan.setAttribute("value", `${max} GB`);
+        });
+
+        // 'changeEnd' se dispara una sola vez al soltar — ahí sí se persiste.
+        slider.on("changeEnd", async (min, max) => {
+            let config = await this.db.readData('configClient');
             config.java_config.java_memory = { min: min, max: max };
             this.db.updateData('configClient', config);
         });
@@ -429,6 +436,217 @@ class Settings {
             console.error('[storage] storage-get-info error:', err)
         }
     }
+
+        // ══════════════════════════════════════════════════════════════
+    // GAME SETTINGS — Lee y escribe options.txt en todas las instancias
+    // ══════════════════════════════════════════════════════════════
+ 
+    async gameSettings() {
+        const path = require('path')
+        const fs   = require('fs')
+
+        // Misma ruta que storage-get-instances-path (app.js) — evita mantener
+        // el path de .MetalDaze hardcodeado por duplicado en main y renderer.
+        const instancesRoot = await ipcRenderer.invoke('storage-get-instances-path')
+        const INSTANCES_DIR = path.join(instancesRoot, 'instances')
+
+
+        // ── Parsear options.txt ──────────────────────────────────────────
+        function parseOptions(filePath) {
+            const opts = {}
+            try {
+                const lines = fs.readFileSync(filePath, 'utf-8').split('\n')
+                for (const line of lines) {
+                    const idx = line.indexOf(':')
+                    if (idx === -1) continue
+                    const key = line.substring(0, idx).trim()
+                    const val = line.substring(idx + 1).trim()
+                    opts[key] = val
+                }
+            } catch(e) {}
+            return opts
+        }
+ 
+        // ── Escribir options.txt (preserva todas las líneas) ─────────────
+        function writeOptions(filePath, changes) {
+            try {
+                let lines = []
+                try {
+                    lines = fs.readFileSync(filePath, 'utf-8').split('\n')
+                } catch(e) {
+                    // archivo no existe aún, se crea desde cero
+                }
+ 
+                // Actualizar las líneas existentes
+                const updated = new Set()
+                lines = lines.map(function(line) {
+                    const idx = line.indexOf(':')
+                    if (idx === -1) return line
+                    const key = line.substring(0, idx).trim()
+                    if (key in changes) {
+                        updated.add(key)
+                        return key + ':' + changes[key]
+                    }
+                    return line
+                })
+ 
+                // Agregar las que no existían
+                for (const key of Object.keys(changes)) {
+                    if (!updated.has(key)) {
+                        lines.push(key + ':' + changes[key])
+                    }
+                }
+ 
+                fs.writeFileSync(filePath, lines.join('\n'), 'utf-8')
+                return true
+            } catch(e) {
+                console.error('[gameSettings] Error escribiendo ' + filePath + ':', e)
+                return false
+            }
+        }
+ 
+        // ── Obtener lista de instancias ──────────────────────────────────
+        function getInstances() {
+            try {
+                return fs.readdirSync(INSTANCES_DIR, { withFileTypes: true })
+                    .filter(function(d) { return d.isDirectory() })
+                    .map(function(d) { return path.join(INSTANCES_DIR, d.name, 'options.txt') })
+            } catch(e) { return [] }
+        }
+ 
+        // ── Leer valores actuales (primera instancia disponible) ─────────
+        let currentOpts = {}
+        const instances = getInstances()
+        for (const optPath of instances) {
+            if (fs.existsSync(optPath)) {
+                currentOpts = parseOptions(optPath)
+                break
+            }
+        }
+ 
+        // ── Helpers de conversión ────────────────────────────────────────
+        // FOV: Minecraft guarda entre -1.0 y 1.0 → nosotros mostramos 30–110
+        function fovToDisplay(raw) {
+            const v = parseFloat(raw)
+            if (isNaN(v)) return 70
+            return Math.round(v * 40 + 70)
+        }
+        function displayToFov(deg) {
+            return ((deg - 70) / 40).toFixed(2)
+        }
+        function pctToDisplay(raw) {
+            return Math.round(parseFloat(raw) * 100)
+        }
+ 
+        // ── Inicializar controles ────────────────────────────────────────
+        const self = this
+ 
+        // Toggles
+        document.querySelectorAll('.game-toggle').forEach(function(toggle) {
+            const key = toggle.dataset.key
+            const val = currentOpts[key]
+            if (val === 'true') toggle.classList.add('on')
+            toggle.addEventListener('click', function() {
+                toggle.classList.toggle('on')
+            })
+        })
+ 
+        // Sliders
+        document.querySelectorAll('.game-slider').forEach(function(slider) {
+            const key    = slider.dataset.key
+            const type   = slider.dataset.type
+            const valEl  = document.getElementById(slider.id + '-val')
+            const raw    = currentOpts[key]
+ 
+            function updateLabel(v) {
+                if (!valEl) return
+                if (type === 'fov') {
+                    valEl.textContent = v == 70 ? 'Normal' : v + '°'
+                } else if (key === 'guiScale') {
+                    valEl.textContent = v == 0 ? 'Auto' : v
+                } else {
+                    valEl.textContent = Math.round(v * 100) / 100 <= 1 && type === 'float'
+                        ? pctToDisplay(v) + '%'
+                        : v
+                }
+            }
+ 
+            // Valor inicial
+            let initVal
+            if (type === 'fov') {
+                initVal = fovToDisplay(raw !== undefined ? raw : '0')
+            } else if (type === 'float') {
+                initVal = raw !== undefined ? parseFloat(raw) : parseFloat(slider.min)
+            } else {
+                initVal = raw !== undefined ? parseInt(raw) : parseInt(slider.min)
+            }
+ 
+            slider.value = initVal
+            updateLabel(initVal)
+ 
+            slider.addEventListener('input', function() {
+                updateLabel(slider.value)
+            })
+        })
+ 
+        // ── Botón guardar ────────────────────────────────────────────────
+        const saveBtn  = document.getElementById('gs-save-btn')
+        const statusEl = document.getElementById('gs-status')
+ 
+        saveBtn.addEventListener('click', function() {
+            const changes = {}
+ 
+            // Recoger toggles
+            document.querySelectorAll('.game-toggle').forEach(function(toggle) {
+                changes[toggle.dataset.key] = toggle.classList.contains('on') ? 'true' : 'false'
+            })
+ 
+            // Recoger sliders
+            document.querySelectorAll('.game-slider').forEach(function(slider) {
+                const key  = slider.dataset.key
+                const type = slider.dataset.type
+                const v    = parseFloat(slider.value)
+ 
+                if (type === 'fov') {
+                    changes[key] = displayToFov(v)
+                } else if (type === 'float') {
+                    changes[key] = v.toFixed(2)
+                } else {
+                    changes[key] = String(Math.round(v))
+                }
+            })
+ 
+            // Escribir en todas las instancias
+            const targets = getInstances()
+ 
+            if (targets.length === 0) {
+                statusEl.textContent = 'No se encontraron instancias.'
+                statusEl.className = 'game-save-status error'
+                return
+            }
+ 
+            let ok = 0
+            let fail = 0
+            for (const optPath of targets) {
+                if (writeOptions(optPath, changes)) ok++
+                else fail++
+            }
+ 
+            if (fail === 0) {
+                statusEl.textContent = 'Guardado en ' + ok + ' instancia' + (ok !== 1 ? 's' : '') + ' correctamente.'
+                statusEl.className = 'game-save-status success'
+            } else {
+                statusEl.textContent = ok + ' ok, ' + fail + ' con error.'
+                statusEl.className = 'game-save-status error'
+            }
+ 
+            setTimeout(function() {
+                statusEl.textContent = ''
+                statusEl.className = 'game-save-status'
+            }, 4000)
+        })
+    }
+
 
     /**
      * Convierte bytes a string legible: KB, MB, GB

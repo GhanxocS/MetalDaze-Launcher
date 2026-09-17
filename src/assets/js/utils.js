@@ -16,6 +16,16 @@ import popup from './utils/popup.js';
 import { skin2D } from './utils/skin.js';
 import slider from './utils/slider.js';
 
+function escapeHtml(str) {
+    if (str === null || str === undefined) return ''
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;')
+}
+
 async function setBackground(theme) {
     if (typeof theme == 'undefined') {
         let databaseLauncher = new database();
@@ -41,6 +51,10 @@ async function setBackground(theme) {
 
 async function changePanel(id) {
     let panel = document.querySelector(`.${id}`);
+    if (!panel) {
+        console.error(`[changePanel] El panel ".${id}" no existe, se ignora el cambio.`);
+        return;
+    }
     let active = document.querySelector(`.active`)
     if (active) active.classList.toggle("active");
     panel.classList.add("active");
@@ -61,8 +75,8 @@ async function addAccount(data) {
     div.innerHTML = `
         <div class="profile-image" ${skin ? 'style="background-image: url(' + skin + ');"' : ''}></div>
         <div class="profile-infos">
-            <div class="profile-pseudo">${data.name}</div>
-            <div class="profile-uuid">${data.uuid}</div>
+            <div class="profile-pseudo">${escapeHtml(data.name)}</div>
+            <div class="profile-uuid">${escapeHtml(data.uuid)}</div>
         </div>
         <div class="delete-profile" data-id="${data.ID}">
             <div class="icon-account-delete delete-profile-icon"></div>
@@ -134,5 +148,6 @@ export {
     accountSelect as accountSelect,
     slider as Slider,
     pkg as pkg,
-    setStatus as setStatus
+    setStatus as setStatus,
+    escapeHtml as escapeHtml
 }
