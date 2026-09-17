@@ -7,10 +7,28 @@
 const pkg = require('../package.json');
 const nodeFetch = require("node-fetch");
 const convert = require('xml-js');
+const { ipcRenderer } = require('electron');
+const fs = require('fs');
+const path = require('path');
 let url = pkg.user ? `${pkg.url}/${pkg.user}` : pkg.url
 
 let config = `${url}/config`;
 let articles = `${url}/articles`;
+
+// Token opcional de developer: si existe <userData>/dev-token.txt, se manda
+// como header x-dev-token al pedir /instances, para que el backend incluya
+// las instancias whitelistActive:true (ver server.js). Mismo patrón que
+// database.js usa para su key.txt.
+async function getDevToken() {
+    try {
+        const userDataPath = await ipcRenderer.invoke('path-user-data');
+        const tokenPath = path.join(userDataPath, 'dev-token.txt');
+        if (fs.existsSync(tokenPath)) {
+            return fs.readFileSync(tokenPath, 'utf-8').trim();
+        }
+    } catch (e) {}
+    return null;
+}
 
 class Config {
     GetConfig() {
@@ -26,7 +44,9 @@ class Config {
 
     async getInstanceList() {
         let urlInstance = `${url}/instances`
-        let instances = await nodeFetch(urlInstance).then(res => res.json()).catch(err => err)
+        let devToken = await getDevToken()
+        let fetchOpts = devToken ? { headers: { 'x-dev-token': devToken } } : {}
+        let instances = await nodeFetch(urlInstance, fetchOpts).then(res => res.json()).catch(err => err)
         let instancesList = []
         instances = Object.entries(instances)
 
