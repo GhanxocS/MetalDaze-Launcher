@@ -9,7 +9,7 @@ import Home from './panels/home.js';
 import Settings from './panels/settings.js';
 
 // import modules
-import { logger, config, changePanel, database, popup, setBackground, accountSelect, addAccount, pkg } from './utils.js';
+import { logger, config, changePanel, database, popup, setBackground, setAccent, setTextScale, setHighContrast, setLanguage, accountSelect, addAccount, pkg } from './utils.js';
 const { AZauth, Microsoft, Mojang } = require('minecraft-java-core');
 
 // libs
@@ -23,12 +23,18 @@ class Launcher {
         console.log('Initializing Launcher...');
         this.shortcut()
         await setBackground()
+        await setAccent()
+        await setTextScale()
+        await setHighContrast()
         this.initFrame();
         this.config = await config.GetConfig().then(res => res).catch(err => err);
         if (await this.config.error) return this.errorConnect()
         this.db = new database();
         await this.initConfigClient();
         this.createPanels(Login, Home, Settings);
+        // Después de createPanels(): recién ahí el HTML de los paneles
+        // (con sus [data-i18n]) está en el DOM — aplicar antes no traduce nada.
+        await setLanguage();
         this.startLauncher();
     }
 
@@ -63,25 +69,32 @@ class Launcher {
 
     initFrame() {
         console.log('Initializing Frame...')
-        const platform = os.platform() === 'darwin' ? "darwin" : "other";
+        const isDarwin = os.platform() === 'darwin'
+        // Nota: no usar una clase en <body> para esto — utils.js:setBackground()
+        // reasigna body.className por completo (theme claro/oscuro/auto) y se
+        // llevaría puesta cualquier clase de plataforma que hubiéramos agregado ahí.
+        document.querySelector('.darwin-frame').style.display = isDarwin ? 'flex' : 'none'
+        document.querySelector('.win-frame').style.display = isDarwin ? 'none' : 'flex'
+        const prefix = isDarwin ? 'mac' : 'win'
 
-        document.querySelector(`.${platform} .frame`).classList.toggle('hide')
-
-        document.querySelector(`.${platform} .frame #minimize`).addEventListener('click', () => {
+        document.getElementById(`${prefix}-minimize`).addEventListener('click', () => {
             ipcRenderer.send('main-window-minimize');
         });
 
-        let maximized = false;
-        let maximize = document.querySelector(`.${platform} .frame #maximize`);
+        // El ícono de maximizar/restaurar sigue el estado real de la ventana
+        // (evento del main process), no un contador local: la ventana ahora se
+        // puede maximizar por vías que no pasan por este botón (doble click en
+        // la barra, snap de Windows), y un contador local se desincroniza ahí.
+        let maximize = document.getElementById(`${prefix}-maximize`);
         maximize.addEventListener('click', () => {
-            if (maximized) ipcRenderer.send('main-window-maximize')
-            else ipcRenderer.send('main-window-maximize');
-            maximized = !maximized
-            maximize.classList.toggle('icon-maximize')
-            maximize.classList.toggle('icon-restore-down')
+            ipcRenderer.send('main-window-maximize')
+        });
+        ipcRenderer.on('window-maximized-change', (event, isMaximized) => {
+            maximize.classList.toggle('icon-maximize', !isMaximized)
+            maximize.classList.toggle('icon-restore-down', isMaximized)
         });
 
-        document.querySelector(`.${platform} .frame #close`).addEventListener('click', () => {
+        document.getElementById(`${prefix}-close`).addEventListener('click', () => {
             ipcRenderer.send('main-window-close');
         })
     }
@@ -110,6 +123,10 @@ class Launcher {
                 launcher_config: {
                     download_multi: 5,
                     theme: 'auto',
+                    accent_color: 'metaldaze',
+                    language: 'es',
+                    text_scale: 1,
+                    high_contrast: false,
                     closeLauncher: 'close-launcher',
                     intelEnabledMac: true
                 }
@@ -137,8 +154,12 @@ class Launcher {
 
         if (accounts?.length) {
 
+            // Solo limpiar las filas de cuentas reales — innerHTML = '' acá
+            // borraba también el botón fijo #add (viene en el HTML estático
+            // de Settings, no se recrea en ningún lado), dejando el launcher
+            // sin forma de agregar una segunda cuenta después de reiniciar.
             const accountsList = document.querySelector('.accounts-list');
-            if (accountsList) accountsList.innerHTML = '';
+            if (accountsList) accountsList.querySelectorAll('.account:not(#add)').forEach(el => el.remove());
 
             for (let account of accounts) {
                 let account_ID = account.ID
@@ -247,11 +268,15 @@ class Launcher {
             account_selected = configClient ? configClient.account_selected : null
 
             if (!account_selected) {
-                let uuid = accounts[0].ID
-                if (uuid) {
-                    configClient.account_selected = uuid
+                let firstAccount = accounts[0]
+                if (firstAccount && firstAccount.ID) {
+                    configClient.account_selected = firstAccount.ID
                     await this.db.updateData('configClient', configClient)
-                    accountSelect(uuid)
+                    // accountSelect() espera la cuenta completa (usa
+                    // .name/.profile además de .ID) — pasarle solo el ID
+                    // (como antes) hacía que quedara con data.ID undefined
+                    // y no encontrara el elemento a marcar como activo.
+                    accountSelect(firstAccount)
                 }
             }
 

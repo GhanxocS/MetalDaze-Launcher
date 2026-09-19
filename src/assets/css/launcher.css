@@ -3,14 +3,15 @@
 @import 'panels/login.css';
 @import 'panels/home.css';
 @import 'panels/settings.css';
-@import './panels/game-settings.css';
+@import 'panels/media.css';
+@import 'panels/skins.css';
 
 body {
     margin: 0;
     padding: 0;
     user-select: none;
     color: var(--color);
-    font-family: 'Poppins';
+    font-family: 'Barlow', sans-serif;
     font-weight: bolder;
 }
 
@@ -33,58 +34,111 @@ input::-webkit-inner-spin-button {
     overflow: auto;
 }
 
+/* Estado oculto por defecto (paneles/overlays que un panel abre con JS).
+   Reemplaza los style="display:none" en línea — CLAUDE.md prohíbe CSS
+   inline. El propio JS de cada panel sigue mostrando/ocultando con
+   el.style.display, que gana por especificidad sobre esta clase. */
+.is-hidden {
+    display: none;
+}
+
 .content-scroll::-webkit-scrollbar {
     width: 0;
 }
 
-.dragbar {
+/* ══ BARRA DE TÍTULO ══
+ * Ventana frameless (frame:false) con barra propia siempre visible:
+ * logo + nombre + aviso de desarrollo a la izquierda, controles nativos
+ * (min/max/cerrar) a la derecha. Toda la barra es región de arrastre
+ * salvo los botones, que se marcan no-drag explícitamente.
+ */
+:root {
+    --titlebar-h: 34px;
+}
+
+.app-titlebar {
     position: fixed;
-    top: 0px;
-    left: 0px;
-    width: 100%;
-    height: 26px;
+    top: 0; left: 0; right: 0;
+    height: var(--titlebar-h);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    z-index: 1000;
     -webkit-app-region: drag;
-    z-index: 11;
 }
 
-.darwin .frame {
-    background: transparent;
-    position: fixed;
-    top: 0px;
-    z-index: 11;
-    -webkit-app-region: no-drag;
+.app-titlebar-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding-left: 0.75rem;
+    min-width: 0;
+    overflow: hidden;
+}
+
+.app-titlebar-logo {
+    flex-shrink: 0;
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.app-titlebar-logo-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.app-titlebar-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 0.72rem;
+    letter-spacing: 0.04em;
+    color: var(--text-muted);
+    white-space: nowrap;
+}
+
+.app-titlebar-badge {
+    flex-shrink: 0;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    color: var(--red);
+    background: var(--red-dim);
+    border: 1px solid rgba(224,90,90,0.35);
+    border-radius: 4px;
+    padding: 0.1rem 0.4rem;
+    white-space: nowrap;
+}
+
+.frame {
     display: none;
-}
-
-.other .frame {
-    background: transparent;
-    position: fixed;
-    top: 0px;
-    right: 0px;
-    z-index: 11;
+    height: 100%;
     -webkit-app-region: no-drag;
-    display: none;
 }
 
-.frame.hide {
-    display: block;
-}
-
-.darwin .button-frame {
+.darwin-frame .button-frame {
     position: relative;
     display: table-cell;
     width: 20px;
     height: 26px;
+    align-self: center;
+    margin: 0 3px;
     transition: color .2s, background-color .2s;
 }
 
-.other .button-frame {
+.win-frame .button-frame {
     position: relative;
     display: table-cell;
-    width: 30px;
-    height: 26px;
+    width: 44px;
+    height: 100%;
     transition: color .2s, background-color .2s;
-    color: black;
+    color: var(--text-muted);
     cursor: pointer;
 }
 
@@ -96,6 +150,16 @@ input::-webkit-inner-spin-button {
     height: 14px;
     font-size: 14px;
     color: #f8f9f9;
+}
+
+.win-frame .button-frame:before {
+    top: 10px;
+    left: 15px;
+    color: var(--text-muted);
+}
+
+.win-frame .button-frame:hover:before {
+    color: var(--text);
 }
 
 .darwin-icon-minimize,
@@ -151,8 +215,8 @@ input::-webkit-inner-spin-button {
 .popup-tab {
     width: 320px;
     padding: 2rem 2.5rem;
-    background: #111111;
-    border: 1px solid #2a2a2a;
+    background: var(--surface);
+    border: 1px solid var(--border);
     border-radius: 10px;
     z-index: 10;
     display: flex;
@@ -165,9 +229,9 @@ input::-webkit-inner-spin-button {
     font-weight: 700;
     font-size: 1.1rem;
     letter-spacing: 0.15em;
-    color: #f0f0f0;
+    color: var(--text);
     text-align: center;
-    border-bottom: 1px solid #2a2a2a;
+    border-bottom: 1px solid var(--border);
     padding-bottom: 0.75rem;
     margin: 0;
 }
@@ -190,9 +254,9 @@ input::-webkit-inner-spin-button {
 }
 
 .popup-button {
-    background: rgba(255,255,255,0.06);
-    color: #f0f0f0;
-    border: 1px solid #3a3a3a;
+    background: var(--accent-gradient);
+    color: #0a0a0a;
+    border: none;
     border-radius: 6px;
     padding: 0.5rem 2.5rem;
     font-family: 'Barlow Condensed', sans-serif;
@@ -200,12 +264,11 @@ input::-webkit-inner-spin-button {
     font-size: 0.85rem;
     letter-spacing: 0.12em;
     cursor: pointer;
-    transition: border-color 0.18s, background 0.18s;
+    transition: filter 0.18s;
 }
 
 .popup-button:hover {
-    border-color: #f0f0f0;
-    background: rgba(255,255,255,0.1);
+    filter: brightness(1.08);
 }
 
 .panel {

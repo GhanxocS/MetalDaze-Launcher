@@ -6,8 +6,7 @@
         <!-- Branding -->
         <div class="login-brand">
             <div class="login-logo">
-                <span class="login-logo-text">MD</span>
-                <div class="login-logo-glow"></div>
+                <img src="assets/images/brand/logo-mark.png" alt="MetalDaze" class="login-logo-img">
             </div>
             <div class="login-brand-name">MetalDaze</div>
             <div class="login-brand-sub">ESTUDIO</div>
@@ -15,7 +14,7 @@
 
         <!-- ── Tab: selección de método ── -->
         <div class="login-home login-tabs">
-            <div class="login-section-title">Iniciar sesión</div>
+            <div class="login-section-title" data-i18n="login.method.title">Iniciar sesión</div>
             <div class="login-methods">
                 <button class="method-btn method-microsoft connect-home">
                     <span class="method-icon">
@@ -26,7 +25,7 @@
                             <rect x="11" y="11" width="9" height="9" fill="#ffb900"/>
                         </svg>
                     </span>
-                    <span class="method-label">Cuenta Microsoft</span>
+                    <span class="method-label" data-i18n="login.method.microsoft">Cuenta Microsoft</span>
                     <span class="method-arrow">→</span>
                 </button>
                 <button class="method-btn method-mojang connect-mojang">
@@ -35,59 +34,59 @@
                             <path d="M12 2a10 10 0 1 0 0 20A10 10 0 0 0 12 2zm0 2a8 8 0 1 1 0 16A8 8 0 0 1 12 4zM9 7v6.5l1.5.87V9h1v6.26l1.5.87V7H15v8l-3 1.73L9 15V7H9z"/>
                         </svg>
                     </span>
-                    <span class="method-label">Cuenta Mojang</span>
+                    <span class="method-label" data-i18n="login.method.mojang">Cuenta Mojang</span>
                     <span class="method-arrow">→</span>
                 </button>
             </div>
-            <button class="cancel cancel-home login-cancel" style="display: none;">← Volver</button>
+            <button class="cancel cancel-home login-cancel" style="display: none;" data-i18n="login.back">← Volver</button>
         </div>
 
         <!-- ── Tab: login offline ── -->
         <div class="login-offline login-tabs">
-            <div class="login-section-title">Modo sin conexión</div>
+            <div class="login-section-title" data-i18n="login.offline.title">Modo sin conexión</div>
             <div class="login-form">
                 <div class="login-field">
-                    <label class="login-label">Nombre de usuario</label>
-                    <input type="text" class="login-input email email-offline" placeholder="Tu apodo..." />
+                    <label class="login-label" data-i18n="login.offline.username">Nombre de usuario</label>
+                    <input type="text" class="login-input email email-offline" placeholder="Tu apodo..." data-i18n-placeholder="login.offline.username.placeholder" />
                 </div>
             </div>
             <div class="login-actions">
-                <button class="connect connect-offline login-btn-primary">Entrar</button>
-                <button class="cancel cancel-offline login-btn-ghost" style="display: none;">← Volver</button>
+                <button class="connect connect-offline login-btn-primary" data-i18n="login.enter">Entrar</button>
+                <button class="cancel cancel-offline login-btn-ghost" style="display: none;" data-i18n="login.back">← Volver</button>
             </div>
         </div>
 
         <!-- ── Tab: AZauth ── -->
         <div class="login-AZauth login-tabs">
-            <div class="login-section-title">Iniciar sesión</div>
+            <div class="login-section-title" data-i18n="login.azauth.title">Iniciar sesión</div>
             <div class="login-form">
                 <div class="login-field">
-                    <label class="login-label">Correo electrónico</label>
-                    <input type="text" class="login-input email email-AZauth" placeholder="correo@ejemplo.com" />
+                    <label class="login-label" data-i18n="login.azauth.email">Correo electrónico</label>
+                    <input type="text" class="login-input email email-AZauth" placeholder="correo@ejemplo.com" data-i18n-placeholder="login.azauth.email.placeholder" />
                 </div>
                 <div class="login-field">
-                    <label class="login-label">Contraseña</label>
+                    <label class="login-label" data-i18n="login.azauth.password">Contraseña</label>
                     <input type="password" class="login-input password password-AZauth" placeholder="••••••••" />
                 </div>
             </div>
             <div class="login-actions">
-                <button class="connect connect-AZauth login-btn-primary">Iniciar sesión</button>
-                <button class="cancel cancel-AZauth login-btn-ghost" style="display: none;">← Volver</button>
+                <button class="connect connect-AZauth login-btn-primary" data-i18n="login.azauth.submit">Iniciar sesión</button>
+                <button class="cancel cancel-AZauth login-btn-ghost" style="display: none;" data-i18n="login.back">← Volver</button>
             </div>
         </div>
 
         <!-- ── Tab: AZauth A2F ── -->
         <div class="login-AZauth-A2F login-tabs">
-            <div class="login-section-title">Verificación en 2 pasos</div>
+            <div class="login-section-title" data-i18n="login.a2f.title">Verificación en 2 pasos</div>
             <div class="login-form">
                 <div class="login-field">
-                    <label class="login-label">Código de seguridad</label>
+                    <label class="login-label" data-i18n="login.a2f.code">Código de seguridad</label>
                     <input type="text" class="login-input A2F A2F-AZauth" placeholder="000000" maxlength="6" />
                 </div>
             </div>
             <div class="login-actions">
-                <button class="connect connect-AZauth-A2F login-btn-primary">Verificar</button>
-                <button class="cancel cancel-AZauth-A2F login-btn-ghost">← Volver</button>
+                <button class="connect connect-AZauth-A2F login-btn-primary" data-i18n="login.a2f.submit">Verificar</button>
+                <button class="cancel cancel-AZauth-A2F login-btn-ghost" data-i18n="login.back">← Volver</button>
             </div>
         </div>
 

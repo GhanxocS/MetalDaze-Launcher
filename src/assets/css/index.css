@@ -11,6 +11,13 @@
     --md-white:      #f0f0f0;
     --md-muted:      #555555;
     --transition:    0.18s cubic-bezier(0.4, 0, 0.2, 1);
+
+    /* Acento de marca — mismos valores que theme.css, duplicados aquí porque
+       el splash es una ventana independiente sin las clases .dark/.global */
+    --accent-a: #2dd4bf;
+    --accent-b: #7c5cff;
+    --accent-gradient: linear-gradient(135deg, var(--accent-a), var(--accent-b));
+    --accent-glow: rgba(124, 92, 255, 0.35);
 }
 
 * {
@@ -92,6 +99,7 @@ img {
 
 /* ── Logo ── */
 .splash-logo-wrap {
+    position: relative;
     width: 100px;
     height: 100px;
     border-radius: 50%;
@@ -103,9 +111,13 @@ img {
     margin-bottom: 1.75rem;
     background: var(--md-surface);
     flex-shrink: 0;
-    transition: opacity 0.3s ease, transform 1.5s cubic-bezier(0.16,1,0.3,1);
+    transition: opacity 0.3s ease, transform 1.5s cubic-bezier(0.16,1,0.3,1), box-shadow 0.6s ease;
     opacity: 0;
     transform: translateY(20px);
+}
+
+.splash-logo-wrap.show {
+    box-shadow: 0 0 0 2px var(--accent-b), 0 0 28px var(--accent-glow);
 }
 
 .splash-logo-wrap.show {
@@ -233,7 +245,7 @@ img {
 }
 
 .progress::-webkit-progress-value {
-    background: var(--md-white);
+    background: var(--accent-gradient);
     border-radius: 2px;
 }
 

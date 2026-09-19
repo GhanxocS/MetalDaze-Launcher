@@ -4,7 +4,7 @@
  * Modificado por ITakerMetal
  */
 
-import { changePanel, accountSelect, database, Slider, config, setStatus, popup, appdata, setBackground } from '../utils.js'
+import { changePanel, accountSelect, database, Slider, config, setStatus, popup, appdata, setBackground, setAccent, ACCENT_PRESETS, isHex, setTextScale, setHighContrast, setLanguage, updateAccountsCount } from '../utils.js'
 const { ipcRenderer } = require('electron');
 const os = require('os');
 
@@ -19,12 +19,18 @@ class Settings {
         this.javaPath()
         this.resolution()
         this.launcher()
+        this.accentColor()
+        this.accessibility()
         this.storage()
         this.gameSettings()
     }
 
     navBTN() {
-        document.querySelector('#save').addEventListener('click', () => {
+        // Vuelve a Inicio y deja "Cuentas" como pestaña activa para la
+        // próxima vez que se abra Ajustes. Único botón de volver: el
+        // circular que encabeza cada pestaña (el link "INICIO" del
+        // sidebar se sacó por ser redundante con este).
+        const goHome = () => {
             let activeSettingsBTN = document.querySelector('.active-settings-BTN');
             if (activeSettingsBTN) activeSettingsBTN.classList.remove('active-settings-BTN');
             document.querySelector('#account').classList.add('active-settings-BTN');
@@ -34,17 +40,24 @@ class Settings {
             document.querySelector('#account-tab').classList.add('active-container-settings');
 
             changePanel('home');
-        });
+        };
+
+        document.querySelectorAll('.tab-back-btn').forEach(btn => btn.addEventListener('click', goHome));
 
         document.querySelector('.nav-box').addEventListener('click', e => {
-            if (e.target.classList.contains('nav-settings-btn')) {
-                let id = e.target.id;
+            // .closest() en vez de comparar e.target directo: los botones del
+            // nav ahora tienen ícono + título + subtítulo adentro, así que un
+            // click en cualquiera de esos hijos debe seguir contando como
+            // click en el botón que los contiene.
+            const btn = e.target.closest('.nav-settings-btn');
+            if (btn) {
+                let id = btn.id;
 
                 let activeSettingsBTN = document.querySelector('.active-settings-BTN');
                 let activeContainerSettings = document.querySelector('.active-container-settings');
 
                 if (activeSettingsBTN) activeSettingsBTN.classList.remove('active-settings-BTN');
-                e.target.classList.add('active-settings-BTN');
+                btn.classList.add('active-settings-BTN');
 
                 if (activeContainerSettings) activeContainerSettings.classList.remove('active-container-settings');
                 document.querySelector(`#${id}-tab`).classList.add('active-container-settings');
@@ -62,6 +75,7 @@ class Settings {
         let accountList = document.querySelector('.accounts-list');
         let existingAccounts = accountList.querySelectorAll('.account:not(#add)');
         existingAccounts.forEach(acc => acc.remove());
+        updateAccountsCount();
 
         document.querySelector('.accounts-list').addEventListener('click', async e => {
             let popupAccount = new popup()
@@ -80,6 +94,7 @@ class Settings {
 
                     await this.db.deleteData('accounts', id)
                     accountEl.remove()
+                    updateAccountsCount()
 
                     let accountListElement = document.querySelector('.accounts-list')
                     let remaining = accountListElement.querySelectorAll('.account:not(#add)')
@@ -365,6 +380,124 @@ class Settings {
                 }
             }
         })
+    }
+
+    /**
+     * accentColor() — Color del diseño en Apariencia.
+     * 6 presets tipo TwooVerse + un color personalizado (hex). Aplica en
+     * vivo con setAccent() (utils.js) y persiste en
+     * configClient.launcher_config.accent_color.
+     */
+    async accentColor() {
+        const grid = document.getElementById('accent-swatch-grid');
+        const picker = document.getElementById('accent-custom-picker');
+        const hexInput = document.getElementById('accent-custom-hex');
+        if (!grid || !picker || !hexInput) return;
+
+        const markActive = id => {
+            grid.querySelectorAll('.accent-swatch').forEach(btn => {
+                btn.classList.toggle('is-active', btn.dataset.accent === id);
+            });
+        };
+
+        let configClient = await this.db.readData('configClient');
+        let current = configClient?.launcher_config?.accent_color || 'metaldaze';
+
+        if (ACCENT_PRESETS[current]) {
+            markActive(current);
+            picker.value = ACCENT_PRESETS[current].b;
+            hexInput.value = ACCENT_PRESETS[current].b.toUpperCase();
+        } else if (isHex(current)) {
+            markActive(null);
+            picker.value = current;
+            hexInput.value = current.toUpperCase();
+        } else {
+            markActive('metaldaze');
+        }
+
+        grid.addEventListener('click', async e => {
+            const btn = e.target.closest('.accent-swatch');
+            if (!btn) return;
+            const id = btn.dataset.accent;
+            const applied = await setAccent(id);
+            markActive(id);
+            picker.value = applied.b;
+            hexInput.value = applied.b.toUpperCase();
+        });
+
+        picker.addEventListener('input', async () => {
+            const hex = picker.value;
+            hexInput.value = hex.toUpperCase();
+            markActive(null);
+            await setAccent(hex);
+        });
+
+        const applyCustomHex = async () => {
+            let hex = hexInput.value.trim();
+            if (!hex.startsWith('#')) hex = '#' + hex;
+            if (!isHex(hex)) {
+                // Valor inválido: vuelve a mostrar el último acento aplicado
+                // en vez de dejar el campo en un estado roto.
+                hexInput.value = picker.value.toUpperCase();
+                return;
+            }
+            hexInput.value = hex.toUpperCase();
+            picker.value = hex;
+            markActive(null);
+            await setAccent(hex);
+        };
+
+        hexInput.addEventListener('change', applyCustomHex);
+        hexInput.addEventListener('keydown', e => {
+            // Blur en vez de llamar applyCustomHex() directo acá: el input
+            // sigue enfocado, así que blur() dispara 'change' solo una vez
+            // y basta con ese único código; si además se llamara acá, el
+            // blur posterior lo volvía a disparar y aplicaba el mismo
+            // color dos veces (doble setAccent() + doble escritura a disco).
+            if (e.key === 'Enter') { e.preventDefault(); hexInput.blur(); }
+        });
+    }
+
+    /**
+     * accessibility() — Idioma, escala de interfaz, tamaño de texto y
+     * contraste alto, en Apariencia. Cada control llama al setter de
+     * utils.js correspondiente, que aplica en vivo y persiste.
+     */
+    async accessibility() {
+        let configClient = await this.db.readData('configClient');
+        let launcherConfig = configClient?.launcher_config || {};
+
+        // Idioma — solo persiste la preferencia (ver nota en utils.js:setLanguage).
+        const languageSelect = document.getElementById('language-select');
+        if (languageSelect) {
+            languageSelect.value = launcherConfig.language || 'es';
+            languageSelect.addEventListener('change', () => setLanguage(languageSelect.value));
+        }
+
+        // Escala de interfaz (zoom real de Electron) y tamaño de texto
+        // (font-size raíz) comparten el mismo patrón de slider + label %.
+        const wireScaleSlider = (sliderId, valueId, stored, apply) => {
+            const slider = document.getElementById(sliderId);
+            const valueEl = document.getElementById(valueId);
+            if (!slider || !valueEl) return;
+
+            const paint = v => { valueEl.textContent = `${Math.round(v * 100)}%`; };
+
+            slider.value = stored;
+            paint(stored);
+
+            slider.addEventListener('input', () => paint(parseFloat(slider.value)));
+            slider.addEventListener('change', () => apply(parseFloat(slider.value)));
+        };
+
+        wireScaleSlider('text-scale-slider', 'text-scale-value', launcherConfig.text_scale || 1, setTextScale);
+
+        // Contraste alto
+        const contrastToggle = document.getElementById('high-contrast-toggle');
+        if (contrastToggle) {
+            contrastToggle.checked = !!launcherConfig.high_contrast;
+            contrastToggle.addEventListener('change', () => setHighContrast(contrastToggle.checked));
+        }
     }
 
     /**

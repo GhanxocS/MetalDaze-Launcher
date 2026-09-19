@@ -2,19 +2,68 @@
    MetalDaze Launcher — Settings Panel
    ============================================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;900&family=Barlow:wght@300;400;500&display=swap');
-
-/* ── Variables (heredadas del home) ── */
+/* ── Variables — Settings usa sus propios nombres (--md-*) en vez de
+   alias directos a --bg/--surface del theme global porque necesita más
+   pasos de superficie que el resto del launcher (surface, surface-2,
+   negro puro para inputs). El :root de abajo es la base oscura; body.light
+   la pisa con los MISMOS valores que ya usa el resto del launcher
+   (theme.css .light), así que Settings cambia de tema junto con
+   Home/Login/Splash en vez de quedarse siempre oscuro.
+   El ACENTO (--md-accent*) es aparte: --accent-a/--accent-b/--md-accent*
+   NO cambian con el tema (igual que en theme.css) — utils.js:setAccent()
+   los pisa en vivo sobre document.body.style sin importar claro/oscuro. */
 :root {
-    --md-black:       #0a0a0a;
-    --md-dark:        #111111;
-    --md-surface:     #1a1a1a;
-    --md-border:      #2a2a2a;
-    --md-border-lit:  #3a3a3a;
-    --md-white:       #f0f0f0;
-    --md-muted:       #666666;
-    --md-accent-dim:  rgba(255,255,255,0.08);
-    --transition:     0.18s cubic-bezier(0.4, 0, 0.2, 1);
+    --md-black:       #0b0e14;
+    --md-dark:         #0b0e14;
+    --md-surface:      #151822;
+    --md-surface-2:    #1b1f2c;
+    --md-border:       rgba(255,255,255,0.05);
+    --md-border-lit:   rgba(255,255,255,0.1);
+    --md-white:        #f2f3f7;
+    --md-text-strong:  rgba(255,255,255,0.78);
+    --md-muted:        #8a8fa3;
+    --md-dim:          #8e8fac;
+    --md-accent-dim:   rgba(255,255,255,0.08);
+    --md-accent:             #7c5cff;
+    --md-accent-strong:      #2dd4bf;
+    --md-accent-ink:         #17111f;
+    --md-accent-wash-faint:  rgba(124,92,255,0.05);
+    --md-accent-wash:        rgba(124,92,255,0.12);
+    --md-accent-wash-strong: rgba(124,92,255,0.2);
+    --md-accent-glow:        rgba(124,92,255,0.35);
+}
+
+/* Tema claro — mismos valores que theme.css .light (bg/surface/texto),
+   para que Settings se vea consistente con el resto del launcher. */
+body.light {
+    --md-black:      #f2f2f4;
+    --md-dark:       #f2f2f4;
+    --md-surface:    #ffffff;
+    --md-surface-2:  #e7e8ec;
+    --md-border:     rgba(0,0,0,0.08);
+    --md-border-lit: rgba(0,0,0,0.16);
+    --md-white:      #16181c;
+    --md-text-strong: rgba(0,0,0,0.75);
+    --md-muted:      #5b606a;
+    --md-dim:        #5f6575;
+    --md-accent-dim: rgba(0,0,0,0.05);
+}
+
+/* Alto contraste (Apariencia > Accesibilidad, utils.js:setHighContrast())
+   — separado por tema: el boost de contraste de un fondo oscuro (bordes
+   más blancos) es el inverso del de un fondo claro (bordes más negros). */
+body.high-contrast.dark {
+    --md-border:     rgba(255,255,255,0.16);
+    --md-border-lit: rgba(255,255,255,0.28);
+    --md-muted:      #b7bbcf;
+    --md-dim:        #a6abc0;
+}
+
+body.high-contrast.light {
+    --md-border:     rgba(0,0,0,0.22);
+    --md-border-lit: rgba(0,0,0,0.35);
+    --md-muted:      #33363c;
+    --md-dim:        #45484f;
 }
 
 /* ============================================================
@@ -30,54 +79,764 @@
 }
 
 /* ============================================================
+   SETTINGS TAB HEAD — banda enmarcada al inicio de cada tab:
+   eyebrow pequeño + título masivo (CLAUDE.md: alto contraste
+   tipográfico) + descripción, sobre un marco con wash del acento.
+   ============================================================ */
+
+.settings-tab-head {
+    width: 100%;
+    max-width: 760px;
+    margin: 0 0 1.75rem;
+    padding: 2rem 2.25rem;
+    border-radius: 16px;
+    border: 1px solid var(--md-border);
+    background:
+        radial-gradient(circle at 100% 0%, var(--md-accent-wash), transparent 55%),
+        radial-gradient(circle at 0% 100%, var(--md-accent-wash-faint), transparent 50%),
+        var(--md-surface);
+    position: relative;
+}
+
+.settings-tab-head-row {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    min-width: 0;
+}
+
+/* Botón circular de volver, a la izquierda del título — misma acción
+   que "INICIO" en el sidebar (settings.js las une en un solo handler). */
+.tab-back-btn {
+    flex-shrink: 0;
+    width: 52px;
+    height: 52px;
+    border-radius: 999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--md-surface-2);
+    border: 1px solid var(--md-border);
+    color: var(--md-muted);
+    cursor: pointer;
+    transition: color var(--transition), border-color var(--transition), background var(--transition), transform var(--transition);
+}
+
+.tab-back-btn svg {
+    width: 20px;
+    height: 20px;
+}
+
+.tab-back-btn:hover {
+    color: var(--md-accent);
+    border-color: var(--md-accent-glow);
+    background: var(--md-accent-wash);
+}
+
+.tab-back-btn:active {
+    transform: scale(0.94);
+}
+
+.settings-tab-eyebrow {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 0.72rem;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--md-muted);
+    opacity: 0.7;
+    margin-bottom: 0.6rem;
+}
+
+.settings-tab-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: clamp(2.1rem, 3.4vw, 2.9rem);
+    letter-spacing: -0.01em;
+    color: var(--md-white);
+    line-height: 0.95;
+}
+
+.settings-tab-desc {
+    font-family: 'Barlow', sans-serif;
+    font-weight: 300;
+    font-size: 0.85rem;
+    color: var(--md-muted);
+    line-height: 1.65;
+    margin-top: 0.85rem;
+    max-width: 58ch;
+}
+
+/* Variante del marco con un contador a la derecha (usada en Cuentas) */
+.settings-tab-head-split {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+}
+
+.settings-tab-count {
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    text-align: right;
+    padding-left: 1.5rem;
+    border-left: 1px solid var(--md-border);
+}
+
+.settings-tab-count-value {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: 2.25rem;
+    line-height: 1;
+    color: var(--md-white);
+}
+
+.settings-tab-count-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--md-muted);
+    line-height: 1.4;
+    margin-top: 0.35rem;
+}
+
+/* ============================================================
+   ACCOUNT HERO — barra grande de la cuenta activa (Cuentas).
+   Sin acción de borrar acá a propósito: eso vive en la lista de
+   abajo. Esta barra es solo "con quién estoy jugando ahora".
+   ============================================================ */
+
+.account-hero {
+    width: 100%;
+    max-width: 760px;
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    background: var(--md-surface);
+    border: 1px solid var(--md-border);
+    border-radius: 16px;
+    padding: 1.5rem 1.75rem;
+    margin-bottom: 1.75rem;
+}
+
+.account-hero-avatar {
+    flex-shrink: 0;
+    width: 64px;
+    height: 64px;
+    border-radius: 14px;
+    background-color: var(--md-surface-2);
+    background-image: url(../../images/default/setve.png);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    image-rendering: pixelated;
+    border: 1px solid var(--md-border);
+}
+
+.account-hero-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.account-hero-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--md-muted);
+}
+
+.account-hero-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 1.5rem;
+    letter-spacing: 0.01em;
+    color: var(--md-white);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.account-hero-tag {
+    flex-shrink: 0;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 0.4rem 0.9rem;
+    border-radius: 999px;
+    color: var(--md-dim);
+    background: var(--md-accent-dim);
+    border: 1px solid var(--md-border);
+    opacity: 0.6;
+}
+
+/* Solo cuando hay una cuenta realmente activa (accountSelect() la marca)
+   el tag y el avatar se ganan el acento — sigue siendo el único acento
+   real de la pantalla (Rare Accent Rule). */
+.account-hero.account-hero-active {
+    border-color: var(--md-accent-wash-strong);
+}
+
+.account-hero.account-hero-active .account-hero-avatar {
+    border-color: var(--md-accent);
+}
+
+.account-hero.account-hero-active .account-hero-tag {
+    color: var(--md-accent-ink);
+    background: var(--md-accent);
+    border-color: transparent;
+    opacity: 1;
+}
+
+.settings-autosave-hint {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--md-dim);
+    width: 100%;
+    max-width: 760px;
+    text-align: right;
+    margin-top: 0.5rem;
+}
+
+/* ============================================================
+   SETTING CARD — icono + título/descripción + control
+   Unidad base para un ajuste individual dentro de una tab.
+   ============================================================ */
+
+.setting-card {
+    background: var(--md-surface);
+    border: 1px solid var(--md-border);
+    width: 100%;
+    max-width: 760px;
+    border-radius: 16px;
+    padding: 1.75rem 2rem;
+    margin-bottom: 1rem;
+    position: relative;
+    transition: border-color var(--transition), transform var(--transition), box-shadow var(--transition);
+}
+
+.setting-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    border-radius: 16px 16px 0 0;
+    background: var(--md-accent);
+    opacity: 0;
+    transition: opacity var(--transition);
+}
+
+.setting-card:hover {
+    border-color: var(--md-border-lit);
+    transform: translateY(-2px);
+    box-shadow: 0 0 0 1px var(--md-accent-wash-strong), 0 14px 32px rgba(0,0,0,0.4);
+}
+
+.setting-card:hover::before {
+    opacity: 1;
+}
+
+.setting-card-row {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+}
+
+.setting-card-icon {
+    flex-shrink: 0;
+    width: 56px;
+    height: 56px;
+    border-radius: 14px;
+    background: linear-gradient(160deg, var(--md-surface-2), var(--md-accent-wash));
+    border: 1px solid var(--md-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--md-white);
+}
+
+.setting-card-icon svg {
+    width: 22px;
+    height: 22px;
+}
+
+.setting-card-text {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.setting-card-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 1.15rem;
+    letter-spacing: 0.01em;
+    color: var(--md-white);
+}
+
+.setting-card-desc {
+    font-family: 'Barlow', sans-serif;
+    font-weight: 300;
+    font-size: 0.8rem;
+    color: var(--md-muted);
+    line-height: 1.55;
+}
+
+.setting-card-desc .java-path-txt {
+    color: var(--md-text-strong);
+}
+
+.setting-card-control {
+    flex-shrink: 0;
+}
+
+/* Variante "stack": el control ocupa el ancho completo debajo de la fila
+   icono+texto, en vez de ir al lado (usado por sliders y controles anchos). */
+.setting-card-stack .setting-card-row {
+    margin-bottom: 1.75rem;
+}
+
+/* Fila de mini-stats al pie de una tarjeta, separadas por un divisor —
+   p.ej. RAM total / RAM disponible dentro de la tarjeta de Memoria. */
+.setting-card-stats {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    background: var(--md-black);
+    border: 1px solid var(--md-border);
+    border-radius: 10px;
+    padding: 1rem 0;
+    margin-top: 1.75rem;
+}
+
+.setting-card-stat {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.setting-card-stat-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    color: var(--md-muted);
+}
+
+.setting-card-stat-value {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 1.3rem;
+    letter-spacing: 0.06em;
+    color: var(--md-white);
+}
+
+.setting-card-stat-divider {
+    width: 1px;
+    height: 2rem;
+    background: var(--md-border);
+    flex-shrink: 0;
+}
+
+/* ============================================================
+   ACCENT SWATCHES — presets + color personalizado (Apariencia)
+   ============================================================ */
+
+.accent-swatch-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+}
+
+.accent-swatch {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 1rem 0.5rem;
+    background: var(--md-surface-2);
+    border: 1px solid var(--md-border);
+    border-radius: 12px;
+    cursor: pointer;
+    font: inherit;
+    transition: border-color var(--transition), background var(--transition), transform var(--transition);
+}
+
+.accent-swatch:hover {
+    border-color: var(--md-border-lit);
+    transform: translateY(-1px);
+}
+
+.accent-swatch.is-active {
+    border-color: var(--swatch-b);
+    background: var(--md-accent-dim);
+}
+
+.accent-swatch-dot {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--swatch-a), var(--swatch-b));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08) inset;
+}
+
+.accent-swatch-check {
+    width: 16px;
+    height: 16px;
+    color: #fff;
+    opacity: 0;
+    transform: scale(0.6);
+    transition: opacity var(--transition), transform var(--transition);
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.5));
+}
+
+.accent-swatch.is-active .accent-swatch-check {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.accent-swatch-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 0.78rem;
+    letter-spacing: 0.03em;
+    color: var(--md-muted);
+}
+
+.accent-swatch.is-active .accent-swatch-label {
+    color: var(--md-white);
+}
+
+.accent-custom-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.25rem;
+    padding-top: 1.5rem;
+    margin-top: 1.5rem;
+    border-top: 1px solid var(--md-border);
+}
+
+.accent-custom-text {
+    min-width: 0;
+}
+
+.field-label-inline {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 0.92rem;
+    color: var(--md-white);
+}
+
+.accent-custom-hint {
+    font-family: 'Barlow', sans-serif;
+    font-weight: 300;
+    font-size: 0.78rem;
+    color: var(--md-dim);
+    margin-top: 0.2rem;
+}
+
+.accent-custom-controls {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+/* input[type=color] nativo: se saca el chrome por defecto del navegador
+   (borde/padding cuadrado) para que quede como una pastilla redonda,
+   consistente con .accent-swatch-dot. */
+.accent-custom-picker {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border: 1px solid var(--md-border);
+    border-radius: 50%;
+    background: none;
+    cursor: pointer;
+}
+
+.accent-custom-picker::-webkit-color-swatch-wrapper {
+    padding: 2px;
+    border-radius: 50%;
+}
+
+.accent-custom-picker::-webkit-color-swatch {
+    border: none;
+    border-radius: 50%;
+}
+
+.accent-custom-hex {
+    width: 6.5rem;
+    background: var(--md-black);
+    border: 1px solid var(--md-border);
+    border-radius: 8px;
+    color: var(--md-white);
+    padding: 0.6rem 0.75rem;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 0.9rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    transition: border-color var(--transition);
+}
+
+.accent-custom-hex:focus {
+    outline: none;
+    border-color: var(--md-accent);
+    box-shadow: 0 0 0 3px var(--md-accent-glow);
+}
+
+/* ============================================================
+   IDIOMA — dropdown nativo restilizado
+   ============================================================ */
+
+.select-wrap {
+    position: relative;
+    margin-top: 1.25rem;
+}
+
+.field-select {
+    width: 100%;
+    appearance: none;
+    -webkit-appearance: none;
+    background: var(--md-black);
+    border: 1px solid var(--md-border);
+    border-radius: 8px;
+    color: var(--md-white);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 0.95rem;
+    letter-spacing: 0.02em;
+    padding: 0.85rem 2.75rem 0.85rem 1rem;
+    cursor: pointer;
+    transition: border-color var(--transition);
+}
+
+.field-select:hover {
+    border-color: var(--md-border-lit);
+}
+
+.field-select:focus {
+    outline: none;
+    border-color: var(--md-accent);
+    box-shadow: 0 0 0 3px var(--md-accent-glow);
+}
+
+.field-select option {
+    background: var(--md-surface-2);
+    color: var(--md-white);
+}
+
+.select-chevron {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 16px;
+    height: 16px;
+    color: var(--md-dim);
+    pointer-events: none;
+}
+
+.setting-card-note {
+    margin-top: 1rem;
+    font-family: 'Barlow', sans-serif;
+    font-weight: 300;
+    font-size: 0.74rem;
+    color: var(--md-dim);
+    line-height: 1.5;
+}
+
+/* ============================================================
+   ACCESIBILIDAD — sliders de escala + toggle de alto contraste
+   ============================================================ */
+
+.scale-slider-value {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    letter-spacing: 0.03em;
+    color: var(--md-white);
+    min-width: 3.5rem;
+    text-align: right;
+}
+
+.scale-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 3px;
+    margin-top: 1.5rem;
+    background: var(--md-border-lit);
+    border-radius: 3px;
+    outline: none;
+    cursor: pointer;
+}
+
+.scale-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--md-accent);
+    cursor: pointer;
+    border: 2px solid var(--md-black);
+    box-shadow: 0 0 0 1px var(--md-accent);
+    transition: transform 0.1s ease;
+}
+
+.scale-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.15);
+}
+
+/* Toggle accesible (checkbox real, no el div .game-toggle de la tab
+   Juego — ese lo recorre gameSettings() para options.txt y no debe
+   confundirse con preferencias del launcher). */
+.md-toggle-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    cursor: pointer;
+}
+
+.md-toggle-row-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    min-width: 0;
+}
+
+.md-toggle {
+    flex-shrink: 0;
+    position: relative;
+    display: inline-flex;
+}
+
+.md-toggle input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+.md-toggle-track {
+    width: 46px;
+    height: 26px;
+    border-radius: 999px;
+    background: var(--md-surface-2);
+    border: 1px solid var(--md-border);
+    display: block;
+    position: relative;
+    transition: background var(--transition), border-color var(--transition);
+}
+
+.md-toggle-thumb {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--md-muted);
+    transition: transform var(--transition), background var(--transition);
+}
+
+.md-toggle input:checked + .md-toggle-track {
+    background: var(--md-accent);
+    border-color: transparent;
+}
+
+.md-toggle input:checked + .md-toggle-track .md-toggle-thumb {
+    transform: translateX(20px);
+    background: var(--md-accent-ink);
+}
+
+.md-toggle input:focus-visible + .md-toggle-track {
+    box-shadow: 0 0 0 3px var(--md-accent-glow);
+}
+
+/* ============================================================
    NAV SIDEBAR
    ============================================================ */
 
 .nav-settings {
-    width: 210px;
-    min-width: 210px;
+    width: 270px;
+    min-width: 270px;
     background: var(--md-dark);
     border-right: 1px solid var(--md-border);
     display: flex;
     flex-direction: column;
     align-items: stretch;
-    padding: 2rem 0 0;
+    padding: 2.25rem 0;
     position: fixed;
     left: 0;
-    top: 0;
+    top: var(--titlebar-h);
     bottom: 0;
-    justify-content: space-between;
+    overflow-y: auto;
 }
 
 .nav-brand {
     font-family: 'Barlow Condensed', sans-serif;
     font-weight: 700;
-    font-size: 0.65rem;
-    letter-spacing: 0.25em;
+    font-size: 0.75rem;
+    letter-spacing: 0.28em;
     color: var(--md-muted);
-    padding: 0 1.5rem 1.5rem;
+    padding: 0 1.75rem 1.5rem;
     border-bottom: 1px solid var(--md-border);
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.75rem;
 }
 
 .nav-box {
     display: flex;
     flex-direction: column;
     flex: 1;
-    gap: 0.2rem;
-    padding: 0 0.75rem;
+    gap: 0.3rem;
+    padding: 0 1rem;
 }
 
 .nav-settings-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
     font-family: 'Barlow Condensed', sans-serif;
     font-weight: 600;
     font-size: 0.88rem;
     letter-spacing: 0.12em;
     color: var(--md-muted);
-    padding: 0.75rem 1rem;
-    border-radius: 6px;
+    padding: 0.8rem 0.85rem;
+    border-radius: 12px;
     cursor: pointer;
-    transition: color var(--transition), background var(--transition);
+    transition: color var(--transition), background var(--transition), border-color var(--transition);
     border: 1px solid transparent;
 }
 
@@ -86,27 +845,63 @@
     background: var(--md-accent-dim);
 }
 
+/* Ícono en círculo — solo lo tienen los botones de categoría, no #save */
+.nav-settings-icon {
+    flex-shrink: 0;
+    width: 42px;
+    height: 42px;
+    border-radius: 11px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--md-surface);
+    color: var(--md-muted);
+    transition: background var(--transition), color var(--transition);
+}
+
+/* Título + subtítulo apilados — reemplaza el texto de una sola línea */
+.nav-settings-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    min-width: 0;
+    text-align: left;
+}
+
+.nav-settings-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    letter-spacing: 0.02em;
+    text-transform: none;
+    color: var(--md-white);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.nav-settings-subtitle {
+    font-family: 'Barlow', sans-serif;
+    font-weight: 300;
+    font-size: 0.78rem;
+    letter-spacing: 0.02em;
+    color: var(--md-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 .active-settings-BTN {
     color: var(--md-white);
-    background: var(--md-accent-dim);
-    border-color: var(--md-border-lit);
+    background: var(--md-accent-wash);
+    border-color: var(--md-accent-wash-strong);
+    border-left: 2px solid var(--md-accent);
+    padding-left: calc(0.85rem - 1px);
 }
 
-.nav-back {
-    margin: 0 0.75rem 1.5rem;
-    color: var(--md-muted);
-    font-size: 0.75rem;
-    letter-spacing: 0.08em;
-    border-top: 1px solid var(--md-border);
-    border-radius: 6px;
-    padding: 0.85rem;
-    cursor: pointer;
-    transition: color var(--transition), background var(--transition);
-}
-
-.nav-back:hover {
-    color: var(--md-white);
-    background: none;
+.active-settings-BTN .nav-settings-icon {
+    background: var(--md-accent);
+    color: var(--md-accent-ink);
 }
 
 /* ============================================================
@@ -117,15 +912,15 @@
     position: absolute;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    left: 210px;
+    align-items: flex-start;
+    left: 270px;
     right: 0;
-    top: 0;
+    top: var(--titlebar-h);
     bottom: 0;
     opacity: 0;
     pointer-events: none;
     overflow-y: auto;
-    padding: 2rem;
+    padding: 3rem 3.5rem 4rem;
     scrollbar-width: none;
 }
 
@@ -143,15 +938,15 @@
 .titre-tab {
     font-family: 'Barlow Condensed', sans-serif;
     font-weight: 700;
-    font-size: 0.65rem;
-    letter-spacing: 0.25em;
+    font-size: 0.7rem;
+    letter-spacing: 0.3em;
     color: var(--md-muted);
     display: flex;
     align-items: center;
     gap: 0.75rem;
     width: 100%;
-    max-width: 700px;
-    margin: 1.5rem 0 0.75rem;
+    max-width: 760px;
+    margin: 2rem 0 1rem;
 }
 
 .titre-tab:first-child {
@@ -161,7 +956,7 @@
 .tab-line {
     flex: 1;
     height: 1px;
-    background: var(--md-border);
+    background: linear-gradient(90deg, var(--md-border), transparent);
 }
 
 /* Settings card */
@@ -169,22 +964,33 @@
     background: var(--md-surface);
     border: 1px solid var(--md-border);
     width: 100%;
-    max-width: 700px;
-    border-radius: 8px;
-    padding: 1.25rem 1.5rem;
-    margin-bottom: 0.5rem;
+    max-width: 760px;
+    border-radius: 14px;
+    padding: 1.75rem 2rem;
+    margin-bottom: 0.75rem;
+    transition: border-color var(--transition);
+}
+
+.settings-elements-box:hover {
+    border-color: var(--md-border-lit);
 }
 
 .setting-text {
     font-size: 0.82rem;
     font-weight: 300;
-    color: rgba(240,240,240,0.55);
+    color: var(--md-muted);
     line-height: 1.6;
     margin-bottom: 1rem;
+    max-width: 65ch;
+}
+
+.setting-text strong {
+    color: var(--md-text-strong);
+    font-weight: 600;
 }
 
 .setting-text span {
-    color: rgba(240,240,240,0.35);
+    color: var(--md-dim);
     font-size: 0.75rem;
 }
 
@@ -212,81 +1018,124 @@
 
 .accounts-list {
     width: 100%;
-    max-width: 700px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.75rem;
-    justify-content: center;
+    max-width: 760px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1rem;
     align-content: flex-start;
-    max-height: calc(100% - 4rem);
+    margin-bottom: 1rem;
 }
 
 .account {
+    position: relative;
     background: var(--md-surface);
     border: 1px solid var(--md-border);
     display: flex;
     align-items: center;
-    gap: 1rem;
-    width: calc(50% - 0.375rem);
-    min-width: 280px;
-    padding: 0.85rem 1rem;
-    border-radius: 8px;
+    gap: 1.1rem;
+    padding: 1.25rem 1.4rem;
+    border-radius: 14px;
     cursor: pointer;
-    transition: border-color var(--transition), background var(--transition);
+    transition: border-color var(--transition), background var(--transition), transform var(--transition), box-shadow var(--transition);
 }
 
 .account:hover {
     border-color: var(--md-border-lit);
-    background: rgba(255,255,255,0.04);
+    background: var(--md-accent-dim);
+    transform: translateY(-2px);
+    box-shadow: 0 0 0 1px var(--md-accent-wash-strong), 0 10px 26px rgba(0,0,0,0.4);
 }
 
+/* La cuenta activa es la única que se gana el acento — selección real,
+   no decoración (Rare Accent Rule). */
 .account-select {
-    border-color: var(--md-white) !important;
+    border-color: transparent !important;
+    box-shadow: 0 0 0 1px var(--md-accent), 0 0 0 5px var(--md-accent-wash), 0 10px 26px rgba(0,0,0,0.4);
+}
+
+.account-select .profile-image {
+    border-color: var(--md-accent);
 }
 
 .accounts-list #add {
     justify-content: flex-start;
     cursor: pointer;
+    border-style: dashed;
+    border-color: var(--md-border-lit);
+}
+
+.accounts-list #add:hover {
+    border-color: var(--md-accent);
+    background: var(--md-accent-wash-faint);
 }
 
 .add-profile {
-    width: 44px;
-    height: 44px;
-    font-size: 1.5rem;
+    width: 56px;
+    height: 56px;
     display: flex;
     justify-content: center;
     align-items: center;
-    border: 1px solid var(--md-border-lit);
-    border-radius: 6px;
-    color: var(--md-muted);
+    background: linear-gradient(160deg, var(--md-surface-2), var(--md-accent-wash));
+    border: 1px solid var(--md-border);
+    border-radius: 14px;
+    color: var(--md-white);
     pointer-events: none;
     flex-shrink: 0;
 }
 
+.add-profile svg {
+    width: 22px;
+    height: 22px;
+}
+
+.add-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    pointer-events: none;
+}
+
 .add-text-profile {
     font-family: 'Barlow Condensed', sans-serif;
-    font-size: 0.9rem;
-    letter-spacing: 0.08em;
+    font-weight: 700;
+    font-size: 1rem;
+    letter-spacing: 0.02em;
+    color: var(--md-white);
+    pointer-events: none;
+}
+
+.add-text-desc {
+    font-family: 'Barlow', sans-serif;
+    font-weight: 300;
+    font-size: 0.75rem;
     color: var(--md-muted);
     pointer-events: none;
 }
 
 .profile-image {
-    width: 44px;
-    height: 44px;
-    background: url(../../images/default/setve.png);
+    width: 56px;
+    height: 56px;
+    box-sizing: border-box;
+    background-color: var(--md-surface-2);
+    background-image: url(../../images/default/setve.png);
+    background-repeat: no-repeat;
+    background-position: center;
     background-size: cover;
-    border-radius: 6px;
+    border-radius: 14px;
     pointer-events: none;
     image-rendering: pixelated;
     flex-shrink: 0;
-    border: 1px solid var(--md-border-lit);
+    border: 1px solid var(--md-border);
+    transition: border-color var(--transition);
 }
 
 .profile-infos {
     flex: 1;
     min-width: 0;
     pointer-events: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
 }
 
 .profile-pseudo {
@@ -294,9 +1143,10 @@
     text-overflow: ellipsis;
     white-space: nowrap;
     font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 600;
-    font-size: 1rem;
-    letter-spacing: 0.05em;
+    font-weight: 700;
+    font-size: 1.1rem;
+    letter-spacing: 0.02em;
+    color: var(--md-white);
     pointer-events: none;
 }
 
@@ -304,28 +1154,38 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    font-family: 'Barlow', sans-serif;
+    font-weight: 300;
     font-size: 0.7rem;
     color: var(--md-muted);
     pointer-events: none;
-    margin-top: 0.15rem;
 }
 
+/* Oculto en reposo — aparece al pasar el mouse sobre la tarjeta, así la
+   tarjeta no compite visualmente con un cuadro rojo todo el tiempo. */
 .delete-profile {
-    width: 36px;
-    height: 36px;
-    border-radius: 6px;
-    font-size: 1.2rem;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    font-size: 1.1rem;
     display: flex;
     justify-content: center;
     align-items: center;
-    color: #ff4444;
+    color: var(--red);
     cursor: pointer;
-    transition: background var(--transition);
+    opacity: 0;
+    transform: translateX(4px);
+    transition: opacity var(--transition), transform var(--transition), background var(--transition);
     flex-shrink: 0;
 }
 
+.account:hover .delete-profile {
+    opacity: 1;
+    transform: translateX(0);
+}
+
 .delete-profile:hover {
-    background: rgba(255,68,68,0.12);
+    background: var(--red-dim);
 }
 
 .delete-profile-icon {
@@ -338,9 +1198,9 @@
 
 .memory-slider {
     position: relative;
-    margin: 1.5rem 1rem 1rem 0;
+    margin: 0.75rem 0 0;
     height: 18px;
-    width: 65%;
+    width: 100%;
     user-select: none;
 }
 
@@ -400,31 +1260,27 @@
     background: var(--md-white);
 }
 
-.ram-info-block {
-    font-size: 0.82rem;
-    font-weight: 300;
-    color: rgba(240,240,240,0.5);
-    line-height: 1.9;
-    font-family: 'Barlow', sans-serif;
-    flex-shrink: 0;
-    text-align: right;
-}
-
-.ram-info-block span {
-    color: var(--md-white);
-    font-weight: 500;
-}
-
 /* Java path */
+.java-path-row {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    width: 100%;
+}
+
 .java-path-input-text {
+    flex: 1;
+    min-width: 0;
     background: var(--md-black);
     border: 1px solid var(--md-border);
-    color: rgba(240,240,240,0.5);
+    color: var(--md-muted);
     padding: 0.5rem 0.85rem;
     border-radius: 6px;
-    width: 50%;
     font-family: 'Barlow', sans-serif;
     font-size: 0.8rem;
+    cursor: default;
+    -webkit-text-fill-color: var(--md-muted);
+    opacity: 1;
 }
 
 .java-path-input-file { display: none; }
@@ -433,6 +1289,7 @@
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    flex-shrink: 0;
 }
 
 .java-path-btn {
@@ -451,7 +1308,7 @@
 
 .java-path-btn:hover {
     border-color: var(--md-white);
-    background: rgba(255,255,255,0.1);
+    background: var(--md-border-lit);
 }
 
 /* ============================================================
@@ -568,9 +1425,9 @@
 }
 
 .active-theme {
-    color: var(--md-white) !important;
-    border-color: var(--md-white) !important;
-    background: var(--md-accent-dim) !important;
+    color: var(--md-accent-ink) !important;
+    border-color: transparent !important;
+    background: var(--md-accent) !important;
 }
 
 /* Close behavior buttons */
@@ -601,9 +1458,9 @@
 }
 
 .active-close {
-    color: var(--md-white) !important;
-    border-color: var(--md-white) !important;
-    background: var(--md-accent-dim) !important;
+    color: var(--md-accent-ink) !important;
+    border-color: transparent !important;
+    background: var(--md-accent) !important;
 }
 
 /* ============================================================
@@ -616,37 +1473,32 @@
     gap: 2rem;
     background: var(--md-surface);
     border: 1px solid var(--md-border);
-    border-radius: 10px;
-    padding: 2rem 2.5rem;
+    border-radius: 16px;
+    padding: 2.25rem 2.5rem;
     width: 100%;
-    max-width: 700px;
-    margin-bottom: 0.5rem;
+    max-width: 760px;
+    margin-bottom: 0.75rem;
     box-sizing: border-box;
 }
 
 .about-logo-wrapper {
     position: relative;
-    width: 72px;
-    height: 72px;
+    width: 88px;
+    height: 88px;
     flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: var(--md-dark);
-    border: 1px solid var(--md-border-lit);
-    border-radius: 14px;
 }
 
 .about-logo-ring {
     display: none;
 }
 
-.about-logo-text {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 900;
-    font-size: 1.5rem;
-    letter-spacing: 0.1em;
-    color: var(--md-white);
+.about-logo-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
 }
 
 .about-info {
@@ -658,11 +1510,11 @@
 
 .about-title {
     font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 700;
-    font-size: 1.3rem;
-    letter-spacing: 0.08em;
+    font-weight: 900;
+    font-size: 1.6rem;
+    letter-spacing: 0.02em;
     color: var(--md-white);
-    line-height: 1.2;
+    line-height: 1.15;
 }
 
 .about-subtitle {
@@ -701,7 +1553,7 @@
 }
 
 .about-credit-by span {
-    color: rgba(240,240,240,0.8);
+    color: var(--md-text-strong);
     font-weight: 500;
 }
 
@@ -733,8 +1585,7 @@
 }
 
 /* ============================================================
-   ALMACENAMIENTO — bloque en launcher-tab (v1.1)
-   Pegar al final de settings.css
+   ALMACENAMIENTO — pestaña propia (antes vivía dentro de "Launcher")
    ============================================================ */
 
 /* ── Fila ruta + botón ── */
@@ -749,7 +1600,7 @@
     flex: 1;
     background: var(--md-black);
     border: 1px solid var(--md-border);
-    color: rgba(240,240,240,0.45);
+    color: var(--md-dim);
     padding: 0.5rem 0.85rem;
     border-radius: 6px;
     font-family: 'Barlow', sans-serif;
@@ -757,7 +1608,7 @@
     /* cursor de texto aunque esté disabled, para poder seleccionar y copiar */
     cursor: default;
     /* quita el estilo grayed-out que ponen algunos SO al usar disabled */
-    -webkit-text-fill-color: rgba(240,240,240,0.45);
+    -webkit-text-fill-color: var(--md-dim);
     opacity: 1;
 }
 
@@ -782,7 +1633,7 @@
 
 .storage-open-btn:hover {
     border-color: var(--md-white);
-    background: rgba(255,255,255,0.1);
+    background: var(--md-border-lit);
 }
 
 .storage-open-btn svg {
@@ -846,7 +1697,7 @@
 .storage-bar-fill {
     height: 100%;
     width: 0%;
-    background: var(--md-white);
+    background: var(--md-accent);
     border-radius: 4px;
     transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -922,10 +1773,10 @@
 }
  
 .game-toggle.on {
-    background: var(--md-white);
-    border-color: var(--md-white);
+    background: var(--md-accent);
+    border-color: transparent;
 }
- 
+
 .game-toggle-knob {
     position: absolute;
     top: 2px;
@@ -936,10 +1787,10 @@
     border-radius: 50%;
     transition: transform var(--transition), background var(--transition);
 }
- 
+
 .game-toggle.on .game-toggle-knob {
     transform: translateX(20px);
-    background: var(--md-black);
+    background: var(--md-accent-ink);
 }
  
 /* ── Slider ── */
@@ -969,7 +1820,7 @@
     width: 14px;
     height: 14px;
     border-radius: 50%;
-    background: var(--md-white);
+    background: var(--md-accent);
     cursor: pointer;
     border: none;
     transition: transform 0.1s ease;
@@ -1018,16 +1869,15 @@
     font-size: 0.82rem;
     letter-spacing: 0.15em;
     padding: 0.7rem 1.5rem;
-    background: var(--md-accent-dim);
-    border: 1px solid var(--md-border-lit);
+    background: var(--md-accent);
+    border: none;
     border-radius: 6px;
-    color: var(--md-white);
+    color: var(--md-accent-ink);
     cursor: pointer;
-    transition: border-color var(--transition), background var(--transition);
+    transition: filter var(--transition);
     white-space: nowrap;
 }
- 
+
 .game-save-btn:hover {
-    border-color: var(--md-white);
-    background: rgba(255,255,255,0.12);
+    filter: brightness(1.08);
 }

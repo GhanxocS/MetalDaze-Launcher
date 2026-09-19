@@ -1,0 +1,192 @@
+/* ============================================================
+   MetalDaze Launcher — Media (capturas de pantalla)
+   Vista superpuesta dentro de Home, mismo patrón que .all-news-panel:
+   sin flecha de "volver", la fila de categorías de arriba nunca desaparece,
+   se cambia de vista clickeando otra categoría del nav.
+   ============================================================ */
+
+.media-overlay {
+    position: fixed;
+    top: calc(var(--titlebar-h) + var(--topnav-h)); bottom: 0;
+    left: 0; right: 0;
+    background: rgba(10,11,13,0.97);
+    backdrop-filter: blur(20px);
+    z-index: 90;
+    display: flex;
+    flex-direction: column;
+    padding: 1.75rem 3rem;
+}
+
+/* ══ FILTROS ══ */
+.media-filters {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin-top: 1.25rem;
+}
+
+.media-filter-group {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.media-filter-group label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.68rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+}
+
+.media-filter-group select {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.8rem;
+    letter-spacing: 0.05em;
+    padding: 0.4rem 0.75rem;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: border-color var(--transition);
+}
+
+.media-filter-group select:hover { border-color: var(--border-lit); }
+
+.media-filter-group select:focus-visible {
+    outline: 2px solid var(--accent-b);
+    outline-offset: 2px;
+}
+
+.media-count {
+    margin-left: auto;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    color: var(--text-dim);
+}
+
+/* ══ GRILLA (3 columnas, tantas filas como haga falta) ══ */
+.media-grid-wrap {
+    flex: 1;
+    overflow-y: auto;
+    margin-top: 1rem;
+    scrollbar-width: none;
+}
+
+.media-grid-wrap::-webkit-scrollbar { display: none; }
+
+.media-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+}
+
+.media-cell {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    cursor: pointer;
+    transition: border-color var(--transition), transform var(--transition);
+}
+
+.media-cell:hover {
+    border-color: var(--border-lit);
+    transform: translateY(-2px);
+}
+
+.media-cell:focus-visible {
+    outline: 2px solid var(--accent-b);
+    outline-offset: 2px;
+}
+
+.media-cell img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.media-cell-meta {
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    padding: 0.4rem 0.6rem;
+    background: linear-gradient(to top, rgba(0,0,0,0.75), transparent);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.media-empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 0;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.9rem;
+    letter-spacing: 0.06em;
+    color: var(--text-dim);
+    text-align: center;
+}
+
+/* ══ VISOR (lightbox) ══ */
+.media-lightbox {
+    position: fixed;
+    inset: 0;
+    background: rgba(5,5,6,0.92);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 900;
+    padding: 3rem;
+}
+
+.media-lightbox img {
+    max-width: 100%;
+    max-height: 80vh;
+    border-radius: var(--radius-md);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+}
+
+.media-lightbox-meta {
+    position: absolute;
+    bottom: 2rem; left: 0; right: 0;
+    text-align: center;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.8rem;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+}
+
+.media-lightbox-close {
+    position: absolute;
+    top: 1.5rem; right: 1.5rem;
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid var(--border-lit);
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: color var(--transition), background var(--transition);
+}
+
+.media-lightbox-close:hover { color: var(--text); background: rgba(255,255,255,0.1); }
+
+.media-lightbox-close:focus-visible {
+    outline: 2px solid var(--accent-b);
+    outline-offset: 2px;
+}

@@ -27,7 +27,8 @@ function createWindow() {
         height: 650,
         minWidth: 480,
         minHeight: 650,
-        resizable: false,
+        resizable: true,
+        maximizable: true,
         icon: `./src/assets/images/icon/icon.${os.platform() === "win32" ? "ico" : "png"}`,
         frame: false,
         show: false,
@@ -38,6 +39,19 @@ function createWindow() {
     });
     Menu.setApplicationMenu(null);
     mainWindow.setMenuBarVisibility(false);
+    // La ventana ahora es resizable/maximizable de verdad (ver app.js), así que
+    // el usuario puede maximizarla por vías que no pasan por nuestro botón
+    // (doble click en la barra, snap de Windows). Avisamos al renderer del
+    // estado real para que el ícono de maximizar/restaurar no se desincronice.
+    mainWindow.on('maximize', () => mainWindow.webContents.send('window-maximized-change', true));
+    mainWindow.on('unmaximize', () => mainWindow.webContents.send('window-maximized-change', false));
+    // Fuerza el zoom a 100% siempre. Chromium persiste el nivel de zoom por
+    // origen en el perfil de la app (userData), así que un valor probado en
+    // una sesión anterior (p.ej. mientras existió la extinta "Escala de
+    // interfaz") puede quedar pegado y sobrevivir a un simple reinicio del
+    // launcher si no se resetea acá explícitamente.
+    mainWindow.webContents.setZoomFactor(1);
+    mainWindow.webContents.on('did-finish-load', () => mainWindow.webContents.setZoomFactor(1));
     mainWindow.loadFile(path.join(`${app.getAppPath()}/src/launcher.html`));
     mainWindow.once('ready-to-show', () => {
         if (mainWindow) {

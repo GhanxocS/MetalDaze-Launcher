@@ -73,14 +73,18 @@ ipcMain.on('main-window-hide', () => MainWindow.getWindow().hide())
 ipcMain.on('main-window-show', () => MainWindow.getWindow().show())
 
 ipcMain.on('main-window-login-size', () => {
-    MainWindow.getWindow().setResizable(false)
+    // resizable:true a propósito (ver main-window-maximize): una ventana no
+    // resizable rota el maximizado nativo de Windows (la mueve a una esquina
+    // en vez de agrandarla), así que la ventana siempre queda resizable y solo
+    // cambiamos el tamaño mínimo/actual según la pantalla.
+    MainWindow.getWindow().setResizable(true)
     MainWindow.getWindow().setMinimumSize(480, 650)
     MainWindow.getWindow().setSize(480, 650)
     MainWindow.getWindow().center()
 })
 
 ipcMain.on('main-window-home-size', () => {
-    MainWindow.getWindow().setResizable(false)
+    MainWindow.getWindow().setResizable(true)
     MainWindow.getWindow().setMinimumSize(1280, 720)
     MainWindow.getWindow().setSize(1280, 720)
     MainWindow.getWindow().center()

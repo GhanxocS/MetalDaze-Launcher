@@ -2,29 +2,15 @@
    MetalDaze Launcher — Login Panel
    ============================================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;900&family=Barlow:wght@300;400;500&display=swap');
-
-:root {
-    --md-black:       #0a0a0a;
-    --md-dark:        #111111;
-    --md-surface:     #161616;
-    --md-surface-2:   #1e1e1e;
-    --md-border:      #2a2a2a;
-    --md-border-lit:  #3a3a3a;
-    --md-white:       #f0f0f0;
-    --md-muted:       #555555;
-    --md-muted-light: #888888;
-    --md-accent-dim:  rgba(255,255,255,0.06);
-    --transition:     0.18s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
 /* ── Contenedor fullscreen ── */
 .login .container {
     display: flex;
     align-items: center;
     justify-content: center;
     height: 100%;
-    background: var(--md-black);
+    padding-top: var(--titlebar-h);
+    box-sizing: border-box;
+    background: var(--bg);
     /* Textura de ruido sutil */
     background-image:
         radial-gradient(ellipse 60% 50% at 50% 100%, rgba(255,255,255,0.02) 0%, transparent 100%),
@@ -34,8 +20,8 @@
 /* ── Panel flotante ── */
 .login-panel {
     width: 380px;
-    background: var(--md-surface);
-    border: 1px solid var(--md-border);
+    background: var(--surface);
+    border: 1px solid var(--border);
     border-radius: 14px;
     overflow: hidden;
     box-shadow:
@@ -62,7 +48,7 @@
     flex-direction: column;
     align-items: center;
     padding: 2.5rem 2rem 2rem;
-    border-bottom: 1px solid var(--md-border);
+    border-bottom: 1px solid var(--border);
     background: linear-gradient(180deg, rgba(255,255,255,0.03) 0%, transparent 100%);
     gap: 0.2rem;
 }
@@ -77,32 +63,12 @@
     margin-bottom: 0.75rem;
 }
 
-.login-logo::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: 14px;
-    border: 1px solid var(--md-border-lit);
-    background: var(--md-surface-2);
-}
-
-.login-logo-text {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 900;
-    font-size: 1.4rem;
-    letter-spacing: 0.1em;
-    color: var(--md-white);
+.login-logo-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
     position: relative;
     z-index: 1;
-}
-
-.login-logo-glow {
-    position: absolute;
-    inset: -1px;
-    border-radius: 14px;
-    background: transparent;
-    box-shadow: 0 0 20px rgba(255,255,255,0.04);
-    pointer-events: none;
 }
 
 .login-brand-name {
@@ -110,7 +76,7 @@
     font-weight: 700;
     font-size: 1.3rem;
     letter-spacing: 0.2em;
-    color: var(--md-white);
+    color: var(--text);
     line-height: 1;
 }
 
@@ -119,7 +85,7 @@
     font-weight: 400;
     font-size: 0.6rem;
     letter-spacing: 0.45em;
-    color: var(--md-muted);
+    color: var(--text-dim);
     text-transform: uppercase;
     margin-top: 0.15rem;
 }
@@ -141,7 +107,7 @@
     font-weight: 700;
     font-size: 1rem;
     letter-spacing: 0.12em;
-    color: var(--md-white);
+    color: var(--text);
     margin-bottom: 1.25rem;
     text-align: center;
 }
@@ -159,21 +125,21 @@
     gap: 0.9rem;
     width: 100%;
     padding: 0.9rem 1.1rem;
-    background: var(--md-accent-dim);
-    border: 1px solid var(--md-border);
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
     border-radius: 9px;
     cursor: pointer;
     transition:
         border-color var(--transition),
         background var(--transition),
         transform 0.12s ease;
-    color: var(--md-white);
+    color: var(--text);
     font-family: 'Barlow Condensed', sans-serif;
     text-align: left;
 }
 
 .method-btn:hover {
-    border-color: var(--md-border-lit);
+    border-color: var(--accent-b);
     background: rgba(255,255,255,0.08);
     transform: translateY(-1px);
 }
@@ -188,11 +154,11 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: var(--md-surface-2);
-    border: 1px solid var(--md-border-lit);
+    background: var(--surface-2);
+    border: 1px solid var(--border-lit);
     border-radius: 7px;
     flex-shrink: 0;
-    color: var(--md-muted-light);
+    color: var(--text-muted);
 }
 
 .method-label {
@@ -200,17 +166,17 @@
     font-size: 0.95rem;
     font-weight: 600;
     letter-spacing: 0.06em;
-    color: var(--md-white);
+    color: var(--text);
 }
 
 .method-arrow {
     font-size: 0.9rem;
-    color: var(--md-muted);
+    color: var(--text-dim);
     transition: color var(--transition), transform var(--transition);
 }
 
 .method-btn:hover .method-arrow {
-    color: var(--md-white);
+    color: var(--accent-a);
     transform: translateX(3px);
 }
 
@@ -233,14 +199,14 @@
     font-size: 0.68rem;
     font-weight: 600;
     letter-spacing: 0.2em;
-    color: var(--md-muted-light);
+    color: var(--text-muted);
     text-transform: uppercase;
 }
 
 .login-input {
-    background: var(--md-black);
-    border: 1px solid var(--md-border);
-    color: var(--md-white);
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text);
     padding: 0.7rem 1rem;
     border-radius: 8px;
     font-family: 'Barlow', sans-serif;
@@ -252,13 +218,13 @@
 }
 
 .login-input::placeholder {
-    color: var(--md-muted);
+    color: var(--text-dim);
 }
 
 .login-input:focus {
     outline: none;
-    border-color: var(--md-border-lit);
-    box-shadow: 0 0 0 3px rgba(255,255,255,0.04);
+    border-color: var(--accent-b);
+    box-shadow: 0 0 0 3px var(--accent-glow);
 }
 
 /* ── Acciones ── */
@@ -271,8 +237,8 @@
 .login-btn-primary {
     width: 100%;
     padding: 0.85rem;
-    background: var(--md-white);
-    color: var(--md-black);
+    background: var(--accent-gradient);
+    color: #0a0a0a;
     border: none;
     border-radius: 8px;
     font-family: 'Barlow Condensed', sans-serif;
@@ -280,11 +246,11 @@
     font-size: 0.9rem;
     letter-spacing: 0.15em;
     cursor: pointer;
-    transition: background var(--transition), transform 0.1s ease;
+    transition: filter var(--transition), transform 0.1s ease;
 }
 
 .login-btn-primary:hover {
-    background: #e0e0e0;
+    filter: brightness(1.08);
     transform: translateY(-1px);
 }
 
@@ -296,7 +262,7 @@
     width: 100%;
     padding: 0.6rem;
     background: none;
-    color: var(--md-muted-light);
+    color: var(--text-muted);
     border: none;
     border-radius: 8px;
     font-family: 'Barlow Condensed', sans-serif;
@@ -308,7 +274,7 @@
 }
 
 .login-btn-ghost:hover {
-    color: var(--md-white);
+    color: var(--text);
 }
 
 /* Botón cancelar heredado (usado por JS) */
@@ -317,7 +283,7 @@
     width: 100%;
     padding: 0.6rem;
     background: none;
-    color: var(--md-muted-light);
+    color: var(--text-muted);
     border: none;
     font-family: 'Barlow Condensed', sans-serif;
     font-size: 0.82rem;
@@ -327,14 +293,14 @@
 }
 
 .login-cancel:hover {
-    color: var(--md-white);
+    color: var(--text);
 }
 
 /* ── Compatibilidad con clases del JS original ── */
 .connect,
 .cancel {
     background: none;
-    color: var(--md-white);
+    color: var(--text);
     border: none;
     cursor: pointer;
 }
@@ -342,9 +308,9 @@
 .input-login .email,
 .input-login .password,
 .A2F {
-    color: var(--md-white);
-    background: var(--md-black);
-    border: 1px solid var(--md-border);
+    color: var(--text);
+    background: var(--bg);
+    border: 1px solid var(--border);
     border-radius: 8px;
     padding: 0.7rem 1rem;
     font-family: 'Barlow', sans-serif;

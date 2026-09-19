@@ -1,41 +1,22 @@
 /* ============================================================
-   MetalDaze Launcher — Home Panel REWORK
+   MetalDaze Launcher — Home Panel REWORK v4.0 (XMB-style)
    ============================================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;900&family=Barlow:wght@300;400;500&display=swap');
-
 :root {
-    --md-black:      #0a0a0a;
-    --md-dark:       #111111;
-    --md-surface:    #171a1f;
-    --md-surface2:   #1e2228;
-    --md-border:     #2a2d35;
-    --md-border-lit: #3d4149;
-    --md-white:      #f0f0f0;
-    --md-muted:      #5c6270;
-    --md-muted2:     #8f98a0;
-    --md-accent-dim: rgba(255,255,255,0.06);
-    --md-green:      #4caf7d;
-    --md-green-dim:  rgba(76,175,125,0.15);
-    --md-red:        #e05a5a;
-    --md-blue:       #5b9bd5;
-    --sidebar-w:     64px;
-    --transition:    0.18s cubic-bezier(0.4,0,0.2,1);
+    --topnav-h: 88px;
 }
 
 body, html { overflow: hidden; margin: 0; padding: 0; }
 .panels, .panel { overflow: hidden; }
 
-.home .container {
-    display: flex;
-    height: 100%;
+.home {
     font-family: 'Barlow', sans-serif;
-    background: var(--md-black);
-    color: var(--md-white);
+    background: var(--bg);
+    color: var(--text);
     position: relative;
 }
 
-/* ══ FONDO DINÁMICO ══ */
+/* ══ FONDO DINÁMICO POR INSTANCIA ══ */
 .home-bg {
     position: fixed;
     inset: 0;
@@ -50,12 +31,8 @@ body, html { overflow: hidden; margin: 0; padding: 0; }
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(
-        to right,
-        rgba(10,10,10,0.97) 0%,
-        rgba(10,10,10,0.85) 40%,
-        rgba(10,10,10,0.3) 100%
-    );
+    background:
+        linear-gradient(to top, rgba(10,10,10,0.96) 0%, rgba(10,10,10,0.55) 45%, rgba(10,10,10,0.25) 75%, rgba(10,10,10,0.55) 100%);
 }
 
 .home-bg-grid {
@@ -63,492 +40,626 @@ body, html { overflow: hidden; margin: 0; padding: 0; }
     inset: 0;
     z-index: 0;
     display: none;
-    background-image:
-        linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
-    background-size: 24px 24px;
+    background: radial-gradient(ellipse 80% 60% at 30% 20%, rgba(124,92,255,0.10), transparent 60%),
+                var(--bg);
 }
 
 .home-bg-grid.visible { display: block; }
 
-/* ══ SIDEBAR ══
- * FIX: sin justify-content:space-between, los elementos se apilan
- * desde arriba y el settings queda al fondo sin salirse del borde.
- */
-.sidebar {
+/* ══ TOP NAV ══ */
+.home-topnav {
     position: fixed;
-    left: 0; top: 0;
-    width: var(--sidebar-w);
-    height: 100%;
-    background: rgba(15,17,20,0.95);
-    border-right: 1px solid var(--md-border);
+    top: var(--titlebar-h); left: 0; right: 0;
+    height: var(--topnav-h);
     display: flex;
-    flex-direction: column;
     align-items: center;
-    /* FIX: space-between reemplazado por gaps y margin-auto */
-    justify-content: flex-start;
+    gap: 2rem;
+    padding: 0 1.75rem;
+    background: rgba(10,11,13,0.32);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    backdrop-filter: blur(20px);
     z-index: 100;
-    padding: 1rem 0;
-    backdrop-filter: blur(8px);
-    gap: 0;
+    -webkit-app-region: drag;
 }
 
-.sidebar-top {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1.25rem;
-    width: 100%;
-    padding-bottom: 1rem;
-    border-bottom: 1px solid var(--md-border);
+.home-topnav .nav-item,
+.home-topnav .account-chip,
+.home-topnav .topnav-icon-btn,
+.home-topnav .social-block-sidebar {
+    -webkit-app-region: no-drag;
 }
 
-.sidebar-mid {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.35rem;
-    margin-top: 1rem;
-    /* FIX: ocupa el espacio disponible empujando settings al fondo */
-    flex: 1;
-}
-
-/* FIX: settings se ancla al fondo sin salirse */
-.sidebar-bottom {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding-bottom: 0.5rem;
-    width: 100%;
-}
-
-.brand-mark {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 900;
-    font-size: 0.9rem;
-    letter-spacing: 0.1em;
-    color: var(--md-white);
-    width: 38px; height: 38px;
+.topnav-icon-btn {
+    flex-shrink: 0;
+    width: 34px; height: 34px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 1px solid var(--md-border-lit);
-    border-radius: 8px;
-    background: var(--md-surface);
-}
-
-.player-head {
-    width: 38px; height: 38px;
-    border-radius: 8px;
-    border: 1px solid var(--md-border-lit);
-    background-size: cover;
-    image-rendering: pixelated;
+    border-radius: 50%;
+    color: var(--text-muted);
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
     cursor: pointer;
-    transition: border-color var(--transition), transform var(--transition);
+    transition: color var(--transition), background var(--transition), border-color var(--transition);
 }
 
-.player-head:hover {
-    border-color: var(--md-white);
-    transform: scale(1.05);
+.topnav-icon-btn:hover {
+    color: var(--text);
+    background: rgba(255,255,255,0.09);
+    border-color: var(--border-lit);
 }
 
-.social-block-sidebar {
-    width: 38px; height: 38px;
-    display: flex; align-items: center; justify-content: center;
-    border-radius: 6px; cursor: pointer;
-    transition: background var(--transition);
+.topnav-icon-btn:focus-visible {
+    outline: 2px solid var(--accent-b);
+    outline-offset: 2px;
 }
 
-.social-block-sidebar:hover { background: var(--md-accent-dim); }
-
-.social-block-sidebar .icon-social {
-    pointer-events: none;
-    background-repeat: no-repeat;
-    background-size: contain;
-    height: 52%; width: 52%;
-    filter: var(--svg-color);
-    opacity: 0.4;
-    transition: opacity var(--transition);
+/* Separador entre el botón de ajustes y el bloque de redes/cuenta — mismo
+   tono que el border-bottom del topnav, para no meter un borde "de caja". */
+.topnav-divider {
+    width: 1px;
+    height: 28px;
+    background: rgba(255,255,255,0.1);
+    flex-shrink: 0;
 }
 
-.social-block-sidebar:hover .icon-social { opacity: 0.9; }
+.topnav-socials {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-shrink: 0;
+}
 
-.settings-btn {
-    width: 38px; height: 38px;
-    display: flex; align-items: center; justify-content: center;
-    border-radius: 6px; cursor: pointer;
-    color: var(--md-muted); font-size: 1.3rem;
+.topnav-nav {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    flex: 1;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 0.85rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    padding: 0.5rem 0.9rem;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
     transition: color var(--transition), background var(--transition);
 }
 
-.settings-btn:hover { color: var(--md-white); background: var(--md-accent-dim); }
+.nav-item-icon { flex-shrink: 0; opacity: 0.85; }
 
-/* ══ CONTENIDO PRINCIPAL ══ */
-.home-main {
-    position: relative;
-    z-index: 10;
-    margin-left: var(--sidebar-w);
-    width: calc(100% - var(--sidebar-w));
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    padding: 1.5rem 2rem 8rem 2rem;
-    overflow: hidden;
+.nav-item:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+
+.nav-item:focus-visible,
+.account-chip:focus-visible,
+.instance-elements:focus-visible {
+    outline: 2px solid var(--accent-b);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
 }
 
-/* ══ NOTICIA DESTACADA ══ */
-.featured-news-wrap {
-    display: flex;
-    flex-direction: column;
-    max-width: 640px;
-    width: 100%;
-    /* FIX: altura calculada dejando espacio exacto para el botón */
-    height: calc(100% - 2.5rem);
-    flex: none;
-    gap: 0;
+.nav-item-active {
+    color: var(--text);
+    background: rgba(255,255,255,0.06);
+    box-shadow: inset 0 -2px 0 0 var(--accent-b);
 }
 
-.featured-news {
-    background: rgba(23,26,31,0.88);
-    border: 1px solid var(--md-border);
-    border-radius: 10px;
-    padding: 1.5rem;
-    backdrop-filter: blur(12px);
-    transition: border-color var(--transition);
-    display: flex;
-    flex-direction: column;
-    /* FIX: deja exactamente 2rem para el botón de abajo */
-    height: calc(100% - 2rem);
-    overflow: hidden;
-}
-
-.featured-news:hover { border-color: var(--md-border-lit); }
-
-.featured-news-header {
+.account-chip {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
-    margin-bottom: 0.85rem;
+    gap: 0.6rem;
+    padding: 0.3rem 0.9rem 0.3rem 0.3rem;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+    cursor: pointer;
     flex-shrink: 0;
+    transition: border-color var(--transition), background var(--transition);
 }
 
-.featured-news-icon {
+.account-chip:hover { border-color: var(--border-lit); background: rgba(255,255,255,0.07); }
+
+.account-chip .player-head {
     width: 30px; height: 30px;
-    border-radius: 6px; opacity: 0.85; flex-shrink: 0;
-}
-
-.featured-news-title {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 700; font-size: 1.05rem; letter-spacing: 0.04em;
-    color: var(--md-white); flex: 1;
-}
-
-.featured-news-date {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 0.7rem; letter-spacing: 0.06em;
-    color: var(--md-muted2); text-align: right;
-    flex-shrink: 0; line-height: 1.4;
-}
-
-.featured-news-body {
-    font-size: 0.84rem;
-    font-weight: 300;
-    color: rgba(240,240,240,0.62);
-    line-height: 1.7;
-    overflow-y: auto;
-    scrollbar-width: none;
-    flex: 1;
-    min-height: 0;
-}
-
-.featured-news-body::-webkit-scrollbar { display: none; }
-
-.featured-news-author {
-    font-size: 0.7rem;
-    color: var(--md-muted);
-    margin-top: 1rem;
-    text-align: right;
+    border-radius: 50%;
+    border: 1px solid var(--border-lit);
+    background-color: var(--surface-2);
+    background-image: url('../images/default/setve.png');
+    background-size: cover;
+    image-rendering: pixelated;
     flex-shrink: 0;
 }
 
-.featured-news-author span { color: var(--md-muted2); font-weight: 500; }
+.account-text { display: flex; flex-direction: column; line-height: 1.25; max-width: 140px; }
 
-/* FIX: botón siempre visible, fuera del card */
-.all-news-link {
-    display: inline-flex;
+.account-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700; font-size: 0.82rem; letter-spacing: 0.02em;
+    color: var(--text);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+.account-role {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.62rem; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--text-dim);
+}
+
+/* ══ HERO ══ */
+.home-hero {
+    position: fixed;
+    top: calc(var(--titlebar-h) + var(--topnav-h));
+    left: 0; right: 0; bottom: 0;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    /* El padding superior es menor que antes a propósito: el rail de
+       instancias ahora carga su propio padding grande arriba (44px) para el
+       crecimiento del tile activo, así que sumar los dos daría demasiado
+       espacio muerto entre el nav y los íconos. */
+    padding: 1.25rem 2.75rem 1.75rem;
+    overflow: hidden;
+}
+
+/* ══ RAIL DE INSTANCIAS (estilo XMB, siempre visible) ══ */
+.instance-rail {
+    flex-shrink: 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+    /* El tile activo crece con ancho/alto real (ver .instance-tile), no con
+       transform:scale, así que el layout ya reserva el espacio solo — el
+       padding acá es solo para que el rail no quede pegado a los bordes,
+       no para evitar recortes. Izquierdo igual al derecho: si el primer
+       tile es el activo, necesita el mismo margen para crecer que cualquiera. */
+    padding: 16px 24px 16px 28px;
+}
+
+.instance-rail::-webkit-scrollbar { display: none; }
+
+.instance-rail-list {
+    display: flex;
+    align-items: flex-start;
+    gap: clamp(1.1rem, 1.4vw, 1.75rem);
+}
+
+.instance-elements {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.instance-tile {
+    /* Tamaño base en una variable: el tile activo lo reusa con calc() para
+       crecer con ancho/alto REAL en vez de transform:scale — así el layout
+       reserva el espacio solo (el de al lado no se pisa) y el crecimiento
+       queda anclado arriba, hacia abajo, como una fila con align-items:
+       flex-start. Escala con el ancho de ventana: la ventana ahora es
+       resizable/maximizable (ver src/app.js), así que un tile fijo de 76px
+       se ve minúsculo en pantalla completa. 76px en la ventana mínima
+       (1280px), hasta 132px. */
+    --tile-base: clamp(76px, 5.5vw, 132px);
+    width: var(--tile-base);
+    height: var(--tile-base);
+    border-radius: var(--radius-md);
+    background-color: var(--surface-2);
+    background-size: cover;
+    background-position: center;
+    border: 2px solid transparent;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.35);
+    /* width/height fuera de la transición a propósito: animarlas fuerza
+       layout thrash (recálculo de layout en cada frame). El cambio de tamaño
+       queda instantáneo; el borde/glow, que es lo que se percibe como
+       "selección", sigue animado y compositado en la GPU. */
+    transition: transform var(--transition), border-color var(--transition), box-shadow var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: clamp(1.3rem, 1.6vw, 2rem);
+    color: var(--text-muted);
+}
+
+.instance-elements:hover .instance-tile {
+    transform: translateY(-3px);
+    border-color: var(--border-lit);
+}
+
+.instance-elements.active-instance .instance-tile {
+    width: calc(var(--tile-base) * 1.18);
+    height: calc(var(--tile-base) * 1.18);
+    border-color: var(--accent-b);
+    box-shadow: 0 0 0 3px var(--accent-glow), 0 10px 26px rgba(0,0,0,0.5);
+}
+
+.tile-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: clamp(0.7rem, 0.75vw, 0.85rem);
+    letter-spacing: 0.04em;
+    color: var(--text-dim);
+    max-width: clamp(84px, 5.5vw, 132px);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    transition: color var(--transition);
+}
+
+.instance-elements.active-instance .tile-label,
+.instance-elements:hover .tile-label { color: var(--text); }
+
+/* ══ INFO DE LA INSTANCIA SELECCIONADA ══ */
+.hero-info {
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    max-width: 720px;
+}
+
+.hero-tags {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.hero-tag {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700; font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--text-muted);
+    background: rgba(255,255,255,0.06);
+    border: 1px solid var(--border-lit);
+    border-radius: 999px;
+    padding: 0.3rem 0.75rem;
+    backdrop-filter: blur(6px);
+}
+
+.hero-tag-live { color: var(--green); border-color: var(--green-dim); display: flex; align-items: center; gap: 0.4rem; }
+.hero-tag-live::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--green); box-shadow: 0 0 6px var(--green); }
+
+/* Etiquetas creadas en el panel admin (Config.getTagsCatalog) — el color de
+   fondo/texto llega inline por instancia, esta clase solo destrancha el
+   tinte muted por defecto para que ese color se vea sólido. */
+.hero-tag-custom { border-color: transparent; backdrop-filter: none; }
+
+.hero-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: 3.9rem;
+    line-height: 1;
+    letter-spacing: -0.01em;
+    color: var(--text);
+    text-shadow: 0 4px 24px rgba(0,0,0,0.6);
+    max-width: 100%;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+
+.hero-description {
+    font-family: 'Barlow', sans-serif;
+    font-weight: 300;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: rgba(240,240,240,0.75);
+    text-shadow: 0 2px 12px rgba(0,0,0,0.7);
+    max-width: 62ch;
+    margin-top: 0.25rem;
+    /* Recorta a 2 líneas en vez de dejar que una descripción larga empuje el
+       resto del hero (play, tiempo jugado) fuera de la ventana. */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* Bloques de red social del topnav (ver .topnav-socials) — se movieron acá
+   desde el hero, que ya no los muestra. */
+.social-block-sidebar {
+    width: 32px; height: 32px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: var(--radius-sm);
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+    cursor: pointer;
+    transition: background var(--transition), border-color var(--transition);
+}
+
+.social-block-sidebar:hover { background: rgba(255,255,255,0.1); border-color: var(--border-lit); }
+
+.icon-social {
+    pointer-events: none;
+    background-repeat: no-repeat;
+    background-size: contain;
+    height: 48%; width: 48%;
+    filter: var(--svg-color);
+    opacity: 0.75;
+}
+
+/* ══ BARRA DE ACCIONES ══ */
+.hero-actions {
+    flex-shrink: 0;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-top: 1.5rem;
+}
+
+.play-wrap { display: flex; align-items: center; gap: 1.25rem; }
+
+.play-btn {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700; font-size: 1.45rem; letter-spacing: 0.18em;
+    padding: 1.2rem 4.5rem;
+    border: none; border-radius: var(--radius-md); cursor: pointer;
+    transition: box-shadow var(--transition), transform var(--transition), filter var(--transition);
+    background: var(--accent-gradient);
+    color: #0a0a0a;
+    box-shadow: 0 8px 28px var(--accent-glow);
+}
+
+.play-btn:hover { filter: brightness(1.08); transform: translateY(-1px); }
+.play-btn:active { transform: translateY(0); }
+
+.play-btn.state-update,
+.play-btn.state-instance-update {
+    background: var(--blue);
+    color: #fff;
+    box-shadow: 0 8px 24px rgba(91,155,213,0.35);
+}
+
+.play-btn.state-no-instance {
+    background: var(--red);
+    color: #fff;
+    box-shadow: 0 8px 24px rgba(224,90,90,0.3);
+    cursor: not-allowed;
+}
+
+.play-btn.state-no-instance:hover { transform: none; filter: none; }
+
+/* ══ MENÚ "MÁS OPCIONES" (junto a JUGAR) ══ */
+.hero-more-wrap { position: relative; }
+
+.hero-more-btn {
+    width: 3.4rem;
+    height: 3.4rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-md);
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border-lit);
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: color var(--transition), background var(--transition), border-color var(--transition);
+}
+
+.hero-more-btn:hover { color: var(--text); background: rgba(255,255,255,0.09); }
+
+.hero-more-btn:focus-visible,
+.hero-more-btn[aria-expanded="true"] {
+    color: var(--text);
+    border-color: var(--accent-b);
+    outline: none;
+}
+
+/* Se abre hacia arriba: el botón vive pegado al borde inferior de la
+   ventana, un menú hacia abajo se saldría del viewport. */
+.hero-more-menu {
+    position: absolute;
+    bottom: calc(100% + 0.6rem);
+    right: 0;
+    min-width: 230px;
+    background: var(--surface);
+    border: 1px solid var(--border-lit);
+    border-radius: var(--radius-md);
+    padding: 0.4rem;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.55);
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    z-index: 200;
+}
+
+.hero-more-item {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 0.82rem;
+    letter-spacing: 0.03em;
+    text-align: left;
+    color: var(--text);
+    background: none;
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 0.6rem 0.7rem;
+    cursor: pointer;
+    transition: background var(--transition);
+}
+
+.hero-more-item svg { flex-shrink: 0; opacity: 0.75; }
+
+.hero-more-item:hover,
+.hero-more-item:focus-visible { background: rgba(255,255,255,0.08); outline: none; }
+
+/* ══ TOAST (feedback de las acciones del menú "más opciones") ══ */
+.hero-toast {
+    position: fixed;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%) translateY(12px);
+    max-width: 420px;
+    background: var(--surface);
+    border: 1px solid var(--border-lit);
+    border-radius: var(--radius-md);
+    padding: 0.75rem 1.25rem;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.85rem;
+    letter-spacing: 0.03em;
+    color: var(--text);
+    box-shadow: 0 16px 40px rgba(0,0,0,0.5);
+    z-index: 999;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--transition), transform var(--transition);
+}
+
+.hero-toast.hero-toast-show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.hero-toast.hero-toast-error { border-color: rgba(224,90,90,0.4); color: var(--red); }
+
+.info-starting-game { display: none; text-align: left; }
+
+.info-starting-game-text {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 1.15rem; letter-spacing: 0.06em;
+    color: var(--text); margin-bottom: 0.5rem;
+}
+
+.progress-bar { appearance: none; width: 260px; height: 3px; }
+.progress-bar::-webkit-progress-bar { background: var(--border); border-radius: 2px; }
+.progress-bar::-webkit-progress-value { background: var(--accent-gradient); border-radius: 2px; }
+
+/* Solo visible mientras el juego ya está corriendo (evento 'data') — no se
+   puede cancelar limpiamente una descarga en curso (ver comentario en
+   home.js startGame), así que este botón solo mata el proceso real de
+   Minecraft una vez que existe. */
+.force-close-btn {
+    display: none;
     align-items: center;
     gap: 0.35rem;
+    margin-top: 0.5rem;
     font-family: 'Barlow Condensed', sans-serif;
-    font-size: 0.76rem; letter-spacing: 0.12em;
-    color: var(--md-muted2);
+    font-weight: 600;
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--red);
+    background: var(--red-dim);
+    border: 1px solid rgba(224,90,90,0.35);
+    border-radius: var(--radius-sm);
+    padding: 0.35rem 0.7rem;
     cursor: pointer;
-    transition: color var(--transition);
-    width: fit-content;
-    /* FIX: altura fija de 2rem para que el card deje espacio */
-    height: 2rem;
+    transition: background var(--transition), border-color var(--transition);
+}
+
+.force-close-btn:hover {
+    background: rgba(224,90,90,0.25);
+    border-color: var(--red);
+}
+
+.force-close-btn:focus-visible {
+    outline: 2px solid var(--accent-b);
+    outline-offset: 2px;
+}
+
+.hero-playtime {
+    display: flex;
     align-items: center;
-    padding: 0;
-    margin: 0;
+    gap: 0.5rem;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600; font-size: 0.85rem; letter-spacing: 0.05em;
+    color: var(--text-muted);
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 0.55rem 1.1rem;
 }
 
-.all-news-link:hover { color: var(--md-white); }
+.hero-playtime-icon { flex-shrink: 0; opacity: 0.8; }
 
-.all-news-arrow {
-    font-size: 1rem;
-    transition: transform var(--transition);
-}
+/* ══ NOTICIA DESTACADA (oculta, sólo mantiene el DOM vivo para Home.news()) ══ */
+.featured-news-hidden { display: none; }
 
-.all-news-link:hover .all-news-arrow { transform: translateX(3px); }
-
-/* ══ PANEL TODAS LAS NOTICIAS ══
- * FIX: fixed cubriendo todo menos el sidebar, z-index sobre el play
- */
+/* ══ PANEL DE TODAS LAS NOTICIAS ══ */
 .all-news-panel {
     position: fixed;
-    top: 0; bottom: 0;
-    left: var(--sidebar-w);
-    right: 0;
-    background: rgba(14,17,21,0.98);
+    top: calc(var(--titlebar-h) + var(--topnav-h)); bottom: 0;
+    left: 0; right: 0;
+    background: rgba(10,11,13,0.97);
     backdrop-filter: blur(20px);
-    z-index: 150;
+    z-index: 90;
     display: flex;
     flex-direction: column;
-    padding: 1.5rem 2rem;
+    padding: 1.75rem 3rem;
 }
 
 .all-news-header {
     display: flex;
     align-items: center;
     gap: 1.5rem;
-    margin-bottom: 1.25rem;
+    margin-bottom: 1.5rem;
     padding-bottom: 1rem;
-    border-bottom: 1px solid var(--md-border);
+    border-bottom: 1px solid var(--border);
     flex-shrink: 0;
 }
-
-.all-news-back {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 0.82rem; letter-spacing: 0.1em;
-    color: var(--md-muted2); cursor: pointer;
-    transition: color var(--transition);
-    display: flex; align-items: center; gap: 0.3rem;
-}
-
-.all-news-back:hover { color: var(--md-white); }
 
 .all-news-title {
     font-family: 'Barlow Condensed', sans-serif;
     font-weight: 700; font-size: 0.65rem;
-    letter-spacing: 0.3em; color: var(--md-muted);
+    letter-spacing: 0.3em; color: var(--text-dim);
 }
 
 .news-list {
     flex: 1; overflow-y: auto; scrollbar-width: none;
     display: flex; flex-direction: column; gap: 0.6rem;
+    max-width: 760px;
 }
 
 .news-list::-webkit-scrollbar { display: none; }
 
 .news-block {
-    background: var(--md-surface);
-    border: 1px solid var(--md-border);
-    border-radius: 8px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
     transition: border-color var(--transition);
     flex-shrink: 0;
 }
 
-.news-block:hover { border-color: var(--md-border-lit); }
+.news-block:hover { border-color: var(--border-lit); }
 
 .news-header {
     display: flex; align-items: center;
     padding: 0.85rem 1rem 0.4rem; gap: 0.65rem;
 }
 
-.server-status-icon { height: 26px; width: 26px; border-radius: 4px; opacity: 0.8; }
+.server-status-icon { height: 26px; width: 26px; object-fit: contain; opacity: 0.85; }
 .header-text { flex: 1; }
 
 .header-text .title {
     font-family: 'Barlow Condensed', sans-serif;
     font-weight: 600; font-size: 0.95rem; letter-spacing: 0.03em;
-    color: var(--md-white);
+    color: var(--text);
 }
 
 .news-header .date {
     display: flex; flex-direction: column; align-items: flex-end;
     font-family: 'Barlow Condensed', sans-serif;
-    font-size: 0.7rem; color: var(--md-muted2); letter-spacing: 0.04em;
+    font-size: 0.7rem; color: var(--text-muted); letter-spacing: 0.04em;
 }
 
 .news-content .bbWrapper {
     padding: 0 1rem 0.85rem;
     font-size: 0.82rem; font-weight: 300;
     color: rgba(240,240,240,0.6); line-height: 1.6;
+    max-width: 65ch;
 }
 
 .news-content .bbWrapper p { margin: 0; }
 
 .news-content .bbWrapper .news-author {
     margin-top: 0.6rem; text-align: right;
-    font-size: 0.7rem; color: var(--md-muted);
+    font-size: 0.7rem; color: var(--text-dim);
 }
 
-.news-content .bbWrapper .news-author span { color: var(--md-muted2); font-weight: 500; }
+.news-content .bbWrapper .news-author span { color: var(--text-muted); font-weight: 500; }
 
-/* ══ ÁREA DE PLAY ══ */
-.play-area {
-    position: fixed;
-    bottom: 2rem; right: 2rem;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 0.5rem;
-    z-index: 50;
-}
-
-.instance-selector-btn {
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
-    background: rgba(23,26,31,0.92);
-    border: 1px solid var(--md-border-lit);
-    border-radius: 6px;
-    padding: 0.6rem 1.1rem;
-    cursor: pointer;
-    transition: border-color var(--transition), background var(--transition);
-    backdrop-filter: blur(8px);
-}
-
-.instance-selector-btn:hover {
-    border-color: var(--md-white);
-    background: rgba(30,34,40,0.95);
-}
-
-.instance-selector-icon { font-size: 0.8rem; color: var(--md-muted2); }
-
-.instance-selector-label {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 600; font-size: 0.85rem; letter-spacing: 0.1em;
-    color: var(--md-muted2);
-    max-width: 220px;
-    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-}
-
-.play-wrap { display: flex; }
-
-.play-btn {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 700; font-size: 1.4rem; letter-spacing: 0.2em;
-    padding: 1rem 4rem;
-    border: none; border-radius: 8px; cursor: pointer;
-    transition: background var(--transition), box-shadow var(--transition), transform var(--transition);
-    background: var(--md-green);
-    color: #fff;
-    box-shadow: 0 0 20px rgba(76,175,125,0.3);
-}
-
-.play-btn:hover {
-    background: #5bc490;
-    box-shadow: 0 0 30px rgba(76,175,125,0.45);
-    transform: translateY(-1px);
-}
-
-.play-btn:active { transform: translateY(0); }
-
-.play-btn.state-update {
-    background: var(--md-blue);
-    box-shadow: 0 0 20px rgba(91,155,213,0.3);
-}
-
-.play-btn.state-update:hover {
-    background: #6aaee0;
-    box-shadow: 0 0 30px rgba(91,155,213,0.45);
-}
-
-.play-btn.state-no-instance {
-    background: var(--md-red);
-    box-shadow: 0 0 20px rgba(224,90,90,0.3);
-    cursor: not-allowed;
-}
-
-.play-btn.state-no-instance:hover { transform: none; }
-
-.info-starting-game { display: none; text-align: right; }
-
-.info-starting-game-text {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 0.72rem; letter-spacing: 0.12em;
-    color: var(--md-muted2); margin-bottom: 0.3rem;
-}
-
-.progress-bar { appearance: none; width: 260px; height: 2px; }
-.progress-bar::-webkit-progress-bar { background: var(--md-border); border-radius: 2px; }
-.progress-bar::-webkit-progress-value { background: var(--md-green); border-radius: 2px; }
-
-/* ══ POPUP INSTANCIAS ══ */
-.instance-popup {
-    position: fixed; inset: 0; display: none;
-    background: rgba(0,0,0,0.7); backdrop-filter: blur(4px);
-    z-index: 200; align-items: center; justify-content: center;
-}
-
-.instances-tab {
-    background: var(--md-surface2);
-    border: 1px solid var(--md-border-lit);
-    border-radius: 10px;
-    padding: 1.25rem 1.5rem;
-    min-width: 280px; max-width: 360px; width: 100%;
-}
-
-.instance-popup-header {
-    display: flex; align-items: center;
-    justify-content: space-between; margin-bottom: 1rem;
-}
-
-.instance-popup-title {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 700; font-size: 0.65rem;
-    letter-spacing: 0.3em; color: var(--md-muted);
-}
-
-.close-popup {
-    width: 26px; height: 26px;
-    display: flex; align-items: center; justify-content: center;
-    border-radius: 5px; cursor: pointer; color: var(--md-muted);
-    transition: color var(--transition), background var(--transition);
-}
-
-.close-popup:hover { color: var(--md-white); background: var(--md-accent-dim); }
-
-.instance-elements {
-    background: rgba(255,255,255,0.03);
-    border: 1px solid var(--md-border);
-    border-radius: 6px; margin: 0.35rem 0;
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 600; font-size: 0.9rem; letter-spacing: 0.06em;
-    padding: 0.65rem 1rem; cursor: pointer;
-    transition: background var(--transition), border-color var(--transition), color var(--transition);
-    color: rgba(240,240,240,0.6);
-}
-
-.instance-elements:hover {
-    background: rgba(255,255,255,0.07);
-    border-color: var(--md-border-lit); color: var(--md-white);
-}
-
-.active-instance {
-    background: var(--md-green-dim) !important;
-    border-color: var(--md-green) !important;
-    color: var(--md-white) !important;
-}
-
-/* ══ MISC ══ */
-.dev-badge {
-    position: fixed;
-    bottom: 0.5rem;
-    left: calc(var(--sidebar-w) + 0.75rem);
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 0.55rem; letter-spacing: 0.2em;
-    color: rgba(240,240,240,0.12);
-    pointer-events: none; user-select: none;
-    z-index: 15;
-}

@@ -1,0 +1,471 @@
+/* ============================================================
+   MetalDaze Launcher — Skins (visor 3D + historial)
+   Vista superpuesta dentro de Home, mismo patrón que .media-overlay/
+   .all-news-panel: sin flecha de "volver", la fila de categorías de
+   arriba nunca desaparece, se cambia de vista clickeando otra categoría.
+   ============================================================ */
+
+.skins-overlay {
+    position: fixed;
+    top: calc(var(--titlebar-h) + var(--topnav-h)); bottom: 0;
+    left: 0; right: 0;
+    background: rgba(10,11,13,0.97);
+    backdrop-filter: blur(20px);
+    z-index: 90;
+    display: flex;
+    flex-direction: column;
+    padding: 1.75rem 3rem;
+}
+
+.skins-layout {
+    flex: 1;
+    display: flex;
+    gap: 2rem;
+    margin-top: 1.25rem;
+    min-height: 0;
+}
+
+/* ══ VISOR 3D ══ */
+.skins-viewer-col {
+    flex-shrink: 0;
+    width: 360px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    min-height: 0;
+}
+
+.skins-viewer-card {
+    position: relative;
+    flex: 1;
+    min-height: 0;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.skins-viewer-card canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+    cursor: grab;
+}
+
+.skins-viewer-card canvas:active { cursor: grabbing; }
+
+.skins-viewer-empty {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    text-align: center;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.85rem;
+    letter-spacing: 0.05em;
+    color: var(--text-dim);
+    background: var(--surface);
+}
+
+.skins-viewer-name {
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    padding: 0.6rem 0.9rem;
+    background: linear-gradient(to top, rgba(0,0,0,0.75), transparent);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text);
+    pointer-events: none;
+}
+
+/* ══ BARRAS DE CONTROL (animación / capa-elytra) ══ */
+.skins-control-bar {
+    flex-shrink: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.skins-chip-btn {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 0.45rem 0.9rem;
+    cursor: pointer;
+    transition: color var(--transition), background var(--transition), border-color var(--transition);
+}
+
+.skins-chip-btn:hover:not(:disabled) {
+    color: var(--text);
+    border-color: var(--border-lit);
+    background: rgba(255,255,255,0.08);
+}
+
+.skins-chip-btn:focus-visible {
+    outline: 2px solid var(--accent-b);
+    outline-offset: 2px;
+}
+
+.skins-chip-btn-active {
+    color: var(--text);
+    background: rgba(124,92,255,0.14);
+    border-color: var(--accent-b);
+}
+
+.skins-chip-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+/* Tile "Sin capa" dentro de la galería de Capas — mismo tamaño que una
+   celda real, pero con ícono centrado en vez de imagen. */
+.skins-cell-none {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    color: var(--text-dim);
+}
+
+.skins-cell-none:hover { color: var(--text); }
+
+.skins-cell-none .skins-cell-meta {
+    position: static;
+    background: none;
+    padding: 0;
+    text-align: center;
+}
+
+/* ══ COLUMNA DERECHA: 3 secciones apiladas, scroll único ══
+   (Últimas skins utilizadas / Skins subidas / Capas) — antes cada grilla
+   scrolleaba por separado; con 3 secciones se volvía un scroll-dentro-de-
+   scroll incómodo, así que ahora scrollea la columna entera. */
+.skins-history {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    overflow-y: auto;
+    scrollbar-width: none;
+}
+
+.skins-history::-webkit-scrollbar { display: none; }
+
+.skins-section { flex-shrink: 0; }
+
+.skins-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.skins-section-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700; font-size: 0.65rem;
+    letter-spacing: 0.3em; text-transform: uppercase;
+    color: var(--text-dim);
+}
+
+.skins-add-error {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    color: var(--red);
+    margin: -0.5rem 0 0.75rem;
+}
+
+.skins-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+    gap: 0.85rem;
+}
+
+.skins-cell {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    cursor: pointer;
+    transition: border-color var(--transition), transform var(--transition);
+}
+
+.skins-cell:hover {
+    border-color: var(--border-lit);
+    transform: translateY(-2px);
+}
+
+.skins-cell.skins-cell-active {
+    border-color: var(--accent-b);
+    box-shadow: 0 0 0 1px var(--accent-b);
+}
+
+/* Elegida en la galería pero todavía no confirmada con "Guardar cambios" —
+   borde punteado en vez de sólido, para no confundirla con la ya activa. */
+.skins-cell.skins-cell-pending {
+    border-style: dashed;
+    border-color: #eab308;
+    box-shadow: 0 0 0 1px #eab308;
+}
+
+.skins-cell:focus-visible {
+    outline: 2px solid var(--accent-b);
+    outline-offset: 2px;
+}
+
+.skins-cell img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    image-rendering: pixelated;
+}
+
+/* Las capas son texturas 64x32 — encogerlas con cover las recorta feo,
+   así que se ven completas (con márgenes) en vez de a sangre. */
+/* box-sizing: border-box explícito — esta pantalla no hereda el reset
+   global (ese vive en index.css, que solo carga el splash/update, no
+   launcher.html). Sin esto el padding se suma POR FUERA del 100%x100% y
+   la celda (overflow:hidden) recorta los bordes de la imagen. */
+.skins-cell img.skins-cell-img-contain { box-sizing: border-box; object-fit: contain; padding: 0.5rem; }
+
+.skins-cell-meta {
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    padding: 0.3rem 0.5rem;
+    background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.62rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Tile "+" dentro de la grilla de Skins (reemplaza el botón de arriba) —
+   mismo tamaño/forma que una celda de skin real. */
+.skins-add-tile {
+    aspect-ratio: 1 / 1;
+    border-radius: var(--radius-md);
+    border: 1.5px dashed var(--border-lit);
+    background: rgba(255,255,255,0.02);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-dim);
+    cursor: pointer;
+    transition: border-color var(--transition), color var(--transition), background var(--transition);
+}
+
+.skins-add-tile:hover {
+    border-color: var(--accent-b);
+    color: var(--accent-b);
+    background: rgba(124,92,255,0.06);
+}
+
+.skins-add-tile:focus-visible {
+    outline: 2px solid var(--accent-b);
+    outline-offset: 2px;
+}
+
+/* Wrapper de renombrado inline — reemplaza el .skins-cell-meta de la celda
+   mientras se edita, mismo lugar/tamaño para que no salte el layout. El
+   cambio solo se guarda al tocar el check o apretar Enter — Escape o click
+   afuera cancela, así "confirmar" es un paso explícito. */
+.skins-cell-rename-wrap {
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    display: flex;
+    align-items: stretch;
+    background: rgba(0,0,0,0.9);
+    border-top: 1px solid var(--accent-b);
+}
+
+.skins-cell-rename-input {
+    flex: 1;
+    min-width: 0;
+    padding: 0.3rem 0.4rem;
+    background: none;
+    border: none;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.62rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text);
+}
+
+.skins-cell-rename-input:focus { outline: none; }
+
+.skins-cell-rename-confirm {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.6rem;
+    background: rgba(124,92,255,0.18);
+    border: none;
+    border-left: 1px solid var(--accent-b);
+    color: var(--accent-b);
+    cursor: pointer;
+    transition: background var(--transition);
+}
+
+.skins-cell-rename-confirm:hover { background: rgba(124,92,255,0.32); }
+.skins-cell-rename-confirm:focus-visible { outline: 2px solid var(--accent-b); outline-offset: -2px; }
+
+/* Menú contextual (click derecho sobre una skin subida) */
+.skins-context-menu {
+    position: fixed;
+    z-index: 950;
+    min-width: 160px;
+    background: var(--surface);
+    border: 1px solid var(--border-lit);
+    border-radius: var(--radius-md);
+    padding: 0.4rem;
+    box-shadow: 0 12px 32px rgba(0,0,0,0.5);
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+}
+
+.skins-context-menu-item {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 0.78rem;
+    letter-spacing: 0.04em;
+    text-align: left;
+    color: var(--text);
+    background: none;
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 0.5rem 0.7rem;
+    cursor: pointer;
+    transition: background var(--transition);
+}
+
+.skins-context-menu-item:hover,
+.skins-context-menu-item:focus-visible { background: rgba(255,255,255,0.08); outline: none; }
+
+.skins-context-menu-item-danger { color: var(--red); }
+.skins-context-menu-item-danger:hover { background: var(--red-dim); }
+
+/* Modal de confirmación propio (reemplaza confirm() nativo) */
+.skins-confirm-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 960;
+    background: rgba(5,5,6,0.7);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+}
+
+.skins-confirm-card {
+    width: 320px;
+    max-width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border-lit);
+    border-radius: var(--radius-md);
+    padding: 1.5rem;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+}
+
+.skins-confirm-message {
+    font-family: 'Barlow', sans-serif;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: var(--text);
+    margin-bottom: 1.25rem;
+}
+
+.skins-confirm-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.6rem;
+}
+
+.skins-confirm-btn {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 0.55rem 1.1rem;
+    cursor: pointer;
+    transition: color var(--transition), background var(--transition), border-color var(--transition);
+}
+
+.skins-confirm-btn:hover { color: var(--text); border-color: var(--border-lit); background: rgba(255,255,255,0.09); }
+.skins-confirm-btn:focus-visible { outline: 2px solid var(--accent-b); outline-offset: 2px; }
+
+.skins-confirm-btn-danger { color: var(--red); background: var(--red-dim); border-color: rgba(224,90,90,0.35); }
+.skins-confirm-btn-danger:hover { background: rgba(224,90,90,0.25); border-color: var(--red); }
+
+.skins-section-empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2.5rem 0;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.85rem;
+    letter-spacing: 0.06em;
+    color: var(--text-dim);
+    text-align: center;
+}
+
+/* Botón flotante — solo aparece si hay una skin/capa previsualizada distinta
+   de la ya guardada (ver Skins.updateSaveButton en skins.js). */
+.skins-save-btn {
+    position: absolute;
+    right: 2rem;
+    bottom: 1.5rem;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #0a0a0a;
+    background: var(--accent-gradient);
+    border: none;
+    border-radius: var(--radius-md);
+    padding: 0.75rem 1.5rem;
+    cursor: pointer;
+    box-shadow: 0 10px 28px var(--accent-glow);
+    transition: transform var(--transition), filter var(--transition), opacity var(--transition);
+    z-index: 100;
+}
+
+.skins-save-btn:hover { filter: brightness(1.08); transform: translateY(-1px); }
+
+@media (max-width: 860px) {
+    .skins-layout { flex-direction: column; }
+    .skins-viewer-col { width: 100%; }
+    .skins-viewer-card { height: 320px; }
+}

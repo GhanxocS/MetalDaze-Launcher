@@ -1,153 +1,429 @@
 <div class="container">
     <div class="nav-settings">
-        <div class="nav-brand">CONFIGURACIÓN</div>
+        <div class="nav-brand" data-i18n="settings.brand">CONFIGURACIÓN</div>
         <div class="nav-box">
-            <div id="account" class="nav-settings-btn active-settings-BTN">CUENTAS</div>
-            <div id="java" class="nav-settings-btn">JAVA</div>
-            <div id="resolution" class="nav-settings-btn">RESOLUCIÓN</div>
-            <div id="launcher" class="nav-settings-btn">LAUNCHER</div>
-            <div id="game" class="nav-settings-btn">JUEGO</div>
-            <div id="about" class="nav-settings-btn">ACERCA DE</div>
-        </div>
-        <div id="save" class="nav-settings-btn nav-back">
-            <span class="nav-back-arrow">←</span> INICIO
+            <div id="account" class="nav-settings-btn active-settings-BTN">
+                <span class="nav-settings-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="8" r="4"/>
+                        <path d="M4 20c0-4 4-6 8-6s8 2 8 6"/>
+                    </svg>
+                </span>
+                <span class="nav-settings-text">
+                    <span class="nav-settings-title" data-i18n="settings.nav.cuentas.title">Cuentas</span>
+                    <span class="nav-settings-subtitle" data-i18n="settings.nav.cuentas.subtitle">Perfiles y sesión</span>
+                </span>
+            </div>
+            <div id="java" class="nav-settings-btn">
+                <span class="nav-settings-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="6" y="6" width="12" height="12" rx="2"/>
+                        <path d="M9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4"/>
+                    </svg>
+                </span>
+                <span class="nav-settings-text">
+                    <span class="nav-settings-title" data-i18n="settings.nav.java.title">Java</span>
+                    <span class="nav-settings-subtitle" data-i18n="settings.nav.java.subtitle">Memoria y ruta</span>
+                </span>
+            </div>
+            <div id="appearance" class="nav-settings-btn">
+                <span class="nav-settings-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 3a9 9 0 1 0 0 18c1.5 0 2-1 2-2s-.5-1.5-.5-2 1-1 2-1h1a4 4 0 0 0 4-4c0-5-4-9-8.5-9z"/>
+                        <circle cx="7.5" cy="10.5" r="1" fill="currentColor" stroke="none"/>
+                        <circle cx="11" cy="7" r="1" fill="currentColor" stroke="none"/>
+                        <circle cx="15.5" cy="8.5" r="1" fill="currentColor" stroke="none"/>
+                    </svg>
+                </span>
+                <span class="nav-settings-text">
+                    <span class="nav-settings-title" data-i18n="settings.nav.apariencia.title">Apariencia</span>
+                    <span class="nav-settings-subtitle" data-i18n="settings.nav.apariencia.subtitle">Tema del launcher</span>
+                </span>
+            </div>
+            <div id="integrations" class="nav-settings-btn">
+                <span class="nav-settings-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9 15l6-6"/>
+                        <path d="M10 6l1-1a4 4 0 0 1 6 6l-1 1"/>
+                        <path d="M14 18l-1 1a4 4 0 0 1-6-6l1-1"/>
+                    </svg>
+                </span>
+                <span class="nav-settings-text">
+                    <span class="nav-settings-title" data-i18n="settings.nav.integraciones.title">Integraciones</span>
+                    <span class="nav-settings-subtitle" data-i18n="settings.nav.integraciones.subtitle">Descargas y arranque</span>
+                </span>
+            </div>
+            <div id="storage" class="nav-settings-btn">
+                <span class="nav-settings-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="4" width="18" height="16" rx="2"/>
+                        <path d="M3 12h18"/>
+                        <circle cx="7" cy="16" r="1" fill="currentColor" stroke="none"/>
+                    </svg>
+                </span>
+                <span class="nav-settings-text">
+                    <span class="nav-settings-title" data-i18n="settings.nav.almacenamiento.title">Almacenamiento</span>
+                    <span class="nav-settings-subtitle" data-i18n="settings.nav.almacenamiento.subtitle">Espacio en disco</span>
+                </span>
+            </div>
+            <div id="game" class="nav-settings-btn">
+                <span class="nav-settings-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M7 7h10a5 5 0 0 1 5 5v2a3 3 0 0 1-5.2 2.04L15 14H9l-1.8 2.04A3 3 0 0 1 2 14v-2a5 5 0 0 1 5-5z"/>
+                        <path d="M7.5 10.5v3M6 12h3"/>
+                        <circle cx="16" cy="10.5" r="0.6" fill="currentColor" stroke="none"/>
+                        <circle cx="18" cy="12.5" r="0.6" fill="currentColor" stroke="none"/>
+                    </svg>
+                </span>
+                <span class="nav-settings-text">
+                    <span class="nav-settings-title" data-i18n="settings.nav.juego.title">Juego</span>
+                    <span class="nav-settings-subtitle" data-i18n="settings.nav.juego.subtitle">Resolución, video y audio</span>
+                </span>
+            </div>
+            <div id="about" class="nav-settings-btn">
+                <span class="nav-settings-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="9"/>
+                        <path d="M12 11v5M12 8h.01"/>
+                    </svg>
+                </span>
+                <span class="nav-settings-text">
+                    <span class="nav-settings-title" data-i18n="settings.nav.about.title">Acerca de</span>
+                    <span class="nav-settings-subtitle" data-i18n="settings.nav.about.subtitle">Créditos y licencia</span>
+                </span>
+            </div>
         </div>
     </div>
 
     <div id="account-tab" class="container-settings active-container-settings">
+        <div class="settings-tab-head settings-tab-head-split">
+            <div class="settings-tab-head-row">
+                <button class="tab-back-btn" type="button" aria-label="Volver al inicio">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
+                </button>
+                <div>
+                    <div class="settings-tab-eyebrow" data-i18n="accounts.eyebrow">Identidad</div>
+                    <div class="settings-tab-title" data-i18n="accounts.title">Tus cuentas</div>
+                    <div class="settings-tab-desc" data-i18n="accounts.desc">La cuenta activa es con la que se juega. Guardá varias y cambiá entre ellas cuando quieras.</div>
+                </div>
+            </div>
+            <div class="settings-tab-count">
+                <span class="settings-tab-count-value" id="accounts-count">0</span>
+                <span class="settings-tab-count-label" data-i18n-html="accounts.count.label">cuentas<br>guardadas</span>
+            </div>
+        </div>
+
+        <div class="account-hero" id="account-hero">
+            <div class="account-hero-avatar" id="account-hero-avatar"></div>
+            <div class="account-hero-info">
+                <div class="account-hero-label" data-i18n="accounts.hero.label">Jugando como</div>
+                <!-- account-hero-name se pisa con el nombre real al vuelo (utils.js:accountSelect)
+                     — a propósito SIN data-i18n, para que un cambio de idioma no lo resetee. -->
+                <div class="account-hero-name" id="account-hero-name">Sin cuenta activa</div>
+            </div>
+            <div class="account-hero-tag" data-i18n="accounts.hero.tag">Activa</div>
+        </div>
+
         <div class="titre-tab">
             <span class="tab-line"></span>
-            CUENTAS DE JUGADORES
+            <span data-i18n="accounts.list.title">CUENTAS MICROSOFT CONECTADAS</span>
             <span class="tab-line"></span>
         </div>
-        <div class="accounts-list content-scroll">
+        <div class="accounts-list">
             <div class="account" id="add">
                 <div class="add-profile">
-                    <div class="icon-account-add"></div>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 5v14M5 12h14"/>
+                    </svg>
                 </div>
-                <div class="add-text-profile">Añadir una cuenta</div>
+                <div class="add-text">
+                    <div class="add-text-profile" data-i18n="accounts.add.title">Añadir una cuenta</div>
+                    <div class="add-text-desc" data-i18n="accounts.add.desc">Repetí esto con otra cuenta Microsoft para guardar más de una</div>
+                </div>
             </div>
         </div>
     </div>
 
     <div id="java-tab" class="container-settings content-scroll">
-        <div class="titre-tab">
-            <span class="tab-line"></span>
-            MEMORIA RAM
-            <span class="tab-line"></span>
-        </div>
-        <div class="settings-elements-box">
-            <div class="setting-text">
-                Configura la RAM asignada al juego. No superes el 50% de tu RAM total para el máximo, ni más de 4 GB para el mínimo.
-            </div>
-            <div class="settings-elements content-evenly">
-                <div class="memory-slider" min="0.5" max="8" step="0.5">
-                    <div class="slider-touch-left"><span value="0 GB"></span></div>
-                    <div class="slider-touch-right"><span value="0 GB"></span></div>
-                    <div class="slider-line"><span></span></div>
-                </div>
-                <div class="ram-info-block">
-                    RAM total: <span id="total-ram">0 GB</span><br>
-                    RAM disponible: <span id="free-ram">0 GB</span>
+        <div class="settings-tab-head">
+            <div class="settings-tab-head-row">
+                <button class="tab-back-btn" type="button" aria-label="Volver al inicio">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
+                </button>
+                <div>
+                    <div class="settings-tab-eyebrow" data-i18n="java.eyebrow">Sistema</div>
+                    <div class="settings-tab-title" data-i18n="java.title">Java</div>
+                    <div class="settings-tab-desc" data-i18n="java.desc">Memoria asignada y ejecutable de Java usados para lanzar cualquier instancia.</div>
                 </div>
             </div>
         </div>
 
-        <div class="titre-tab">
-            <span class="tab-line"></span>
-            RUTA DE JAVA
-            <span class="tab-line"></span>
-        </div>
-        <div class="settings-elements-box">
-            <div class="setting-text">
-                El launcher usa Java integrado ubicado en:<br>
-                <span class="java-path-txt"></span>
+        <div class="setting-card setting-card-stack">
+            <div class="setting-card-row">
+                <div class="setting-card-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="6" y="6" width="12" height="12" rx="2"/>
+                        <path d="M9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4"/>
+                    </svg>
+                </div>
+                <div class="setting-card-text">
+                    <div class="setting-card-title" data-i18n="java.ram.title">Memoria RAM</div>
+                    <div class="setting-card-desc" data-i18n="java.ram.desc">No superes el 50% de tu RAM total para el máximo, ni más de 4 GB para el mínimo.</div>
+                </div>
             </div>
-            <div class="settings-elements content-evenly">
+            <div class="memory-slider" min="0.5" max="8" step="0.5">
+                <div class="slider-touch-left"><span value="0 GB"></span></div>
+                <div class="slider-touch-right"><span value="0 GB"></span></div>
+                <div class="slider-line"><span></span></div>
+            </div>
+            <div class="setting-card-stats">
+                <div class="setting-card-stat">
+                    <span class="setting-card-stat-label" data-i18n="java.ram.total">RAM TOTAL</span>
+                    <span class="setting-card-stat-value" id="total-ram">0 GB</span>
+                </div>
+                <div class="setting-card-stat-divider"></div>
+                <div class="setting-card-stat">
+                    <span class="setting-card-stat-label" data-i18n="java.ram.free">RAM DISPONIBLE</span>
+                    <span class="setting-card-stat-value" id="free-ram">0 GB</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="setting-card">
+            <div class="setting-card-row">
+                <div class="setting-card-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+                    </svg>
+                </div>
+                <div class="setting-card-text">
+                    <div class="setting-card-title" data-i18n="java.path.title">Ruta de Java</div>
+                    <!-- .java-path-txt lo pisa settings.js con la ruta real — separado
+                         del texto fijo a propósito, para no pelear con esa asignación. -->
+                    <div class="setting-card-desc"><span data-i18n="java.path.desc">Por defecto usa el Java integrado en</span> <span class="java-path-txt"></span>.</div>
+                </div>
+            </div>
+            <div class="java-path-row">
                 <input type="text" class="java-path-input-text" disabled>
                 <input type="file" class="java-path-input-file" accept="application/octet-stream" />
                 <div class="java-path-box">
-                    <div class="java-path-set java-path-btn">Cambiar</div>
-                    <div class="java-path-reset java-path-btn">Por defecto</div>
+                    <div class="java-path-set java-path-btn" data-i18n="java.path.change">Cambiar</div>
+                    <div class="java-path-reset java-path-btn" data-i18n="java.path.default">Por defecto</div>
                 </div>
             </div>
         </div>
+
+        <div class="settings-autosave-hint" data-i18n="settings.autosave">Los cambios se guardan automáticamente</div>
     </div>
 
-    <div id="resolution-tab" class="container-settings">
-        <div class="titre-tab">
-            <span class="tab-line"></span>
-            RESOLUCIÓN
-            <span class="tab-line"></span>
-        </div>
-        <div class="settings-elements-box">
-            <div class="setting-text">
-                Resolución de la ventana de Minecraft. Por defecto: 854 × 480.
-            </div>
-            <div class="settings-elements content-center">
-                <div class="input-size-element">
-                    <input type="number" class="width-size input-resolution">
-                    <div class="size-cross"></div>
-                    <input type="number" class="height-size input-resolution">
+    <div id="appearance-tab" class="container-settings content-scroll">
+        <div class="settings-tab-head">
+            <div class="settings-tab-head-row">
+                <button class="tab-back-btn" type="button" aria-label="Volver al inicio">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
+                </button>
+                <div>
+                    <div class="settings-tab-eyebrow" data-i18n="appearance.eyebrow">Apariencia</div>
+                    <div class="settings-tab-title" data-i18n="appearance.title">Tema y color</div>
+                    <div class="settings-tab-desc" data-i18n="appearance.desc">Cómo se ve el launcher: brillo de la interfaz y el color de acento en botones, selección y detalles.</div>
                 </div>
-                <div class="size-reset size-btn">Por defecto</div>
-            </div>
-        </div>
-    </div>
-
-    <div id="launcher-tab" class="container-settings content-scroll">
-        <div class="titre-tab">
-            <span class="tab-line"></span>
-            DESCARGAS
-            <span class="tab-line"></span>
-        </div>
-        <div class="settings-elements-box">
-            <div class="setting-text">
-                Número máximo de archivos descargados simultáneamente.
-            </div>
-            <div class="settings-elements content-center">
-                <input type="number" class="max-files input-max-files">
-                <span class="setting-label">archivos</span>
-                <div class="max-files-reset max-files-btn">Por defecto</div>
             </div>
         </div>
 
         <div class="titre-tab">
             <span class="tab-line"></span>
-            TEMA
+            <span data-i18n="appearance.theme.title">TEMA</span>
             <span class="tab-line"></span>
         </div>
         <div class="settings-elements-box">
             <div class="settings-elements content-center theme-box">
-                <div class="theme-btn theme-btn-clair">Gato</div>
-                <div class="theme-btn theme-btn-sombre">Oscuro</div>
-                <div class="theme-btn theme-btn-auto">Automático</div>
+                <div class="theme-btn theme-btn-clair" data-i18n="appearance.theme.light">Claro</div>
+                <div class="theme-btn theme-btn-sombre" data-i18n="appearance.theme.dark">Oscuro</div>
+                <div class="theme-btn theme-btn-auto" data-i18n="appearance.theme.auto">Automático</div>
             </div>
         </div>
 
         <div class="titre-tab">
             <span class="tab-line"></span>
-            AL INICIAR EL JUEGO
+            <span data-i18n="appearance.accent.title">COLOR DEL ACENTO</span>
+            <span class="tab-line"></span>
+        </div>
+        <div class="setting-card">
+            <div class="setting-card-row">
+                <div class="setting-card-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 3a9 9 0 1 0 0 18c1.5 0 2-1 2-2s-.5-1.5-.5-2 1-1 2-1h1a4 4 0 0 0 4-4c0-5-4-9-8.5-9z"/>
+                        <circle cx="7.5" cy="10.5" r="1" fill="currentColor" stroke="none"/>
+                        <circle cx="11" cy="7" r="1" fill="currentColor" stroke="none"/>
+                        <circle cx="15.5" cy="8.5" r="1" fill="currentColor" stroke="none"/>
+                    </svg>
+                </div>
+                <div class="setting-card-text">
+                    <div class="setting-card-title" data-i18n="appearance.accent.card.title">Color del diseño</div>
+                    <div class="setting-card-desc" data-i18n="appearance.accent.card.desc">Personalizá el color principal de controles, selecciones, brillos y detalles en todo el launcher.</div>
+                </div>
+            </div>
+
+            <div class="accent-swatch-grid" id="accent-swatch-grid">
+                <button class="accent-swatch" type="button" data-accent="metaldaze" style="--swatch-a:#2dd4bf; --swatch-b:#7c5cff;">
+                    <span class="accent-swatch-dot"><svg class="accent-swatch-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg></span>
+                    <span class="accent-swatch-label" data-i18n="appearance.accent.preset.metaldaze">MetalDaze</span>
+                </button>
+                <button class="accent-swatch" type="button" data-accent="reactor" style="--swatch-a:#67e8f9; --swatch-b:#22d3ee;">
+                    <span class="accent-swatch-dot"><svg class="accent-swatch-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg></span>
+                    <span class="accent-swatch-label" data-i18n="appearance.accent.preset.reactor">Reactor</span>
+                </button>
+                <button class="accent-swatch" type="button" data-accent="cobalto" style="--swatch-a:#60a5fa; --swatch-b:#3b82f6;">
+                    <span class="accent-swatch-dot"><svg class="accent-swatch-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg></span>
+                    <span class="accent-swatch-label" data-i18n="appearance.accent.preset.cobalto">Cobalto</span>
+                </button>
+                <button class="accent-swatch" type="button" data-accent="esmeralda" style="--swatch-a:#6ee7b7; --swatch-b:#10b981;">
+                    <span class="accent-swatch-dot"><svg class="accent-swatch-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg></span>
+                    <span class="accent-swatch-label" data-i18n="appearance.accent.preset.esmeralda">Esmeralda</span>
+                </button>
+                <button class="accent-swatch" type="button" data-accent="rosa" style="--swatch-a:#f9a8d4; --swatch-b:#ec4899;">
+                    <span class="accent-swatch-dot"><svg class="accent-swatch-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg></span>
+                    <span class="accent-swatch-label" data-i18n="appearance.accent.preset.rosa">Rosa</span>
+                </button>
+                <button class="accent-swatch" type="button" data-accent="ambar" style="--swatch-a:#fcd34d; --swatch-b:#f59e0b;">
+                    <span class="accent-swatch-dot"><svg class="accent-swatch-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg></span>
+                    <span class="accent-swatch-label" data-i18n="appearance.accent.preset.ambar">Ámbar</span>
+                </button>
+            </div>
+
+            <div class="accent-custom-row">
+                <div class="accent-custom-text">
+                    <div class="field-label-inline" data-i18n="appearance.accent.custom.label">Color personalizado</div>
+                    <div class="accent-custom-hint" data-i18n="appearance.accent.custom.hint">Cualquier color, en formato hexadecimal</div>
+                </div>
+                <div class="accent-custom-controls">
+                    <input type="color" class="accent-custom-picker" id="accent-custom-picker" value="#7c5cff" aria-label="Selector de color personalizado">
+                    <input type="text" class="accent-custom-hex" id="accent-custom-hex" value="#7C5CFF" maxlength="7" spellcheck="false" aria-label="Color en hexadecimal">
+                </div>
+            </div>
+        </div>
+
+        <div class="titre-tab">
+            <span class="tab-line"></span>
+            <span data-i18n="appearance.language.title">IDIOMA</span>
+            <span class="tab-line"></span>
+        </div>
+        <div class="setting-card">
+            <div class="setting-card-row">
+                <div class="setting-card-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="9"/>
+                        <path d="M3 12h18M12 3c2.4 2.6 3.6 5.7 3.6 9s-1.2 6.4-3.6 9c-2.4-2.6-3.6-5.7-3.6-9S9.6 5.6 12 3z"/>
+                    </svg>
+                </div>
+                <div class="setting-card-text">
+                    <div class="setting-card-title" data-i18n="appearance.language.card.title">Idioma del launcher</div>
+                    <div class="setting-card-desc" data-i18n="appearance.language.card.desc">Elegí el idioma de la interfaz.</div>
+                </div>
+            </div>
+            <div class="select-wrap">
+                <select class="field-select" id="language-select" aria-label="Idioma del launcher">
+                    <option value="es">Español</option>
+                    <option value="en">English</option>
+                </select>
+                <svg class="select-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+            </div>
+            <div class="setting-card-note" data-i18n="appearance.language.note">Elegí el idioma y se aplica al momento en toda la interfaz.</div>
+        </div>
+
+        <div class="titre-tab">
+            <span class="tab-line"></span>
+            <span data-i18n="appearance.a11y.title">ACCESIBILIDAD</span>
+            <span class="tab-line"></span>
+        </div>
+        <div class="setting-card">
+            <div class="setting-card-row">
+                <div class="setting-card-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 7V5h16v2"/><path d="M9 20h6"/><path d="M12 5v15"/>
+                    </svg>
+                </div>
+                <div class="setting-card-text">
+                    <div class="setting-card-title" data-i18n="appearance.textsize.title">Tamaño de texto</div>
+                    <div class="setting-card-desc" data-i18n="appearance.textsize.desc">Agranda o achica el texto y el espaciado del launcher, sin mover la estructura de la ventana.</div>
+                </div>
+                <div class="setting-card-control">
+                    <span class="scale-slider-value" id="text-scale-value">100%</span>
+                </div>
+            </div>
+            <input type="range" class="scale-slider" id="text-scale-slider" min="0.9" max="1.3" step="0.05" value="1" aria-label="Tamaño de texto">
+        </div>
+        <div class="setting-card">
+            <label class="md-toggle-row" for="high-contrast-toggle">
+                <span class="md-toggle-row-text">
+                    <span class="setting-card-title" data-i18n="appearance.contrast.title">Contraste alto</span>
+                    <span class="setting-card-desc" data-i18n="appearance.contrast.desc">Refuerza el texto apagado y los bordes en todo el launcher para mejorar la legibilidad.</span>
+                </span>
+                <span class="md-toggle">
+                    <input type="checkbox" id="high-contrast-toggle">
+                    <span class="md-toggle-track"><span class="md-toggle-thumb"></span></span>
+                </span>
+            </label>
+        </div>
+    </div>
+
+    <div id="integrations-tab" class="container-settings content-scroll">
+        <div class="settings-tab-head">
+            <div class="settings-tab-head-row">
+                <button class="tab-back-btn" type="button" aria-label="Volver al inicio">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
+                </button>
+                <div>
+                    <div class="settings-tab-eyebrow" data-i18n="integrations.eyebrow">Red</div>
+                    <div class="settings-tab-title" data-i18n="integrations.title">Integraciones</div>
+                    <div class="settings-tab-desc" data-i18n="integrations.desc">Descargas simultáneas y qué pasa con el launcher cuando el juego arranca.</div>
+                </div>
+            </div>
+        </div>
+        <div class="titre-tab">
+            <span class="tab-line"></span>
+            <span data-i18n="integrations.downloads.title">DESCARGAS</span>
+            <span class="tab-line"></span>
+        </div>
+        <div class="settings-elements-box">
+            <div class="setting-text" data-i18n="integrations.downloads.desc">
+                Número máximo de archivos descargados simultáneamente.
+            </div>
+            <div class="settings-elements content-center">
+                <input type="number" class="max-files input-max-files">
+                <span class="setting-label" data-i18n="integrations.downloads.unit">archivos</span>
+                <div class="max-files-reset max-files-btn" data-i18n="integrations.downloads.default">Por defecto</div>
+            </div>
+        </div>
+
+        <div class="titre-tab">
+            <span class="tab-line"></span>
+            <span data-i18n="integrations.onstart.title">AL INICIAR EL JUEGO</span>
             <span class="tab-line"></span>
         </div>
         <div class="settings-elements-box">
             <div class="settings-elements content-evenly close-box">
-                <div class="close-launcher close-btn">Cerrar launcher al iniciar</div>
-                <div class="close-none close-btn">Mantener abierto</div>
-                <div class="close-all close-btn">Cerrar juego con launcher</div>
+                <div class="close-launcher close-btn" data-i18n="integrations.onstart.close">Cerrar launcher al iniciar</div>
+                <div class="close-none close-btn" data-i18n="integrations.onstart.keep">Mantener abierto</div>
+                <div class="close-all close-btn" data-i18n="integrations.onstart.closeall">Cerrar juego con launcher</div>
             </div>
         </div>
+    </div>
 
-        <!-- ── ALMACENAMIENTO (nuevo bloque v1.1) ── -->
-        <div class="titre-tab">
-            <span class="tab-line"></span>
-            ALMACENAMIENTO
-            <span class="tab-line"></span>
+    <div id="storage-tab" class="container-settings content-scroll">
+        <div class="settings-tab-head">
+            <div class="settings-tab-head-row">
+                <button class="tab-back-btn" type="button" aria-label="Volver al inicio">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
+                </button>
+                <div>
+                    <div class="settings-tab-eyebrow" data-i18n="storage.eyebrow">Disco</div>
+                    <div class="settings-tab-title" data-i18n="storage.title">Almacenamiento</div>
+                    <div class="settings-tab-desc" data-i18n="storage.desc">Carpeta de instancias del launcher y espacio en disco. Solo lectura.</div>
+                </div>
+            </div>
         </div>
         <div class="settings-elements-box">
-            <div class="setting-text">
-                Carpeta de instancias del launcher. Solo lectura.
-            </div>
 
             <!-- Fila: ruta + botón abrir carpeta -->
             <div class="storage-path-row">
@@ -163,24 +439,24 @@
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
                     </svg>
-                    Abrir
+                    <span data-i18n="storage.open">Abrir</span>
                 </button>
             </div>
 
             <!-- Fila: stats de uso -->
             <div class="storage-stats-row">
                 <div class="storage-stat-item">
-                    <span class="storage-stat-label">USADO POR INSTANCIAS</span>
+                    <span class="storage-stat-label" data-i18n="storage.used">USADO POR INSTANCIAS</span>
                     <span class="storage-stat-value" id="storage-instances-size">—</span>
                 </div>
                 <div class="storage-stat-divider"></div>
                 <div class="storage-stat-item">
-                    <span class="storage-stat-label">ESPACIO LIBRE EN DISCO</span>
+                    <span class="storage-stat-label" data-i18n="storage.free">ESPACIO LIBRE EN DISCO</span>
                     <span class="storage-stat-value" id="storage-disk-free">—</span>
                 </div>
                 <div class="storage-stat-divider"></div>
                 <div class="storage-stat-item">
-                    <span class="storage-stat-label">DISCO TOTAL</span>
+                    <span class="storage-stat-label" data-i18n="storage.total">DISCO TOTAL</span>
                     <span class="storage-stat-value" id="storage-disk-total">—</span>
                 </div>
             </div>
@@ -190,39 +466,71 @@
                 <div class="storage-bar-fill" id="storage-bar-fill"></div>
             </div>
             <div class="storage-bar-legend">
-                <span id="storage-bar-pct">—</span> del disco en uso por otras aplicaciones
+                <span id="storage-bar-pct">—</span> <span data-i18n="storage.legend">del disco en uso por otras aplicaciones</span>
             </div>
 
         </div>
     </div>
 
     <div id="game-tab" class="container-settings content-scroll">
+        <div class="settings-tab-head">
+            <div class="settings-tab-head-row">
+                <button class="tab-back-btn" type="button" aria-label="Volver al inicio">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
+                </button>
+                <div>
+                    <div class="settings-tab-eyebrow" data-i18n="game.eyebrow">Minecraft</div>
+                    <div class="settings-tab-title" data-i18n="game.title">Juego</div>
+                    <div class="settings-tab-desc" data-i18n="game.desc">Resolución, video, controles y audio. Se guarda en todas las instancias a la vez.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── VENTANA / RESOLUCIÓN ── -->
+        <div class="titre-tab">
+            <span class="tab-line"></span>
+            <span data-i18n="game.resolution.title">RESOLUCIÓN</span>
+            <span class="tab-line"></span>
+        </div>
+        <div class="settings-elements-box">
+            <div class="setting-text" data-i18n="game.resolution.desc">
+                Resolución de la ventana de Minecraft. Por defecto: 854 × 480.
+            </div>
+            <div class="settings-elements content-center">
+                <div class="input-size-element">
+                    <input type="number" class="width-size input-resolution">
+                    <div class="size-cross"></div>
+                    <input type="number" class="height-size input-resolution">
+                </div>
+                <div class="size-reset size-btn" data-i18n="game.resolution.default">Por defecto</div>
+            </div>
+        </div>
 
         <!-- ── VIDEO ── -->
         <div class="titre-tab">
             <span class="tab-line"></span>
-            CONFIGURACIÓN DE VIDEO
+            <span data-i18n="game.video.title">CONFIGURACIÓN DE VIDEO</span>
             <span class="tab-line"></span>
         </div>
         <div class="settings-elements-box">
 
             <div class="game-setting-row">
-                <div class="game-setting-label">Pantalla completa</div>
+                <div class="game-setting-label" data-i18n="game.video.fullscreen">Pantalla completa</div>
                 <div class="game-toggle" id="gs-fullscreen" data-key="fullscreen" data-type="bool">
                     <div class="game-toggle-knob"></div>
                 </div>
             </div>
 
             <div class="game-setting-row">
-                <div class="game-setting-label">Balanceo de vista</div>
+                <div class="game-setting-label" data-i18n="game.video.bobview">Balanceo de vista</div>
                 <div class="game-toggle" id="gs-bobView" data-key="bobView" data-type="bool">
                     <div class="game-toggle-knob"></div>
                 </div>
             </div>
 
             <div class="game-setting-row">
-                <div class="game-setting-label">Escala de GUI
-                    <span class="game-setting-hint">0 = Auto</span>
+                <div class="game-setting-label"><span data-i18n="game.video.guiscale">Escala de GUI</span>
+                    <span class="game-setting-hint" data-i18n="game.video.guiscale.hint">0 = Auto</span>
                 </div>
                 <div class="game-slider-wrap">
                     <input type="range" class="game-slider" id="gs-guiScale" data-key="guiScale" data-type="int" min="0" max="4" step="1">
@@ -231,8 +539,8 @@
             </div>
 
             <div class="game-setting-row">
-                <div class="game-setting-label">Brillo
-                    <span class="game-setting-hint">0% – 100%</span>
+                <div class="game-setting-label"><span data-i18n="game.video.brightness">Brillo</span>
+                    <span class="game-setting-hint" data-i18n="game.video.brightness.hint">0% – 100%</span>
                 </div>
                 <div class="game-slider-wrap">
                     <input type="range" class="game-slider" id="gs-gamma" data-key="gamma" data-type="float" min="0" max="1" step="0.01">
@@ -241,8 +549,8 @@
             </div>
 
             <div class="game-setting-row">
-                <div class="game-setting-label">Distancia de render
-                    <span class="game-setting-hint">2 – 32 chunks</span>
+                <div class="game-setting-label"><span data-i18n="game.video.renderdistance">Distancia de render</span>
+                    <span class="game-setting-hint" data-i18n="game.video.renderdistance.hint">2 – 32 chunks</span>
                 </div>
                 <div class="game-slider-wrap">
                     <input type="range" class="game-slider" id="gs-renderDistance" data-key="renderDistance" data-type="int" min="2" max="32" step="1">
@@ -251,8 +559,8 @@
             </div>
 
             <div class="game-setting-row">
-                <div class="game-setting-label">Campo de visión (FOV)
-                    <span class="game-setting-hint">30° – 110°</span>
+                <div class="game-setting-label"><span data-i18n="game.video.fov">Campo de visión (FOV)</span>
+                    <span class="game-setting-hint" data-i18n="game.video.fov.hint">30° – 110°</span>
                 </div>
                 <div class="game-slider-wrap">
                     <input type="range" class="game-slider" id="gs-fov" data-key="fov" data-type="fov" min="30" max="110" step="1">
@@ -265,28 +573,28 @@
         <!-- ── CONTROLES ── -->
         <div class="titre-tab">
             <span class="tab-line"></span>
-            CONTROLES
+            <span data-i18n="game.controls.title">CONTROLES</span>
             <span class="tab-line"></span>
         </div>
         <div class="settings-elements-box">
 
             <div class="game-setting-row">
-                <div class="game-setting-label">Salto automático</div>
+                <div class="game-setting-label" data-i18n="game.controls.autojump">Salto automático</div>
                 <div class="game-toggle" id="gs-autoJump" data-key="autoJump" data-type="bool">
                     <div class="game-toggle-knob"></div>
                 </div>
             </div>
 
             <div class="game-setting-row">
-                <div class="game-setting-label">Invertir ratón</div>
+                <div class="game-setting-label" data-i18n="game.controls.invertmouse">Invertir ratón</div>
                 <div class="game-toggle" id="gs-invertYMouse" data-key="invertYMouse" data-type="bool">
                     <div class="game-toggle-knob"></div>
                 </div>
             </div>
 
             <div class="game-setting-row">
-                <div class="game-setting-label">Sensibilidad del ratón
-                    <span class="game-setting-hint">0% – 200%</span>
+                <div class="game-setting-label"><span data-i18n="game.controls.sensitivity">Sensibilidad del ratón</span>
+                    <span class="game-setting-hint" data-i18n="game.controls.sensitivity.hint">0% – 200%</span>
                 </div>
                 <div class="game-slider-wrap">
                     <input type="range" class="game-slider" id="gs-mouseSensitivity" data-key="mouseSensitivity" data-type="float" min="0" max="1" step="0.01">
@@ -299,13 +607,13 @@
         <!-- ── AUDIO ── -->
         <div class="titre-tab">
             <span class="tab-line"></span>
-            AUDIO
+            <span data-i18n="game.audio.title">AUDIO</span>
             <span class="tab-line"></span>
         </div>
         <div class="settings-elements-box">
 
             <div class="game-setting-row">
-                <div class="game-setting-label">Volumen maestro</div>
+                <div class="game-setting-label" data-i18n="game.audio.master">Volumen maestro</div>
                 <div class="game-slider-wrap">
                     <input type="range" class="game-slider" id="gs-master" data-key="soundCategory_master" data-type="float" min="0" max="1" step="0.01">
                     <span class="game-slider-val" id="gs-master-val">100%</span>
@@ -313,7 +621,7 @@
             </div>
 
             <div class="game-setting-row">
-                <div class="game-setting-label">Música</div>
+                <div class="game-setting-label" data-i18n="game.audio.music">Música</div>
                 <div class="game-slider-wrap">
                     <input type="range" class="game-slider" id="gs-music" data-key="soundCategory_music" data-type="float" min="0" max="1" step="0.01">
                     <span class="game-slider-val" id="gs-music-val">100%</span>
@@ -321,7 +629,7 @@
             </div>
 
             <div class="game-setting-row">
-                <div class="game-setting-label">Jukebox / Bloques de nota</div>
+                <div class="game-setting-label" data-i18n="game.audio.record">Jukebox / Bloques de nota</div>
                 <div class="game-slider-wrap">
                     <input type="range" class="game-slider" id="gs-record" data-key="soundCategory_record" data-type="float" min="0" max="1" step="0.01">
                     <span class="game-slider-val" id="gs-record-val">100%</span>
@@ -329,7 +637,7 @@
             </div>
 
             <div class="game-setting-row">
-                <div class="game-setting-label">Clima</div>
+                <div class="game-setting-label" data-i18n="game.audio.weather">Clima</div>
                 <div class="game-slider-wrap">
                     <input type="range" class="game-slider" id="gs-weather" data-key="soundCategory_weather" data-type="float" min="0" max="1" step="0.01">
                     <span class="game-slider-val" id="gs-weather-val">100%</span>
@@ -337,7 +645,7 @@
             </div>
 
             <div class="game-setting-row">
-                <div class="game-setting-label">Bloques</div>
+                <div class="game-setting-label" data-i18n="game.audio.block">Bloques</div>
                 <div class="game-slider-wrap">
                     <input type="range" class="game-slider" id="gs-block" data-key="soundCategory_block" data-type="float" min="0" max="1" step="0.01">
                     <span class="game-slider-val" id="gs-block-val">100%</span>
@@ -345,7 +653,7 @@
             </div>
 
             <div class="game-setting-row">
-                <div class="game-setting-label">Criaturas hostiles</div>
+                <div class="game-setting-label" data-i18n="game.audio.hostile">Criaturas hostiles</div>
                 <div class="game-slider-wrap">
                     <input type="range" class="game-slider" id="gs-hostile" data-key="soundCategory_hostile" data-type="float" min="0" max="1" step="0.01">
                     <span class="game-slider-val" id="gs-hostile-val">100%</span>
@@ -353,7 +661,7 @@
             </div>
 
             <div class="game-setting-row">
-                <div class="game-setting-label">Criaturas amigables</div>
+                <div class="game-setting-label" data-i18n="game.audio.neutral">Criaturas amigables</div>
                 <div class="game-slider-wrap">
                     <input type="range" class="game-slider" id="gs-neutral" data-key="soundCategory_neutral" data-type="float" min="0" max="1" step="0.01">
                     <span class="game-slider-val" id="gs-neutral-val">100%</span>
@@ -361,7 +669,7 @@
             </div>
 
             <div class="game-setting-row">
-                <div class="game-setting-label">Jugadores</div>
+                <div class="game-setting-label" data-i18n="game.audio.player">Jugadores</div>
                 <div class="game-slider-wrap">
                     <input type="range" class="game-slider" id="gs-player" data-key="soundCategory_player" data-type="float" min="0" max="1" step="0.01">
                     <span class="game-slider-val" id="gs-player-val">100%</span>
@@ -369,7 +677,7 @@
             </div>
 
             <div class="game-setting-row">
-                <div class="game-setting-label">Ambiente</div>
+                <div class="game-setting-label" data-i18n="game.audio.ambient">Ambiente</div>
                 <div class="game-slider-wrap">
                     <input type="range" class="game-slider" id="gs-ambient" data-key="soundCategory_ambient" data-type="float" min="0" max="1" step="0.01">
                     <span class="game-slider-val" id="gs-ambient-val">100%</span>
@@ -377,7 +685,7 @@
             </div>
 
             <div class="game-setting-row">
-                <div class="game-setting-label">Voz / Locutor</div>
+                <div class="game-setting-label" data-i18n="game.audio.voice">Voz / Locutor</div>
                 <div class="game-slider-wrap">
                     <input type="range" class="game-slider" id="gs-voice" data-key="soundCategory_voice" data-type="float" min="0" max="1" step="0.01">
                     <span class="game-slider-val" id="gs-voice-val">100%</span>
@@ -389,50 +697,57 @@
         <!-- ── BOTÓN GUARDAR ── -->
         <div class="game-save-row">
             <div class="game-save-status" id="gs-status"></div>
-            <button class="game-save-btn" id="gs-save-btn">GUARDAR EN TODAS LAS INSTANCIAS</button>
+            <button class="game-save-btn" id="gs-save-btn" data-i18n="game.save">GUARDAR EN TODAS LAS INSTANCIAS</button>
         </div>
 
     </div>
 
     <div id="about-tab" class="container-settings">
-        <div class="titre-tab">
-            <span class="tab-line"></span>
-            ACERCA DEL LAUNCHER
-            <span class="tab-line"></span>
+        <div class="settings-tab-head">
+            <div class="settings-tab-head-row">
+                <button class="tab-back-btn" type="button" aria-label="Volver al inicio">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
+                </button>
+                <div>
+                    <div class="settings-tab-eyebrow" data-i18n="about.eyebrow">Créditos</div>
+                    <div class="settings-tab-title" data-i18n="about.title">Acerca de</div>
+                    <div class="settings-tab-desc" data-i18n="about.desc">Quién hace este launcher y en qué se basa.</div>
+                </div>
+            </div>
         </div>
         <div class="about-card">
             <div class="about-logo-wrapper">
                 <div class="about-logo-ring"></div>
-                <div class="about-logo-text">MD</div>
+                <img src="assets/images/brand/logo-mark.png" alt="MetalDaze" class="about-logo-img">
             </div>
             <div class="about-info">
                 <div class="about-title">MetalDaze Launcher</div>
-                <div class="about-subtitle">Launcher oficial de MetalDaze Estudio</div>
+                <div class="about-subtitle" data-i18n="about.subtitle">Launcher oficial de MetalDaze Estudio</div>
                 <div class="about-divider"></div>
-                <div class="about-credit-label">BASADO EN</div>
+                <div class="about-credit-label" data-i18n="about.credit.label">BASADO EN</div>
                 <div class="about-credit-name">Selvana Launcher</div>
-                <div class="about-credit-by">por <span>Luuxis</span></div>
+                <div class="about-credit-by"><span data-i18n="about.credit.by.prefix">por</span> <span>Luuxis</span></div>
                 <div class="about-divider"></div>
                 <div class="about-links">
                     <a class="about-link" href="https://github.com/luuxis/Selvania-Launcher" target="_blank">
-                        <span class="about-link-icon">&#x27B6;</span> Repositorio original (Selvana Launcher)
+                        <span class="about-link-icon">&#x27B6;</span> <span data-i18n="about.link.repo">Repositorio original (Selvana Launcher)</span>
                     </a>
                     <a class="about-link" href="https://github.com/luuxis" target="_blank">
-                        <span class="about-link-icon">&#x27B6;</span> Luuxis en GitHub
+                        <span class="about-link-icon">&#x27B6;</span> <span data-i18n="about.link.author">Luuxis en GitHub</span>
                     </a>
                 </div>
             </div>
         </div>
         <div class="titre-tab">
             <span class="tab-line"></span>
-            LICENCIA
+            <span data-i18n="about.license.title">LICENCIA</span>
             <span class="tab-line"></span>
         </div>
         <div class="settings-elements-box">
-            <div class="setting-text">
-                Este launcher es un fork de <strong style="color:rgba(240,240,240,0.75)">Selvana Launcher</strong> desarrollado por <strong style="color:rgba(240,240,240,0.75)">Luuxis</strong>,
+            <div class="setting-text" data-i18n-html="about.license.text">
+                Este launcher es un fork de <strong>Selvana Launcher</strong> desarrollado por <strong>Luuxis</strong>,
                 distribuido bajo la licencia Luuxis License v1.0.<br><br>
-                Modificaciones y personalización realizadas por <strong style="color:rgba(240,240,240,0.75)">MetalDaze Estudio</strong> para uso interno en sus servidores y proyectos.
+                Modificaciones y personalización realizadas por <strong>MetalDaze Estudio</strong> para uso interno en sus servidores y proyectos.
             </div>
         </div>
     </div>

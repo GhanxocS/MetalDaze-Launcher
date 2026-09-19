@@ -3,87 +3,287 @@
     <div class="home-bg" id="home-bg"></div>
     <div class="home-bg-grid" id="home-bg-grid"></div>
 
-    <!-- ══ SIDEBAR ══ -->
-    <div class="sidebar">
-        <div class="sidebar-top">
-            <div class="brand-mark">MD</div>
-            <div class="player-head" id="open-skin-panel"></div>
+    <!-- ══ TOP NAV ══ -->
+    <div class="home-topnav">
+        <div class="topnav-nav">
+            <div class="nav-item nav-item-active" id="nav-home" tabindex="0" role="button">
+                <svg class="nav-item-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M7 7h10a5 5 0 0 1 5 5v2a3 3 0 0 1-5.2 2.04L15 14H9l-1.8 2.04A3 3 0 0 1 2 14v-2a5 5 0 0 1 5-5z"/>
+                    <path d="M7.5 10.5v3M6 12h3"/>
+                    <circle cx="16" cy="10.5" r="0.6" fill="currentColor" stroke="none"/>
+                    <circle cx="18" cy="12.5" r="0.6" fill="currentColor" stroke="none"/>
+                </svg>
+                <span data-i18n="home.nav.inicio">Inicio</span>
+            </div>
+            <div class="nav-item" id="all-news-link" tabindex="0" role="button">
+                <svg class="nav-item-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4 4h13a2 2 0 0 1 2 2v13a1 1 0 0 1-1 1H6a2 2 0 0 1-2-2V4z"/>
+                    <path d="M8 8h7M8 12h7M8 16h4"/>
+                    <path d="M19 8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2"/>
+                </svg>
+                <span data-i18n="home.nav.noticias">Noticias</span>
+            </div>
+            <div class="nav-item" id="nav-media" tabindex="0" role="button">
+                <svg class="nav-item-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="4" width="18" height="16" rx="2"/>
+                    <circle cx="8.5" cy="9.5" r="1.5" fill="currentColor" stroke="none"/>
+                    <path d="M21 15l-4.5-4.5a1 1 0 0 0-1.4 0L9 17"/>
+                </svg>
+                <span data-i18n="home.nav.media">Media</span>
+            </div>
+            <div class="nav-item" id="nav-skins" tabindex="0" role="button">
+                <svg class="nav-item-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M8 4L4 7v3h2v10h12V10h2V7l-4-3"/>
+                    <path d="M8 4a4 4 0 0 0 8 0"/>
+                </svg>
+                <span data-i18n="home.nav.skins">Skins</span>
+            </div>
         </div>
-        <div class="sidebar-mid">
-            <div data-url="https://discord.gg/u7Uvb8XxMV" class="social-block-sidebar">
+
+        <div class="settings-btn topnav-icon-btn" tabindex="0" role="button" aria-label="Ajustes" data-i18n-aria-label="home.settings.aria">
+            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="3"/>
+                <path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/>
+            </svg>
+        </div>
+
+        <div class="topnav-divider"></div>
+
+        <div class="topnav-socials">
+            <div data-url="https://discord.gg/u7Uvb8XxMV" class="social-block-sidebar" tabindex="0" role="button" aria-label="Discord">
                 <div class="icon-discord icon-social"></div>
             </div>
-            <div data-url="https://github.com/GhanxocS" class="social-block-sidebar">
+            <div data-url="https://github.com/GhanxocS" class="social-block-sidebar" tabindex="0" role="button" aria-label="GitHub">
                 <div class="icon-github icon-social"></div>
             </div>
-            <div data-url="https://www.youtube.com/@MetalDazeEstudio" class="social-block-sidebar">
+            <div data-url="https://www.youtube.com/@MetalDazeEstudio" class="social-block-sidebar" tabindex="0" role="button" aria-label="YouTube">
                 <div class="icon-youtube icon-social"></div>
             </div>
         </div>
-        <div class="sidebar-bottom">
-            <div class="settings-btn icon-settings"></div>
+
+        <div class="topnav-divider"></div>
+
+        <div class="account-chip" id="account-chip" tabindex="0" role="button">
+            <div class="player-head" id="open-skin-panel"></div>
+            <div class="account-text">
+                <div class="account-name" id="account-name">—</div>
+                <div class="account-role" id="account-role">&nbsp;</div>
+            </div>
         </div>
     </div>
 
-    <!-- ══ CONTENIDO PRINCIPAL ══ -->
-    <div class="home-main">
+    <!-- ══ HERO PRINCIPAL ══ -->
+    <div class="home-hero">
 
-        <!-- Noticia destacada -->
-        <div class="featured-news-wrap">
-            <div class="featured-news" id="featured-news">
-                <!-- Inyectado por JS -->
-            </div>
-            <div class="all-news-link" id="all-news-link">
-                <span class="all-news-arrow">›</span>
-                Ver todas las noticias
-            </div>
+        <!-- Rail de instancias (siempre visible, estilo XMB) -->
+        <div class="instance-rail" id="instance-popup">
+            <div class="instance-rail-list" id="instances-list-popup"></div>
         </div>
 
-        <!-- Panel de todas las noticias (oculto por defecto) -->
-        <div class="all-news-panel" id="all-news-panel" style="display:none">
-            <div class="all-news-header">
-                <div class="all-news-back" id="all-news-back">‹ Volver</div>
-                <div class="all-news-title">NOTICIAS</div>
-            </div>
-            <div class="news-list" id="news-list-full"></div>
+        <!-- Info de la instancia seleccionada -->
+        <div class="hero-info">
+            <div class="hero-tags" id="hero-tags"></div>
+            <div class="hero-title" id="hero-title">—</div>
+            <div class="hero-description is-hidden" id="hero-description"></div>
         </div>
 
+        <!-- Barra de acciones inferior -->
+        <div class="hero-actions">
+            <div class="play-wrap">
+                <button class="play-btn" id="play-btn">
+                    <span class="play-btn-label" id="play-btn-label" data-i18n="home.play.label">JUGAR</span>
+                </button>
+
+                <div class="hero-more-wrap" id="hero-more-wrap">
+                    <button class="hero-more-btn" id="hero-more-btn" tabindex="0" aria-haspopup="true" aria-expanded="false" data-i18n-aria-label="home.more.aria" aria-label="Más opciones">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                            <circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/>
+                        </svg>
+                    </button>
+                    <div class="hero-more-menu is-hidden" id="hero-more-menu">
+                        <button type="button" class="hero-more-item" data-action="open-folder">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z"/></svg>
+                            <span data-i18n="home.more.openFolder">Abrir carpeta</span>
+                        </button>
+                        <button type="button" class="hero-more-item" data-action="crash-doctor">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6l8-4z"/><path d="M9 11l2 2 4-4"/></svg>
+                            <span data-i18n="home.more.crashDoctor">Doctor de crashes</span>
+                        </button>
+                        <button type="button" class="hero-more-item" data-action="safe-mode">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6l8-4z"/></svg>
+                            <span data-i18n="home.more.safeMode">Iniciar en modo seguro</span>
+                        </button>
+                        <button type="button" class="hero-more-item" data-action="fast-launch">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L4 14h6l-1 8 9-12h-6l1-8z"/></svg>
+                            <span data-i18n="home.more.fastLaunch">Lanzamiento rápido</span>
+                        </button>
+                        <button type="button" class="hero-more-item" data-action="verify-files">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8.5 12.5l2.5 2.5 5-5"/></svg>
+                            <span data-i18n="home.more.verifyFiles">Verificar archivos</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="info-starting-game" id="info-starting-game">
+                    <div class="info-starting-game-text" id="info-starting-text" data-i18n="home.starting">Iniciando...</div>
+                    <progress value="0" max="0" class="progress-bar" id="progress-bar"></progress>
+                    <button class="force-close-btn is-hidden" id="force-close-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M6 6l12 12M18 6L6 18"/>
+                        </svg>
+                        <span data-i18n="home.forceClose">Forzar cierre</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="hero-playtime" id="hero-playtime">
+                <svg class="hero-playtime-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="13" r="8"/>
+                    <path d="M12 9v4l3 2"/>
+                    <path d="M9 2h6"/>
+                </svg>
+                <span class="hero-playtime-label" id="hero-playtime-label" data-i18n="home.playtime.never">Nunca jugado</span>
+            </div>
+        </div>
     </div>
 
-    <!-- ══ ÁREA DE PLAY (esquina inferior derecha) ══ -->
-    <div class="play-area">
+    <!-- Noticia destacada: oculta visualmente, se mantiene en el DOM para que
+         Home.news() la rellene sin errores; el contenido real vive en #news-list-full -->
+    <div class="featured-news-hidden" id="featured-news"></div>
 
-        <!-- Selector de instancia (separado del play) -->
-        <div class="instance-selector-btn" id="instance-selector-btn">
-            <span class="instance-selector-icon">☰</span>
-            <span class="instance-selector-label" id="instance-selector-label">Seleccionar instancia</span>
+    <!-- ══ PANEL DE TODAS LAS NOTICIAS ══ -->
+    <div class="all-news-panel is-hidden" id="all-news-panel">
+        <div class="all-news-header">
+            <div class="all-news-title" data-i18n="home.news.title">NOTICIAS</div>
         </div>
-
-        <!-- Botón de play / actualizar / sin instancia -->
-        <div class="play-wrap">
-            <button class="play-btn" id="play-btn">
-                <span class="play-btn-label" id="play-btn-label">JUGAR</span>
-            </button>
-        </div>
-
-        <!-- Progreso al iniciar -->
-        <div class="info-starting-game" id="info-starting-game">
-            <div class="info-starting-game-text" id="info-starting-text">Iniciando...</div>
-            <progress value="0" max="0" class="progress-bar" id="progress-bar"></progress>
-        </div>
-
+        <div class="news-list" id="news-list-full"></div>
     </div>
 
-    <!-- ══ POPUP SELECTOR DE INSTANCIAS ══ -->
-    <div class="instance-popup" id="instance-popup">
-        <div class="instances-tab">
-            <div class="instance-popup-header">
-                <span class="instance-popup-title">INSTANCIA</span>
-                <div class="close-popup icon-close" id="close-instance-popup"></div>
+    <!-- ══ MEDIA (capturas de pantalla) ══ -->
+    <div class="media-overlay is-hidden" id="media-overlay">
+        <div class="all-news-header">
+            <div class="all-news-title" data-i18n="home.media.title">MEDIA</div>
+        </div>
+
+        <div class="media-filters">
+            <div class="media-filter-group">
+                <label for="media-filter-instance" data-i18n="home.media.instance">Instancia</label>
+                <select id="media-filter-instance">
+                    <option value="all" data-i18n="home.media.instance.all">Todas</option>
+                </select>
             </div>
-            <div class="instances-List" id="instances-list-popup"></div>
+            <div class="media-filter-group">
+                <label for="media-filter-sort" data-i18n="home.media.sort">Orden</label>
+                <select id="media-filter-sort">
+                    <option value="newest" data-i18n="home.media.sort.newest">Más reciente</option>
+                    <option value="oldest" data-i18n="home.media.sort.oldest">Más antiguo</option>
+                </select>
+            </div>
+            <div class="media-count" id="media-count"></div>
+        </div>
+
+        <div class="media-grid-wrap content-scroll">
+            <div class="media-grid" id="media-grid"></div>
+            <div class="media-empty is-hidden" id="media-empty" data-i18n="home.media.empty">
+                Todavía no hay capturas de pantalla en ninguna instancia.
+            </div>
         </div>
     </div>
 
-    <!-- ══ BADGE DEV ══ -->
-    <div class="dev-badge">LAUNCHER EN DESARROLLO</div>
+    <!-- ══ VISOR DE MEDIA (lightbox) ══ -->
+    <div class="media-lightbox is-hidden" id="media-lightbox">
+        <div class="media-lightbox-close" id="media-lightbox-close" tabindex="0" role="button">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M6 6l12 12M18 6L6 18"/>
+            </svg>
+        </div>
+        <img id="media-lightbox-img" src="" alt="" />
+        <div class="media-lightbox-meta" id="media-lightbox-meta"></div>
+    </div>
+
+    <!-- ══ SKINS (visor 3D + historial) ══ -->
+    <div class="skins-overlay is-hidden" id="skins-overlay">
+        <div class="all-news-header">
+            <div class="all-news-title" data-i18n="home.skins.title">SKINS</div>
+        </div>
+
+        <div class="skins-layout">
+            <div class="skins-viewer-col">
+                <div class="skins-viewer-card">
+                    <canvas id="skins-3d-canvas"></canvas>
+                    <div class="skins-viewer-empty is-hidden" id="skins-viewer-empty" data-i18n="home.skins.empty">
+                        Iniciá sesión con una cuenta para ver su skin acá.
+                    </div>
+                    <div class="skins-viewer-name" id="skins-current-name"></div>
+                </div>
+
+                <div class="skins-control-bar" id="skins-animation-bar">
+                    <button type="button" class="skins-chip-btn skins-chip-btn-active" data-anim="idle" data-i18n="home.skins.anim.idle">Quieto</button>
+                    <button type="button" class="skins-chip-btn" data-anim="walk" data-i18n="home.skins.anim.walk">Caminar</button>
+                    <button type="button" class="skins-chip-btn" data-anim="run" data-i18n="home.skins.anim.run">Correr</button>
+                    <button type="button" class="skins-chip-btn" data-anim="wave" data-i18n="home.skins.anim.wave">Saludar</button>
+                </div>
+
+            </div>
+
+            <div class="skins-history">
+                <div class="skins-section">
+                    <div class="skins-section-header">
+                        <div class="skins-section-title" data-i18n="home.skins.history">Últimas skins utilizadas</div>
+                    </div>
+                    <div class="skins-grid" id="skins-history-grid"></div>
+                    <div class="skins-section-empty is-hidden" id="skins-history-empty" data-i18n="home.skins.history.empty">
+                        Todavía no hay skins registradas.
+                    </div>
+                </div>
+
+                <div class="skins-section">
+                    <div class="skins-section-header">
+                        <div class="skins-section-title" data-i18n="home.skins.uploaded">SKINS</div>
+                    </div>
+                    <div class="skins-add-error is-hidden" id="skins-add-error"></div>
+                    <div class="skins-grid" id="skins-uploaded-grid"></div>
+                    <input type="file" id="skins-add-file" accept="image/png" style="display:none">
+                </div>
+
+                <div class="skins-section">
+                    <div class="skins-section-header">
+                        <div class="skins-section-title" data-i18n="home.skins.capes">Capas</div>
+                    </div>
+                    <div class="skins-grid" id="skins-capes-grid"></div>
+                    <div class="skins-section-empty is-hidden" id="skins-capes-empty" data-i18n="home.skins.capes.empty">
+                        Esta cuenta no tiene capas disponibles.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Clickear una skin/capa en las galerías solo la previsualiza en
+             el visor — recién queda "puesta" (el borde activo se mueve) al
+             tocar Guardar. Cambiar de vista sin guardar descarta la preview. -->
+        <button type="button" class="skins-save-btn is-hidden" id="skins-save-btn" data-i18n="home.skins.save">Guardar cambios</button>
+    </div>
+
+    <!-- Menú contextual (click derecho) — solo para skins subidas a mano.
+         A propósito FUERA de .skins-overlay: ese contenedor tiene
+         backdrop-filter, que crea un containing block para position:fixed
+         y hacía que el menú apareciera desplazado en vez de en el cursor. -->
+    <div class="skins-context-menu is-hidden" id="skins-context-menu">
+        <button type="button" class="skins-context-menu-item" data-action="rename" data-i18n="home.skins.ctx.rename">Renombrar</button>
+        <button type="button" class="skins-context-menu-item" data-action="download" data-i18n="home.skins.ctx.download">Descargar</button>
+        <button type="button" class="skins-context-menu-item skins-context-menu-item-danger" data-action="delete" data-i18n="home.skins.ctx.delete">Eliminar</button>
+    </div>
+
+    <!-- Modal de confirmación propio — reemplaza el confirm() nativo del
+         navegador (se ve como un diálogo de Windows suelto, no como parte
+         del launcher). También fuera de .skins-overlay por el mismo tema
+         de backdrop-filter. -->
+    <div class="skins-confirm-overlay is-hidden" id="skins-confirm-overlay">
+        <div class="skins-confirm-card">
+            <div class="skins-confirm-message" id="skins-confirm-message"></div>
+            <div class="skins-confirm-actions">
+                <button type="button" class="skins-confirm-btn" id="skins-confirm-cancel" data-i18n="home.skins.confirm.cancel">Cancelar</button>
+                <button type="button" class="skins-confirm-btn skins-confirm-btn-danger" id="skins-confirm-accept" data-i18n="home.skins.ctx.delete">Eliminar</button>
+            </div>
+        </div>
+    </div>

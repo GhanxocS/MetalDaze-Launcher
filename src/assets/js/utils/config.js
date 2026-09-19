@@ -14,6 +14,7 @@ let url = pkg.user ? `${pkg.url}/${pkg.user}` : pkg.url
 
 let config = `${url}/config`;
 let articles = `${url}/articles`;
+let tagsCatalog = `${url}/tags`;
 
 // Token opcional de developer: si existe <userData>/dev-token.txt, se manda
 // como header x-dev-token al pedir /instances, para que el backend incluya
@@ -55,6 +56,19 @@ class Config {
             instancesList.push(instance)
         }
         return instancesList
+    }
+
+    // Catálogo de etiquetas (nombre + color) gestionado desde el panel admin.
+    // Público y opcional: si el backend todavía no lo tiene desplegado o la
+    // request falla, se resuelve a [] en vez de tumbar el resto del home.
+    async getTagsCatalog() {
+        try {
+            const res = await nodeFetch(tagsCatalog)
+            if (res.status !== 200) return []
+            return await res.json()
+        } catch (e) {
+            return []
+        }
     }
 
     async getNews(config) {

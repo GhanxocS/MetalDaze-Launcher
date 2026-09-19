@@ -1,0 +1,71 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "broken-image",
+        "value": "*",
+        "files": [
+          "src/panels/home.html"
+        ],
+        "createdAt": "2026-09-18T04:06:21.659Z",
+        "reason": "lightbox img src is intentionally empty at rest, set by JS on open (media viewer, moved here from the old standalone media.html); element is display:none until then"
+      },
+      {
+        "rule": "low-contrast",
+        "value": "*",
+        "files": [
+          "src/panels/settings.html"
+        ],
+        "createdAt": "2026-09-18T06:27:30.330Z",
+        "reason": "static per-file render has no .dark/.light class on body (that's applied at runtime by launcher.js setBackground() before any panel shows) — detector sees unstyled browser defaults (black text on white), not the real theme-aware colors"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "rgb(0, 0, 0)",
+        "files": [
+          "src/panels/settings.html"
+        ],
+        "createdAt": "2026-09-18T06:27:30.731Z",
+        "reason": "same root cause: no theme class applied in static render, so .nav-brand text falls back to browser-default black instead of the real var(--color) token"
+      },
+      {
+        "rule": "layout-transition",
+        "value": "*",
+        "files": [
+          "src/assets/css/panels/settings.css"
+        ],
+        "createdAt": "2026-09-18T17:41:10.399Z",
+        "reason": "pre-existing storage-bar-fill width transition, predates this session (flagged attribution unknown); a progress-bar fill width animation is literal, domain-appropriate motion, not layout thrash"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "*",
+        "files": [
+          "src/assets/css/panels/settings.css"
+        ],
+        "createdAt": "2026-09-18T18:26:41.213Z",
+        "reason": "user-directed fork: settings.css now runs its own abyssal/purple palette (bg #0b0e14, accent #a87ffb) per user's explicit prompt, intentionally diverging from DESIGN.md's teal-violet gradient system which still governs Home/Login/Splash"
+      },
+      {
+        "rule": "design-system-radius",
+        "value": "*",
+        "files": [
+          "src/assets/css/panels/settings.css"
+        ],
+        "createdAt": "2026-09-18T18:26:41.358Z",
+        "reason": "same intentional fork as design-system-color; card/button radii were rebased off the new abyssal-purple mockup, not DESIGN.md's 6/10/16px scale"
+      },
+      {
+        "rule": "design-system-font-size",
+        "value": "*",
+        "files": [
+          "src/assets/css/panels/settings.css"
+        ],
+        "createdAt": "2026-09-18T18:26:41.503Z",
+        "reason": "user-directed: massive-heading + tiny-tracked-label contrast per user's literal prompt (CLAUDE.md alto contraste tipografico), off DESIGN.md's documented type ramp"
+      }
+    ]
+  }
+}
