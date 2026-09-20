@@ -2,9 +2,10 @@
  * @author Luuxis / ITakerMetal
  * MetalDaze Launcher — Home Panel REWORK v3.0
  */
-import { config, database, logger, changePanel, appdata, setStatus, pkg, popup, skin2D, escapeHtml, t } from '../utils.js'
+import { config, database, logger, changePanel, appdata, setStatus, pkg, popup, skin2D, escapeHtml, buildModItems, t } from '../utils.js'
 import MediaGallery from './media.js'
 import Skins from './skins.js'
+import Discover from './discover.js'
 
 const { Launch } = require('minecraft-java-core')
 const { shell, ipcRenderer } = require('electron')
@@ -22,6 +23,21 @@ function makeKeyActivatable(el) {
             el.click()
         }
     })
+}
+
+// Forge identifica sus builds como "<versión de MC>-<versión de forge>"
+// (ej. "1.20.1-47.4.2") — minecraft-java-core busca ese string EXACTO en
+// la lista de builds disponibles (ver Minecraft-Loader/loader/forge/forge.js).
+// Si en el panel se cargó solo la versión de forge ("47.4.2", el formato
+// que sí usa NeoForge) el build nunca matchea y el juego tira "Build X not
+// found" al arrancar. Se antepone el prefijo acá para que un dato cargado
+// "a la NeoForge" en una instancia Forge no rompa el lanzamiento — "latest"
+// y "recommended" se dejan tal cual, forge.js los resuelve aparte.
+function normalizeLoaderBuild(loader) {
+    const version = loader.loader_version
+    if (loader.loader_type !== 'forge' || !version || version === 'latest' || version === 'recommended') return version
+    const prefix = `${loader.minecraft_version}-`
+    return version.startsWith(prefix) ? version : `${prefix}${version}`
 }
 
 // Mismo criterio de luminancia perceptual que usa el panel admin (tags.js)
@@ -43,11 +59,13 @@ class Home {
         this.config = config;
         this.db = new database();
         this.instancesList = [];
+        this.allVisibleInstances = [];
         this.currentInstance = null;
         this.hasUpdate = false;
         this.updateUrl = null;
         this.media = new MediaGallery();
         this.skins = new Skins();
+        this.discover = new Discover();
 
         // Registrar jugador en backend
         let configClient = await this.db.readData('configClient')
@@ -162,32 +180,49 @@ class Home {
         const allNewsLink = document.getElementById('all-news-link')
         const navMedia = document.getElementById('nav-media')
         const navSkins = document.getElementById('nav-skins')
+        const navDiscover = document.getElementById('nav-discover')
         const allNewsPanel = document.getElementById('all-news-panel')
         const mediaOverlay = document.getElementById('media-overlay')
         const skinsOverlay = document.getElementById('skins-overlay')
+        const discoverOverlay = document.getElementById('discover-overlay')
         const self = this
 
         function setActiveView(view) {
             allNewsPanel.style.display = view === 'news' ? 'flex' : 'none'
             mediaOverlay.style.display = view === 'media' ? 'flex' : 'none'
             skinsOverlay.style.display = view === 'skins' ? 'flex' : 'none'
+            discoverOverlay.style.display = view === 'discover' ? 'flex' : 'none'
             navHome.classList.toggle('nav-item-active', view === 'home')
             allNewsLink.classList.toggle('nav-item-active', view === 'news')
             navMedia.classList.toggle('nav-item-active', view === 'media')
             navSkins.classList.toggle('nav-item-active', view === 'skins')
+            navDiscover.classList.toggle('nav-item-active', view === 'discover')
 
             if (view === 'media') self.media.show()
             if (view === 'skins') self.skins.show()
+            if (view === 'discover') {
+                self.discover.show(self.allVisibleInstances, self.claimedNames, function(name) { return self.installInstance(name) })
+            }
         }
 
         navHome.addEventListener('click', function() { setActiveView('home') })
         allNewsLink.addEventListener('click', function() { setActiveView('news') })
         navMedia.addEventListener('click', function() { setActiveView('media') })
         navSkins.addEventListener('click', function() { setActiveView('skins') })
+        navDiscover.addEventListener('click', function() { setActiveView('discover') })
         makeKeyActivatable(navHome)
         makeKeyActivatable(allNewsLink)
         makeKeyActivatable(navMedia)
         makeKeyActivatable(navSkins)
+        makeKeyActivatable(navDiscover)
+    }
+
+    // Reclamar una instancia (botón "Instalar" en Descubrir) — persiste
+    // localmente y refresca Inicio para que aparezca de inmediato, sin
+    // pedirle al backend nada nuevo (ver instancesSetup()).
+    async installInstance(name) {
+        await this.db.updateData('claimedInstances', { claimed: true }, name)
+        await this.instancesSetup()
     }
 
     // ══════════════════════════════════════════════════════
@@ -211,15 +246,39 @@ class Home {
         const self = this
         let configClient = await this.db.readData('configClient')
         let auth = await this.db.readData('accounts', configClient.account_selected)
-        let allInstances = await config.getInstanceList()
+        let allInstances = await config.getInstanceList(auth && auth.uuid)
         let tagsCatalog = await config.getTagsCatalog()
         this.tagsCatalogById = new Map(tagsCatalog.map(function(t) { return [t.id, t] }))
 
-        // Filtrar por whitelist
-        this.instancesList = allInstances.filter(function(i) {
+        // Filtrar por whitelist — TODO lo que la cuenta puede ver, reclamado
+        // o no. Descubrir usa esta lista completa; Inicio (más abajo) solo
+        // muestra el subconjunto reclamado.
+        const allVisibleInstances = allInstances.filter(function(i) {
             if (!i.whitelistActive) return true
             return i.whitelist && i.whitelist.find(function(w) { return w === (auth && auth.uuid) })
         })
+        this.allVisibleInstances = allVisibleInstances
+
+        // "Reclamar" es un concepto puramente local (no existe en el
+        // backend) — evita que una instancia nueva le aparezca a todo el
+        // mundo de golpe en Inicio; primero pasa por Descubrir con un botón
+        // "Instalar". Bootstrap de una sola vez: la primera vez que corre
+        // esta versión, todo lo que la cuenta ya podía ver se marca como
+        // reclamado automáticamente, para no hacerle desaparecer instancias
+        // a nadie. De ahí en más, "reclamar" solo importa para instancias
+        // nuevas que se agreguen después.
+        if (!configClient.claims_bootstrapped) {
+            for (const inst of allVisibleInstances) {
+                await this.db.updateData('claimedInstances', { claimed: true }, inst.name)
+            }
+            configClient.claims_bootstrapped = true
+            await this.db.updateData('configClient', configClient)
+        }
+        const claimedRows = await this.db.readAllData('claimedInstances')
+        const claimedNames = new Set(claimedRows.filter(function(r) { return r.claimed }).map(function(r) { return r.ID }))
+        this.claimedNames = claimedNames
+
+        this.instancesList = allVisibleInstances.filter(function(i) { return claimedNames.has(i.name) })
 
         const playBtn           = document.getElementById('play-btn')
         const playBtnLabel      = document.getElementById('play-btn-label')
@@ -250,11 +309,6 @@ class Home {
         }
 
         this.currentInstance = this.instancesList.find(function(i) { return i.name === instanceSelect })
-
-        // Ocultar el rail si solo hay una instancia (nada entre qué elegir)
-        if (this.instancesList.length === 1) {
-            instanceRail.style.display = 'none'
-        }
 
         // Construir el rail de instancias (siempre visible, estilo XMB)
         instancesListEl.innerHTML = ''
@@ -307,17 +361,24 @@ class Home {
 
         await this.applyInstanceTheme(this.currentInstance)
 
-        // Botón de play
-        playBtn.addEventListener('click', async function() {
-            if (playBtn.classList.contains('state-no-instance')) return
+        // Botón de play — instancesSetup() ahora puede correr más de una vez
+        // por sesión (ver installInstance(), llamado desde Descubrir), así
+        // que sin este guard cada llamada apilaría un listener más sobre el
+        // mismo botón (mismo problema que ya se documentó para
+        // forceCloseBtn, pero ese SÍ tenía guard).
+        if (!playBtn._playClickBound) {
+            playBtn._playClickBound = true
+            playBtn.addEventListener('click', async function() {
+                if (playBtn.classList.contains('state-no-instance')) return
 
-            if (playBtn.classList.contains('state-update')) {
-                if (self.updateUrl) shell.openExternal(self.updateUrl)
-                return
-            }
+                if (playBtn.classList.contains('state-update')) {
+                    if (self.updateUrl) shell.openExternal(self.updateUrl)
+                    return
+                }
 
-            await self.startGame()
-        })
+                await self.startGame()
+            })
+        }
 
         this.setupMoreMenu()
     }
@@ -365,7 +426,47 @@ class Home {
             if (action === 'safe-mode') await self.startGame({ safeMode: true })
             if (action === 'fast-launch') await self.startGame({ skipVerify: true })
             if (action === 'verify-files') await self.startGame({ verifyOnly: true })
+            if (action === 'view-mods') self.openModsModal()
         })
+
+        // Modal de "Ver mods incluidos" — se abre desde el menú de arriba,
+        // se cierra con la X o clickeando afuera de la tarjeta.
+        const modsOverlay = document.getElementById('mods-modal-overlay')
+        const modsClose = document.getElementById('mods-modal-close')
+        if (modsOverlay && modsClose) {
+            modsClose.addEventListener('click', () => self.closeModsModal())
+            modsOverlay.addEventListener('click', function(e) {
+                if (e.target === modsOverlay) self.closeModsModal()
+            })
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') self.closeModsModal()
+            })
+        }
+    }
+
+    // instance.mods ya lo cura el panel admin (nombre, fuente, si es
+    // obligatorio) — hasta acá era puramente cosmético del lado del
+    // backend, nunca se le mostraba al jugador.
+    openModsModal() {
+        if (!this.currentInstance) return
+        const overlay = document.getElementById('mods-modal-overlay')
+        const list = document.getElementById('mods-modal-list')
+        const empty = document.getElementById('mods-modal-empty')
+        if (!overlay || !list || !empty) return
+
+        const mods = this.currentInstance.mods || []
+        list.innerHTML = ''
+        list.classList.toggle('is-hidden', mods.length === 0)
+        empty.classList.toggle('is-hidden', mods.length > 0)
+
+        for (const item of buildModItems(mods)) list.appendChild(item)
+
+        overlay.classList.remove('is-hidden')
+    }
+
+    closeModsModal() {
+        const overlay = document.getElementById('mods-modal-overlay')
+        if (overlay) overlay.classList.add('is-hidden')
     }
 
     async openInstanceFolder() {
@@ -669,8 +770,13 @@ class Home {
         const self = this
         let launch = new Launch()
         let configClient = await this.db.readData('configClient')
-        let instanceData = await config.getInstanceList()
         let authenticator = await this.db.readData('accounts', configClient.account_selected)
+        // Sin el uuid, el backend no tiene forma de saber quién pregunta y
+        // omite las instancias whitelistActive:true de la respuesta (ver
+        // instancesSetup(), que sí lo manda) — options quedaba undefined
+        // para cualquier instancia con whitelist y esto cortaba en silencio
+        // más abajo, sin ningún error ni feedback visible.
+        let instanceData = await config.getInstanceList(authenticator && authenticator.uuid)
         let options = instanceData.find(function(i) { return i.name === configClient.instance_select })
 
         if (!options) {
@@ -725,6 +831,52 @@ class Home {
             }
         }
 
+        // taskkill /F /T en vez de child.kill(): mata el árbol de procesos
+        // completo (el proceso capturado + cualquier hijo), más robusto que
+        // matar solo el PID exacto si Forge/NeoForge relanza el JVM durante
+        // su propio arranque. En otras plataformas child.kill() ya alcanza.
+        //
+        // OJO — si "Forzar cierre" sigue sin matar el juego después de este
+        // cambio: mirar este log en DevTools (Ctrl+Shift+I). Si el PID que
+        // loguea ya no existe cuando se hace click (o taskkill dice "no se
+        // encontró el proceso"), es que el JVM inicial se relanzó a sí mismo
+        // y el proceso real del juego quedó en un PID que nunca capturamos —
+        // eso necesitaría matar por nombre de proceso en vez de por PID.
+        function killMinecraftProcess() {
+            console.log('[force-close] click detectado, minecraftProcess:', minecraftProcess ? minecraftProcess.pid : null)
+            if (minecraftProcess) {
+                console.log('[force-close] matando PID', minecraftProcess.pid)
+                if (process.platform === 'win32' && minecraftProcess.pid) {
+                    cpModule.exec(`taskkill /PID ${minecraftProcess.pid} /F /T`, (err, stdout, stderr) => {
+                        console.log('[force-close] taskkill resultado:', stdout || stderr || (err && err.message))
+                    })
+                } else {
+                    minecraftProcess.kill()
+                }
+            }
+            // Fallback para Forge/NeoForge: el bootstrap launcher (modlauncher
+            // + bootstraplauncher, ver los argumentos con
+            // "cpw.mods.bootstraplauncher") a veces relanza el JVM real con
+            // otros flags de módulos y el proceso ORIGINAL que nosotros
+            // spawneamos termina solo (dispara 'close' segundos después de
+            // arrancar, mucho antes de que el jugador cierre el juego de
+            // verdad — confirmado viendo el log). El juego real queda
+            // corriendo en un proceso que nunca capturamos, así que
+            // minecraftProcess puede estar null o apuntar a un proceso ya
+            // muerto acá. Como respaldo, buscamos cualquier java(w).exe cuya
+            // línea de comando tenga el nombre de ESTA instancia (los .jar
+            // de sus mods están en el classpath, así que el nombre aparece
+            // ahí) y lo matamos también — cubre tanto el caso normal como
+            // el del relanzamiento.
+            if (process.platform === 'win32' && options && options.name) {
+                const safeName = String(options.name).replace(/'/g, "''")
+                const psCmd = `Get-CimInstance Win32_Process | Where-Object { ($_.Name -eq 'javaw.exe' -or $_.Name -eq 'java.exe') -and $_.CommandLine -like '*${safeName}*' } | ForEach-Object { Stop-Process -Id $_.ProcessId -Force }`
+                cpModule.exec(`powershell -NoProfile -Command "${psCmd}"`, (err, stdout, stderr) => {
+                    console.log('[force-close] fallback por línea de comando:', stdout || stderr || (err && err.message) || '(sin salida — no encontró nada que matar, o ya estaba muerto)')
+                })
+            }
+        }
+
         // El botón es el mismo elemento del DOM entre partidas: si no se
         // saca el listener anterior, cada nueva partida apila uno más
         // (inofensivo porque los viejos apuntan a un proceso ya nulo, pero
@@ -733,9 +885,7 @@ class Home {
         if (forceCloseBtn._killHandler) {
             forceCloseBtn.removeEventListener('click', forceCloseBtn._killHandler)
         }
-        forceCloseBtn._killHandler = function() {
-            if (minecraftProcess) minecraftProcess.kill()
-        }
+        forceCloseBtn._killHandler = killMinecraftProcess
         forceCloseBtn.addEventListener('click', forceCloseBtn._killHandler)
 
         let opt = {
@@ -750,7 +900,7 @@ class Home {
             intelEnabledMac: configClient.launcher_config.intelEnabledMac,
             loader: {
                 type: options.loader.loader_type,
-                build: options.loader.loader_version,
+                build: normalizeLoaderBuild(options.loader),
                 enable: options.loader.loader_type == 'none' ? false : true
             },
             verify: verifyOnly ? true : (skipVerify ? false : options.verify),
@@ -829,7 +979,7 @@ class Home {
                 // terminó (es lo único que interesaba) — se mata el JVM
                 // recién arrancado antes de que llegue a mostrar nada,
                 // minecraft-java-core no tiene un modo "solo verificar".
-                if (minecraftProcess) minecraftProcess.kill()
+                killMinecraftProcess()
                 return
             }
 
@@ -863,7 +1013,7 @@ class Home {
             infoBox.style.display = 'none'
             playBtn.style.display = ''
             if (moreWrap) moreWrap.style.display = ''
-            if (self.instancesList.length > 1) instanceRail.style.display = ''
+            instanceRail.style.display = ''
             infoText.textContent = t('home.status.verifying')
             new logger(pkg.name, '#7289da')
             console.log('Close')
@@ -894,7 +1044,7 @@ class Home {
             infoBox.style.display = 'none'
             playBtn.style.display = ''
             if (moreWrap) moreWrap.style.display = ''
-            if (self.instancesList.length > 1) instanceRail.style.display = ''
+            instanceRail.style.display = ''
             infoText.textContent = t('home.status.verifying')
             new logger(pkg.name, '#7289da')
         })

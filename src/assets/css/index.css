@@ -1,23 +1,14 @@
 @import "font.css";
 @import 'theme.css';
-@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;900&family=Barlow:wght@300;400;500&display=swap');
 
-:root {
-    --md-black:      #0a0a0a;
-    --md-dark:       #111111;
-    --md-surface:    #1a1a1a;
-    --md-border:     #2a2a2a;
-    --md-border-lit: #3a3a3a;
-    --md-white:      #f0f0f0;
-    --md-muted:      #555555;
-    --transition:    0.18s cubic-bezier(0.4, 0, 0.2, 1);
+/* Ventana de actualización — mismo lenguaje visual que login.css/launcher.css
+   (superficie + borde + sombra + Barlow Condensed tracked), usando los
+   tokens reales de theme.css en vez de valores propios hardcodeados, para
+   que responda al tema claro/oscuro igual que el resto del launcher
+   (index.js ya setea body.className = 'dark global' / 'light global'). */
 
-    /* Acento de marca — mismos valores que theme.css, duplicados aquí porque
-       el splash es una ventana independiente sin las clases .dark/.global */
-    --accent-a: #2dd4bf;
-    --accent-b: #7c5cff;
-    --accent-gradient: linear-gradient(135deg, var(--accent-a), var(--accent-b));
-    --accent-glow: rgba(124, 92, 255, 0.35);
+.is-hidden {
+    display: none;
 }
 
 * {
@@ -32,6 +23,12 @@ body {
     overflow: hidden;
     width: 400px;
     height: 500px;
+    opacity: 0;
+    transition: opacity 0.15s ease;
+}
+
+body.ready {
+    opacity: 1;
 }
 
 img {
@@ -43,15 +40,17 @@ img {
 .splash-frame {
     width: 400px;
     height: 500px;
-    background: var(--md-dark);
-    border: 1px solid var(--md-border-lit);
-    border-radius: 16px;
+    background: var(--surface);
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
     display: flex;
     flex-direction: column;
     overflow: hidden;
     box-shadow:
         0 0 0 1px rgba(255,255,255,0.03),
-        0 32px 80px rgba(0,0,0,0.8);
+        0 32px 80px rgba(0,0,0,0.7),
+        0 8px 24px rgba(0,0,0,0.5);
     opacity: 0;
     transform: scale(0.97);
     transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.16,1,0.3,1);
@@ -62,28 +61,38 @@ img {
     transform: scale(1);
 }
 
-/* ── Top bar ── */
+/* ── Top bar — mismo patrón que .app-titlebar del launcher (logo + nombre) ── */
 .splash-top-bar {
     display: flex;
     align-items: center;
-    padding: 1.1rem 1.5rem;
-    border-bottom: 1px solid var(--md-border);
+    gap: 0.6rem;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--border);
     flex-shrink: 0;
 }
 
-.splash-brand {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 900;
-    font-size: 0.9rem;
-    letter-spacing: 0.15em;
-    color: var(--md-white);
-    width: 34px;
-    height: 34px;
+.splash-top-logo {
+    flex-shrink: 0;
+    width: 22px;
+    height: 22px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 1px solid var(--md-border-lit);
-    border-radius: 7px;
+}
+
+.splash-top-logo-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.splash-top-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 0.78rem;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    white-space: nowrap;
 }
 
 /* ── Content ── */
@@ -97,27 +106,19 @@ img {
     gap: 0;
 }
 
-/* ── Logo ── */
+/* ── Logo — mismo tratamiento que .login-logo-img: imagen plana, sin
+   anillo ni borde circular ── */
 .splash-logo-wrap {
-    position: relative;
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    border: 1px solid var(--md-border-lit);
+    width: 84px;
+    height: 84px;
     display: flex;
     align-items: center;
     justify-content: center;
-    overflow: hidden;
     margin-bottom: 1.75rem;
-    background: var(--md-surface);
     flex-shrink: 0;
-    transition: opacity 0.3s ease, transform 1.5s cubic-bezier(0.16,1,0.3,1), box-shadow 0.6s ease;
+    transition: opacity 0.6s ease, transform 1.5s cubic-bezier(0.16,1,0.3,1);
     opacity: 0;
     transform: translateY(20px);
-}
-
-.splash-logo-wrap.show {
-    box-shadow: 0 0 0 2px var(--accent-b), 0 0 28px var(--accent-glow);
 }
 
 .splash-logo-wrap.show {
@@ -126,16 +127,9 @@ img {
 }
 
 .splash {
-    width: 80px;
-    height: 80px;
-    object-fit: cover;
-    border-radius: 50%;
-    /* Override old absolute positioning */
-    position: static;
-    top: auto;
-    left: auto;
-    transform: none;
-    opacity: 1 !important;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
 }
 
 /* ── Splash message (frase aleatoria) ── */
@@ -145,7 +139,7 @@ img {
     font-size: 1.1rem;
     letter-spacing: 0.06em;
     text-align: center;
-    color: var(--md-white);
+    color: var(--text);
     line-height: 1.3;
     margin-bottom: 0.2rem;
     transition: opacity 1.5s ease;
@@ -163,7 +157,7 @@ img {
     font-size: 0.72rem;
     letter-spacing: 0.2em;
     text-align: center;
-    color: var(--md-muted);
+    color: var(--text-dim);
     margin-bottom: 2rem;
     transition: opacity 1.5s ease;
     opacity: 0;
@@ -172,7 +166,7 @@ img {
 
 .splash-author .author {
     font-weight: 600;
-    color: rgba(240,240,240,0.4);
+    color: var(--text-muted);
 }
 
 .splash-author.opacity {
@@ -186,7 +180,7 @@ img {
     font-size: 0.8rem;
     letter-spacing: 0.18em;
     text-align: center;
-    color: var(--md-muted);
+    color: var(--text-muted);
     text-transform: uppercase;
     transition: opacity 1.5s ease;
     opacity: 0;
@@ -198,26 +192,31 @@ img {
     opacity: 1;
 }
 
-/* ── Download update button ── */
+/* ── Download update button — mismo tratamiento que .login-btn-primary ── */
 .download-update {
     font-family: 'Barlow Condensed', sans-serif;
     font-weight: 700;
     font-size: 0.85rem;
     letter-spacing: 0.15em;
-    color: var(--md-white);
-    border: 1px solid var(--md-border-lit);
-    border-radius: 8px;
+    color: #0a0a0a;
+    border: none;
+    border-radius: var(--radius-sm);
     padding: 0.65rem 2rem;
-    background: rgba(255,255,255,0.06);
+    background: var(--accent-gradient);
     cursor: pointer;
-    transition: border-color var(--transition), background var(--transition);
+    transition: filter var(--transition), transform 0.1s ease;
     margin-top: 0.5rem;
     text-align: center;
+    display: inline-block;
 }
 
 .download-update:hover {
-    border-color: var(--md-white);
-    background: rgba(255,255,255,0.1);
+    filter: brightness(1.08);
+    transform: translateY(-1px);
+}
+
+.download-update:active {
+    transform: translateY(0);
 }
 
 /* ── Progress bar ── */
@@ -228,18 +227,14 @@ img {
     transition: opacity 0.2s ease;
     opacity: 0;
     border-radius: 2px;
-    /* Override old absolute positioning */
-    position: static;
-    top: auto;
-    left: auto;
 }
 
-.show {
-    opacity: 1 !important;
+.progress.show {
+    opacity: 1;
 }
 
 .progress::-webkit-progress-bar {
-    background: var(--md-border);
+    background: var(--border);
     border-radius: 2px;
     border: none;
 }
@@ -255,7 +250,7 @@ img {
     align-items: center;
     justify-content: center;
     padding: 0.85rem 1.5rem;
-    border-top: 1px solid var(--md-border);
+    border-top: 1px solid var(--border);
     flex-shrink: 0;
 }
 
@@ -263,6 +258,6 @@ img {
     font-family: 'Barlow Condensed', sans-serif;
     font-size: 0.62rem;
     letter-spacing: 0.3em;
-    color: var(--md-muted);
+    color: var(--text-dim);
     text-transform: uppercase;
 }

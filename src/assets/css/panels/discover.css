@@ -1,0 +1,317 @@
+/* ============================================================
+   MetalDaze Launcher — Descubrir (catálogo de instancias)
+   Vista superpuesta dentro de Home, mismo patrón que media.css/skins.css:
+   la fila de categorías de arriba nunca desaparece, se cambia de vista
+   clickeando otra categoría del nav.
+   ============================================================ */
+
+.discover-overlay {
+    position: fixed;
+    top: calc(var(--titlebar-h) + var(--topnav-h)); bottom: 0;
+    left: 0; right: 0;
+    background: rgba(10,11,13,0.97);
+    backdrop-filter: blur(20px);
+    z-index: 90;
+    display: flex;
+    flex-direction: column;
+    padding: 1.75rem 3rem;
+}
+
+.discover-grid-wrap {
+    flex: 1;
+    overflow-y: auto;
+    margin-top: 0.5rem;
+    scrollbar-width: none;
+}
+.discover-grid-wrap::-webkit-scrollbar { display: none; }
+
+/* Filas anchas apiladas, no una grilla de tiles — cada instancia ocupa
+   todo el ancho disponible (imagen a la izquierda, info al medio, acción
+   a la derecha), y se van apilando hacia abajo con scroll a medida que se
+   agregan más. */
+.discover-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.discover-card {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    cursor: pointer;
+    transition: border-color var(--transition), transform var(--transition);
+}
+
+.discover-card:hover { border-color: var(--border-lit); transform: translateY(-2px); }
+.discover-card:focus-visible { outline: 2px solid var(--accent-b); outline-offset: 2px; }
+
+.discover-card-img {
+    width: 320px;
+    flex-shrink: 0;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    display: block;
+    background: var(--surface);
+}
+
+.discover-card-body {
+    padding: 1rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.4rem;
+    flex: 1;
+    min-width: 0;
+}
+
+.discover-card-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 1.3rem;
+    letter-spacing: 0.02em;
+    color: var(--text);
+}
+
+.discover-card-desc {
+    font-family: 'Barlow', sans-serif;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.discover-card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    padding: 0 1.75rem;
+}
+
+.discover-card-install {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #0a0a0a;
+    background: var(--accent-gradient);
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 0.6rem 1.3rem;
+    cursor: pointer;
+    transition: filter var(--transition);
+}
+.discover-card-install:hover { filter: brightness(1.08); }
+
+.discover-card-installed-badge {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--green);
+}
+
+.discover-empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 0;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
+/* ══ MODAL DE DETALLE: MODS / LORE / CHANGELOG ══ */
+/* Casi del tamaño completo de la ventana del launcher — el padding grande
+   acá es lo que lo mantiene leyéndose como un popup flotante (con borde
+   visible alrededor) en vez de un panel a pantalla completa tipo Settings. */
+.instance-detail-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 960;
+    background: rgba(5,5,6,0.7);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 5rem;
+}
+
+.instance-detail-card {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background: var(--surface);
+    border: 1px solid var(--border-lit);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+}
+
+.instance-detail-close {
+    position: absolute;
+    top: 1rem; right: 1rem;
+    z-index: 2;
+    background: rgba(10,11,13,0.55);
+    border: none;
+    border-radius: 50%;
+    width: 32px; height: 32px;
+    color: #fff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background var(--transition);
+}
+.instance-detail-close:hover { background: rgba(10,11,13,0.85); }
+.instance-detail-close:focus-visible { outline: 2px solid var(--accent-b); outline-offset: 2px; }
+
+/* ══ BANNER ══ */
+.instance-detail-banner {
+    position: relative;
+    flex-shrink: 0;
+    height: 320px;
+    background-color: var(--surface-2);
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.5rem 1.75rem;
+}
+
+.instance-detail-banner::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(10,11,13,0.92), rgba(10,11,13,0.15) 60%);
+}
+
+.instance-detail-banner-title {
+    position: relative;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: 3rem;
+    letter-spacing: 0.01em;
+    color: #fff;
+    text-shadow: 0 2px 12px rgba(0,0,0,0.5);
+}
+
+.instance-detail-install {
+    position: relative;
+    flex-shrink: 0;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #0a0a0a;
+    background: var(--accent-gradient);
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 0.65rem 1.2rem;
+    cursor: pointer;
+    transition: filter var(--transition);
+}
+.instance-detail-install:hover { filter: brightness(1.08); }
+
+/* ══ CONTENIDO: MODS (fijo, izquierda) + LORE/CHANGELOG (acordeón, derecha) ══ */
+.instance-detail-content {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    min-height: 0;
+}
+
+.instance-detail-mods-col {
+    padding: 1.5rem 1.75rem;
+    overflow-y: auto;
+    scrollbar-width: none;
+    border-right: 1px solid var(--border);
+}
+.instance-detail-mods-col::-webkit-scrollbar { display: none; }
+
+.instance-detail-mods-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 0.65rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 0.9rem;
+}
+
+.instance-detail-side-col {
+    padding: 1.5rem 1.5rem;
+    overflow-y: auto;
+    scrollbar-width: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+.instance-detail-side-col::-webkit-scrollbar { display: none; }
+
+/* <details> nativo — el expandir/colapsar lo maneja el navegador solo,
+   sin JS de por medio. */
+.instance-detail-accordion {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: rgba(255,255,255,0.02);
+}
+
+.instance-detail-accordion summary {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text);
+    padding: 0.7rem 0.9rem;
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.instance-detail-accordion summary::-webkit-details-marker { display: none; }
+.instance-detail-accordion summary::after {
+    content: '+';
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+.instance-detail-accordion[open] summary::after { content: '−'; }
+
+.instance-detail-accordion-body {
+    padding: 0 0.9rem 0.9rem;
+}
+
+.instance-detail-lore,
+.instance-detail-changelog-empty,
+.instance-detail-changelog-entry {
+    font-family: 'Barlow', sans-serif;
+    font-size: 0.82rem;
+    color: var(--text);
+    line-height: 1.55;
+}
+
+.instance-detail-changelog-empty { color: var(--text-muted); }
+
+.instance-detail-changelog-entry {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--border);
+}
+.instance-detail-changelog-entry:last-child { border-bottom: none; }

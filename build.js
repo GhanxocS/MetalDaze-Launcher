@@ -68,6 +68,11 @@ class Index {
                 artifactName: "${productName}-${os}-${arch}.${ext}",
                 extraMetadata: { main: 'app/app.js' },
                 files: ["app/**/*", "package.json", "LICENSE.md"],
+                // electron-builder borra por defecto cualquier carpeta node_modules/**/{examples,example,test,tests}
+                // asumiendo que son solo docs. three.js usa examples/jsm/** para distribuir addons reales
+                // (OrbitControls, etc.) que skinview3d importa en runtime — sin esto, el renderer crashea
+                // con "Cannot find module .../three/examples/jsm/controls/OrbitControls.js" en el build final.
+                onNodeModuleFile: (file) => /[\\/]three[\\/]examples$/.test(file),
                 directories: {
                     "output": "dist"
                 },

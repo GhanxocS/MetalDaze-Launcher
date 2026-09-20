@@ -7,3 +7,9 @@ node-v*
 data
 .DS_Store
 graphify-out
+
+# Herramientas de Claude Code / Impeccable — locales, no forman parte del launcher
+.claude
+.impeccable
+CLAUDE.md
+.github

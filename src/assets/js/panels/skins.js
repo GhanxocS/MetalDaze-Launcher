@@ -91,6 +91,12 @@ class Skins {
         this.currentCape = null
         this.listenersBound = false
         this.resizeObserver = null
+        // Recorte de cada capa (ver cropCapeThumbnail), cacheado por capeId.
+        // renderCapes() reconstruye toda la grilla en cada click (para mover
+        // el borde "activo"/"pending"), así que sin cachear esto cada celda
+        // recalculaba su textura desde cero y TODAS quedaban sin imagen por
+        // un instante — no solo la que se clickeó.
+        this.capeThumbCache = new Map()
     }
 
     // Se llama cada vez que se entra a la vista Skins.
@@ -182,13 +188,30 @@ class Skins {
 
     // Confirma la skin/capa previsualizada como la elegida — antes de esto,
     // clickear en las galerías solo cambiaba lo que se ve en el visor.
-    saveChanges() {
+    async saveChanges() {
         this.activeEntryId = this.pendingEntryId
         this.activeCapeId = this.pendingCapeId
+        await this.persistSelection()
         this.renderAccountHistory()
         this.renderUploadedSkins()
         this.renderCapes()
         this.updateSaveButton()
+    }
+
+    // Escribe la elección confirmada en un store aparte (una fila por
+    // cuenta) — sin esto, activeEntryId/activeCapeId vivían solo en memoria
+    // de esta instancia, y loadCurrentAccountSkin() los pisaba con la skin
+    // "de fábrica" de la cuenta cada vez que se volvía a esta pestaña (ver
+    // ahí). Guardar necesita sobrevivir a salir y volver, no solo a este
+    // render.
+    async persistSelection() {
+        const configClient = await this.db.readData('configClient')
+        const uuid = configClient?.account_selected
+        if (!uuid) return
+        await this.db.updateData('skinSelection', {
+            entryId: this.activeEntryId,
+            capeId: this.activeCapeId,
+        }, uuid)
     }
 
     updateSaveButton() {
@@ -287,36 +310,71 @@ class Skins {
         if (!configClient || !configClient.account_selected) {
             this.setEmptyViewer()
             this.capes = []
+            this.capeThumbCache.clear()
             this.activeEntryId = this.pendingEntryId = null
             this.activeCapeId = this.pendingCapeId = null
             this.updateSaveButton()
             return
         }
 
-        const account = await this.db.readData('accounts', configClient.account_selected)
+        const uuid = configClient.account_selected
+        const account = await this.db.readData('accounts', uuid)
         const skinBase64 = account?.profile?.skins?.[0]?.base64
         if (!account || !skinBase64) {
             this.setEmptyViewer()
             this.capes = []
+            this.capeThumbCache.clear()
             this.activeEntryId = this.pendingEntryId = null
             this.activeCapeId = this.pendingCapeId = null
             this.updateSaveButton()
             return
         }
-
-        this.activeEntryId = null
-        this.pendingEntryId = null
-        await this.loadSkinIntoViewer(skinBase64, account.name)
 
         // Una cuenta Microsoft puede tener varias capes desbloqueadas (evento,
         // migración, etc.) — minecraft-java-core ya las trae todas en
         // profile.capes con base64 resuelto. La activa (state:'ACTIVE') es
         // la que se pone por default; el resto se puede probar en la galería.
         this.capes = account?.profile?.capes || []
-        const activeCape = this.capes.find(c => c.state === 'ACTIVE') || this.capes[0]
-        this.activeCapeId = activeCape?.id || null
-        this.pendingCapeId = this.activeCapeId
-        this.applyCape(activeCape?.base64 || null)
+        this.capeThumbCache.clear()
+
+        // Última elección confirmada con Guardar para ESTA cuenta (ver
+        // persistSelection) — si existe, pisa el default de fábrica de abajo.
+        // Si la skin/capa guardada ya no existe (se borró del historial, o
+        // la cuenta perdió esa capa), se cae al default sin romper nada.
+        const saved = await this.db.readData('skinSelection', uuid)
+
+        let entryId = null
+        let skinSrc = skinBase64
+        let skinLabel = account.name
+        if (saved?.entryId != null) {
+            const entry = await this.db.readData('skinHistory', saved.entryId)
+            if (entry) {
+                entryId = entry.ID
+                skinSrc = entry.base64
+                skinLabel = entry.name
+            }
+        }
+        this.activeEntryId = this.pendingEntryId = entryId
+        await this.loadSkinIntoViewer(skinSrc, skinLabel)
+
+        let capeId = null
+        let capeBase64 = null
+        if (saved?.capeId === 'none') {
+            capeId = 'none'
+        } else if (saved?.capeId != null) {
+            const found = this.capes.find((c, idx) => (c.id || idx) === saved.capeId)
+            if (found) {
+                capeId = saved.capeId
+                capeBase64 = found.base64
+            }
+        }
+        if (capeId == null) {
+            const defaultCape = this.capes.find(c => c.state === 'ACTIVE') || this.capes[0]
+            capeId = defaultCape?.id || null
+            capeBase64 = defaultCape?.base64 || null
+        }
+        this.activeCapeId = this.pendingCapeId = capeId
+        this.applyCape(capeBase64)
         this.updateSaveButton()
     }
 
@@ -704,10 +762,10 @@ class Skins {
             const cell = this.createCell({
                 id: capeId,
                 label,
-                // Recorte del panel visible (ver cropCapeThumbnail) en vez
-                // de la textura cruda — si falla, mejor mostrar la textura
-                // completa que dejar la celda vacía.
-                imgPromiseOrSrc: cropCapeThumbnail(cape.base64).catch(() => cape.base64),
+                // Recorte del panel visible (ver cropCapeThumbnail), cacheado
+                // por capeId (ver getCapeThumb) — si falla, mejor mostrar la
+                // textura completa que dejar la celda vacía.
+                imgPromiseOrSrc: this.getCapeThumb(cape, capeId),
                 active: capeId === this.activeCapeId,
                 pending: capeId === this.pendingCapeId && this.pendingCapeId !== this.activeCapeId,
                 contain: true,
@@ -715,6 +773,17 @@ class Skins {
             })
             grid.appendChild(cell)
         })
+    }
+
+    // Devuelve el data URL cacheado si ya se calculó una vez; si no, arranca
+    // el recorte y lo guarda en cache apenas resuelve. createCell() acepta
+    // tanto un string como una Promise, así que en el hit de cache el <img>
+    // se llena de una sin pasar por un frame sin src (el parpadeo original).
+    getCapeThumb(cape, capeId) {
+        if (this.capeThumbCache.has(capeId)) return this.capeThumbCache.get(capeId)
+        const promise = cropCapeThumbnail(cape.base64).catch(() => cape.base64)
+        promise.then(src => this.capeThumbCache.set(capeId, src))
+        return promise
     }
 
     createNoCapeTile() {

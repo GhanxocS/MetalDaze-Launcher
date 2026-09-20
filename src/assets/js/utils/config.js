@@ -43,10 +43,18 @@ class Config {
         })
     }
 
-    async getInstanceList() {
+    // uuid: cuenta activa del launcher — se manda como x-account-uuid para que
+    // el backend pueda incluir las instancias whitelistActive:true en las que
+    // ese jugador puntual está habilitado (ver server.js). Sin esto, el server
+    // no tiene forma de saber quién está pidiendo la lista y esas instancias
+    // quedan ocultas para todos salvo con dev-token.
+    async getInstanceList(uuid) {
         let urlInstance = `${url}/instances`
         let devToken = await getDevToken()
-        let fetchOpts = devToken ? { headers: { 'x-dev-token': devToken } } : {}
+        let headers = {}
+        if (devToken) headers['x-dev-token'] = devToken
+        if (uuid) headers['x-account-uuid'] = uuid
+        let fetchOpts = Object.keys(headers).length ? { headers } : {}
         let instances = await nodeFetch(urlInstance, fetchOpts).then(res => res.json()).catch(err => err)
         let instancesList = []
         instances = Object.entries(instances)

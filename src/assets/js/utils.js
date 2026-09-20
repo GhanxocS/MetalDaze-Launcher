@@ -27,6 +27,41 @@ function escapeHtml(str) {
         .replace(/'/g, '&#39;')
 }
 
+// Arma la lista de mods (nombre + badge obligatorio/opcional + fuente) como
+// nodos DOM sueltos, sin tocar ningún contenedor puntual — compartido entre
+// el modal "Ver mods incluidos" del menú de 3 puntitos (home.js) y la
+// pestaña "Mods" del detalle de una instancia en Descubrir (discover.js),
+// para no duplicar el mismo armado dos veces.
+function buildModItems(mods) {
+    return (mods || []).map(function(mod) {
+        const item = document.createElement('div')
+        item.className = 'mods-modal-item'
+
+        const name = document.createElement('div')
+        name.className = 'mods-modal-item-name'
+        name.textContent = mod.name || mod.project_slug || '—'
+
+        const meta = document.createElement('div')
+        meta.className = 'mods-modal-item-meta'
+
+        const reqBadge = document.createElement('span')
+        reqBadge.className = 'mods-modal-badge' + (mod.required ? ' mods-modal-badge-required' : '')
+        reqBadge.textContent = mod.required ? t('home.mods.required') : t('home.mods.optional')
+        meta.appendChild(reqBadge)
+
+        if (mod.source) {
+            const sourceBadge = document.createElement('span')
+            sourceBadge.className = 'mods-modal-badge'
+            sourceBadge.textContent = mod.source
+            meta.appendChild(sourceBadge)
+        }
+
+        item.appendChild(name)
+        item.appendChild(meta)
+        return item
+    })
+}
+
 async function setBackground(theme) {
     if (typeof theme == 'undefined') {
         let databaseLauncher = new database();
@@ -425,5 +460,6 @@ export {
     slider as Slider,
     pkg as pkg,
     setStatus as setStatus,
-    escapeHtml as escapeHtml
+    escapeHtml as escapeHtml,
+    buildModItems as buildModItems
 }

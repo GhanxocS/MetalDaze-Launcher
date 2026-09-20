@@ -5,6 +5,7 @@
 @import 'panels/settings.css';
 @import 'panels/media.css';
 @import 'panels/skins.css';
+@import 'panels/discover.css';
 
 body {
     margin: 0;

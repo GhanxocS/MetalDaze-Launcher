@@ -39,6 +39,11 @@ function createWindow() {
     });
     Menu.setApplicationMenu(null);
     updateWindow.setMenuBarVisibility(false);
+    // Ver el mismo comentario en mainWindow.js — sin esto, con
+    // nodeIntegration:true y sin contextIsolation, una navegación o un
+    // window.open dentro de esta ventana tendría acceso a Node directo.
+    updateWindow.webContents.on('will-navigate', (event) => event.preventDefault());
+    updateWindow.webContents.setWindowOpenHandler(() => ({ action: 'deny' }));
     updateWindow.loadFile(path.join(`${app.getAppPath()}/src/index.html`));
     updateWindow.once('ready-to-show', () => {
         if (updateWindow) {

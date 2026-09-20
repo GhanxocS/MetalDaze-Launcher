@@ -663,3 +663,112 @@ body, html { overflow: hidden; margin: 0; padding: 0; }
 
 .news-content .bbWrapper .news-author span { color: var(--text-muted); font-weight: 500; }
 
+/* ══ MODAL: VER MODS INCLUIDOS (menú de 3 puntitos) ══ */
+.mods-modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 960;
+    background: rgba(5,5,6,0.7);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+}
+
+.mods-modal-card {
+    width: 420px;
+    max-width: 100%;
+    max-height: 70vh;
+    display: flex;
+    flex-direction: column;
+    background: var(--surface);
+    border: 1px solid var(--border-lit);
+    border-radius: var(--radius-md);
+    padding: 1.75rem;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+}
+
+.mods-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.25rem;
+    flex-shrink: 0;
+}
+
+.mods-modal-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 1.3rem;
+    letter-spacing: 0.04em;
+    color: var(--text);
+}
+
+.mods-modal-close {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 0.25rem;
+    display: flex;
+    transition: color var(--transition);
+}
+.mods-modal-close:hover { color: var(--text); }
+.mods-modal-close:focus-visible { outline: 2px solid var(--accent-b); outline-offset: 2px; }
+
+.mods-modal-list {
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.mods-modal-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.6rem 0.75rem;
+    background: rgba(255,255,255,0.03);
+    border-radius: var(--radius-sm);
+}
+
+.mods-modal-item-name {
+    font-family: 'Barlow', sans-serif;
+    font-size: 0.85rem;
+    color: var(--text);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.mods-modal-item-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    flex-shrink: 0;
+}
+
+.mods-modal-badge {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 0.62rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.2rem 0.5rem;
+    border-radius: var(--radius-sm);
+    color: var(--text-muted);
+    background: rgba(255,255,255,0.06);
+}
+
+.mods-modal-badge-required { color: var(--green); background: rgba(76,175,125,0.15); }
+
+.mods-modal-empty {
+    font-family: 'Barlow', sans-serif;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    text-align: center;
+    padding: 1.5rem 0;
+}
+

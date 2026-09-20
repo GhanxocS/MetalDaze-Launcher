@@ -52,6 +52,14 @@ function createWindow() {
     // launcher si no se resetea acá explícitamente.
     mainWindow.webContents.setZoomFactor(1);
     mainWindow.webContents.on('did-finish-load', () => mainWindow.webContents.setZoomFactor(1));
+    // Esta ventana solo carga su propio launcher.html local — nunca necesita
+    // navegar a otro lado ni abrir ventanas nuevas (los links externos van
+    // por shell.openExternal desde el renderer, no por target=_blank/window.open).
+    // Con nodeIntegration:true y sin contextIsolation, dejar pasar una
+    // navegación o un window.open le daría a esa página acceso a Node
+    // directo — se corta acá antes de que pueda pasar.
+    mainWindow.webContents.on('will-navigate', (event) => event.preventDefault());
+    mainWindow.webContents.setWindowOpenHandler(() => ({ action: 'deny' }));
     mainWindow.loadFile(path.join(`${app.getAppPath()}/src/launcher.html`));
     mainWindow.once('ready-to-show', () => {
         if (mainWindow) {
